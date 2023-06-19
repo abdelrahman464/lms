@@ -20,7 +20,15 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   const { productId, color } = req.body;
 
   const product = await Product.findById(productId);
-
+  if (!product) {
+    return next(new ApiError("Product not found", 404));
+  }
+  let productPrice;
+  if (product.priceAfterDiscount) {
+    productPrice = product.priceAfterDiscount;
+  } else {
+    productPrice = product.price;
+  }
   //get cart for logged in user
   let cart = await CartStore.findOne({ user: req.user._id });
   //if no cart
@@ -29,7 +37,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
     cart = await CartStore.create({
       user: req.user._id,
       //we can use $addtoSet
-      cartItems: [{ product: productId, color, price: product.price }],
+      cartItems: [{ product: productId, color, price: productPrice }],
     });
   } else {
     // is this product exists in the cart,update product quantity
@@ -45,7 +53,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
       cart.cartItems[productIndex] = cartItem;
     } else {
       //if the product is not exist in the cart ,push product to cartItem array
-      cart.cartItems.push({ product: productId, color, price: product.price });
+      cart.cartItems.push({ product: productId, color, price: productPrice });
     }
   }
 
@@ -68,7 +76,7 @@ exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
   const cart = await CartStore.findOne({ user: req.user._id });
   if (!cart) {
     return next(
-      new ApiError(`there is no cart this user id : ${req.user._id}`, 404)
+      new ApiError(`There Is No Product On Your Cart`, 404)
     );
   }
 

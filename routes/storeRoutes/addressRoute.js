@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   addAddressValidator,
-} = require("../../utils/validators/storeValidator/addressValidator");
+} = require("../../utils/validators/storeValidators/addressValidator");
 const {
   addAddress,
   removeAddressFromAddressList,

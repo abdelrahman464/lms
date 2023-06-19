@@ -62,7 +62,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ data: user });
 });
-
+//@desc chang user password
+//@route PUT /api/v1/user/changePassword/:id
+//@access private admin
 exports.changeUserPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.params.id,
@@ -75,7 +77,7 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
     }
   );
   if (!user) {
-    return next(new ApiError(`No document For this id ${req.params.id}`, 404));
+    return next(new ApiError(`User Not Found`, 404));
   }
   res.status(200).json({ data: user });
 });
@@ -130,16 +132,23 @@ exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: user });
 });
 //@desc deactivate logged user
-//@route DELETE /api/v1/user/deleteMe
+//@route PUT /api/v1/user/deActiveMe
 //@access private/protect
-exports.deleteLoggedUser = asyncHandler(async (req, res, next) => {
+exports.deActivateLoggedUser = asyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: false });
-  res.status(204).send();
+  res.status(201).json({ data: "success" });
 });
 //@desc activate logged user
 //@route PUT /api/v1/user/activeMe
 //@access private/protect
-exports.activeLoggedUser = asyncHandler(async (req, res, next) => {
+exports.activeateLoggedUser = asyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: true });
   res.status(201).json({ data: "success" });
+});
+//@desc delete my acount
+//@route PUT /api/v1/user/deleteMyAcount
+//@access private/protect user
+exports.deleteMyAccount = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndDelete(req.user._id);
+  res.status(204).send();
 });

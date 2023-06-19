@@ -4,7 +4,7 @@ const {
   removeSpecificCartItemValidator,
   updateCartItemQuantityValidator,
   applayCouponValidator,
-} = require("../../utils/validators/storeValidator/cartValidator");
+} = require("../../utils/validators/storeValidators/cartValidator");
 const authServices = require("../../services/authServices");
 const {
   addProductToCart,

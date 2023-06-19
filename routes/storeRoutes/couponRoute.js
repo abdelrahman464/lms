@@ -4,7 +4,7 @@ const {
   createCouponValidator,
   updateCouponValidator,
   deleteCouponValidator,
-} = require("../../utils/validators/storeValidator/couponValidator");
+} = require("../../utils/validators/storeValidators/couponValidator");
 const authServices = require("../../services/authServices");
 const {
   getCoupons,

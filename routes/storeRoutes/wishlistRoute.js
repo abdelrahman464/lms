@@ -2,7 +2,7 @@ const express = require("express");
 
 const {
   addProductToWishlistValidator,
-} = require("../../utils/validators/storeValidator/wishlistValidator");
+} = require("../../utils/validators/storeValidators/wishlistValidator");
 const authServices = require("../../services/authServices");
 const {
   addProductToWishlist,

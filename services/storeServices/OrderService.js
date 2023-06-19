@@ -23,7 +23,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
   const cart = await CartStore.findById(cartId);
   if (!cart) {
     return next(
-      new ApiError(`there is no cart with id ${req.params.catrId}`, 404)
+      new ApiError(`Cart Not Found`, 404)
     );
   }
   //2) get order price cart price  "check if copoun applied"

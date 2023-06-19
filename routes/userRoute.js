@@ -19,8 +19,9 @@ const {
   getLoggedUserData,
   updateLoggedUserPassword,
   updateLoggedUserData,
-  deleteLoggedUser,
-  activeLoggedUser,
+  deActivateLoggedUser,
+  activeateLoggedUser,
+  deleteMyAccount,
   uploadProfileImage,
   resizeImage,
 } = require("../services/userService");
@@ -28,8 +29,9 @@ const {
 const router = express.Router();
 
 router.get("/getMe", authServices.protect, getLoggedUserData, getUser);
-router.delete("/deleteMe", authServices.protect, deleteLoggedUser);
-router.put("/activeMe", authServices.protect, activeLoggedUser);
+router.put("/deActiveMe", authServices.protect, deActivateLoggedUser);
+router.put("/activeMe", authServices.protect, activeateLoggedUser);
+router.delete("/deleteMyAcount", authServices.protect, deleteMyAccount);
 router.put(
   "/changeMyPassword",
   authServices.protect,

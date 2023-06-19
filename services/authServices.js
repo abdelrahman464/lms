@@ -128,12 +128,12 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   user.passwordResetVerified = false;
 
   await user.save();
-
-  const emailMessage = `Hi ${user.name},\n we recived a request to reset your password on your E-shop Account. 
-  \n ${resetCode} \n enter this code to complete the reset \n thanks for helping us keep your account secure.\n 
-  the E-shop Team`;
+  
   //3-send the reset code via email
   try {
+    const emailMessage = `Hi ${user.name},\n we recived a request to reset your password on your E-shop Account. 
+                          \n ${resetCode} \n enter this code to complete the reset \n thanks for helping us keep your account secure.
+                          \n the E-shop Team`;
     await sendEmail({
       to: user.email,
       subject: "Your Password Reset code (valid for 10 min)",

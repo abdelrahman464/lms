@@ -59,6 +59,12 @@ const userShcema = new mongoose.Schema(
         postalCode: String,
       },
     ],
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
   },
   { timestamps: true }
 );

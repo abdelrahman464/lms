@@ -5,7 +5,7 @@ const {
   createCategroyValidator,
   updateCategroyValidator,
   deleteCategroyValidator,
-} = require("../../utils/validators/storeValidator/categoryValidator");
+} = require("../../utils/validators/storeValidators/categoryValidator");
 const authServices = require("../../services/authServices");
 const {
   getCategories,

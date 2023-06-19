@@ -14,7 +14,7 @@ const {
   getsubCategoryValidator,
   updateCategroyValidator,
   deleteCategroyValidator,
-} = require("../../utils/validators/storeValidator/subCategoryValidator");
+} = require("../../utils/validators/storeValidators/subCategoryValidator");
 
 // mergeParams =>> it allows you to access the params from another resource
 //ex: we need to access {categoryId} from category router

@@ -4,7 +4,7 @@ const {
   createReviewValidator,
   updateReviewValidator,
   deleteReviewValidator,
-} = require("../../utils/validators/storeValidator/reviewValidator");
+} = require("../../utils/validators/storeValidators/reviewValidator");
 
 const authServices = require("../../services/authServices");
 const {
