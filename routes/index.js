@@ -11,10 +11,11 @@ const addressRoute = require("./storeRoutes/addressRoute");
 const couponRoute = require("./storeRoutes/couponRoute");
 const cartRoute = require("./storeRoutes/cartRoute");
 const orderRoute = require("./storeRoutes/OrderRoute");
-//store routes
+//analytic routes
 const postRoute = require("./analyticRoutes/postRoute");
 const postCommentRoute = require("./analyticRoutes/postCommentRoute");
 const postReactRoute = require("./analyticRoutes/postReactRoute");
+const telegramBotRoute = require("./analyticRoutes/telegramBotRoute");
 
 const mountRoutes = (app) => {
   // Mount Routes
@@ -31,9 +32,10 @@ const mountRoutes = (app) => {
   app.use("/api/v1/store/coupons", couponRoute);
   app.use("/api/v1/store/cart", cartRoute);
   app.use("/api/v1/store/orders", orderRoute);
-  //store routes
+  //analytic routes
   app.use("/api/v1/analytic/posts", postRoute);
   app.use("/api/v1/analytic/postComments", postCommentRoute);
   app.use("/api/v1/analytic/postReacts", postReactRoute);
+  app.use("/api/v1/analytic/telegram", telegramBotRoute);
 };
 module.exports = mountRoutes;

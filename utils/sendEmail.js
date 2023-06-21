@@ -13,6 +13,9 @@ const sendEmail = async (options) => {
     sender: {
       name: process.env.EMAIL_FROM, // Custom sender name
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
   });
   //2- define emial options (from ,to ,subject,email content)
   const mailOptions = {
