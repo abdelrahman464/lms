@@ -1,12 +1,12 @@
 const asyncHandler = require("express-async-handler");
-const Review = require("../../models/storeModels/storeReviewModel");
-const factory = require("../handllerFactory");
+const Review = require("../../models/educationModel/educationReviewModel");
+const factory = require("./handllerFactory");
 const ApiError = require("../../utils/apiError");
 
 // GET products/:productId/reviews
 exports.createFilterObj = (req, res, next) => {
   let filterObject = {};
-  if (req.params.productId) filterObject = { product: req.params.productId };
+  if (req.params.courseId) filterObject = { course: req.params.courseId };
   req.filterObj = filterObject;
   next();
 };
@@ -19,9 +19,9 @@ exports.getReviews = factory.getALl(Review);
 //@access public
 exports.getReview = factory.getOne(Review);
 //nested route
-exports.setProductIdAndUserIdToBody = (req, res, next) => {
+exports.setCourseIdAndUserIdToBody = (req, res, next) => {
   //Nested Route
-  if (!req.body.product) req.body.product = req.params.productId;
+  if (!req.body.course) req.body.course = req.params.courseId;
   //if you didn't send i user id in the body i will take it from logged user
   //logged user
   if (!req.body.user) req.body.user = req.user._id;
@@ -39,7 +39,7 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
     new: true,
   });
   if (!review) {
-    return next(new ApiError(`No review For this id ${req.params.id}`, 404));
+    return next(new ApiError("review Not Found", 404));
   }
   //trigger "save" event when update the document
   review.save();
@@ -47,5 +47,5 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
 });
 //@desc delete Review
 //@route DELETE /api/v1/reviews/:id
-//@access private/protect/user-admin-manager
+//@access private/protect/user-admin
 exports.deleteReview = factory.deleteOne(Review);

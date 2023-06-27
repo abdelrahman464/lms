@@ -1,11 +1,9 @@
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
-const Category = require("../../models/storeModels/storeCategoryModel");
-const factory = require("../handllerFactory");
-const {
-  uploadSingleImage,
-} = require("../../middlewares/uploadImageMiddleware");
+const Category = require("../../models/educationModel/educationCategoryModel");
+const factory = require("./handllerFactory");
+const { uploadSingleImage } = require("../../middlewares/uploadImageMiddleware");
 
 //upload Singel image
 exports.uploadCategoryImage = uploadSingleImage("image");
@@ -18,7 +16,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
       .resize(600, 600)
       .toFormat("jpeg")
       .jpeg({ quality: 95 })
-      .toFile(`uploads/store/categories/${filename}`);
+      .toFile(`uploads/education/categories/${filename}`);
 
     //save image into our db
     req.body.image = filename;
@@ -30,7 +28,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 //@desc get list of categories
 //@route GET /api/v1/categories
 //@access public
-exports.getCategories = factory.getALl(Category, "Category");
+exports.getCategories = factory.getALl(Category);
 //@desc get specific category by id
 //@route GET /api/v1/categories/:id
 //@access public
@@ -43,7 +41,6 @@ exports.createCategory = factory.createOne(Category);
 //@route PUT /api/v1/categories/:id
 //@access private
 exports.updateCategory = factory.updateOne(Category);
-
 //@desc delete category
 //@route DELETE /api/v1/categories/:id
 //@access private

@@ -1,6 +1,6 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
-const Post = require("../../../models/analyticModels/postModel");
+const Post = require("../../../models/analyticModels/analyticPostModel");
 const User = require("../../../models/userModel");
 
 exports.processPostValidator = [

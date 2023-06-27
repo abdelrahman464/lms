@@ -1,14 +1,14 @@
 const stripe = require("stripe")(
-  "sk_test_51MwAUQGzwHa0nr5TTmR18s20ZIWn4BXVIJoKN36aJ6IDiykIH486DykrASrxdEXXNq0pk6zpQvfNmqschaQibIBF00dmluI50u"
+  ""
 );
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
-const OrderStore = require("../../models/storeModels/orderModel");
-const CartStore = require("../../models/storeModels/cartModel");
+const OrderStore = require("../../models/storeModels/storeOrderModel");
+const CartStore = require("../../models/storeModels/storeCartModel");
 const User = require("../../models/userModel");
-const Product = require("../../models/storeModels/productModel");
+const Product = require("../../models/storeModels/storeProductModel");
 const sendEmail = require("../../utils/sendEmail");
 
 //@desc create cash order

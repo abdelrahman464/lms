@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
-const Post = require("../../models/analyticModels/postModel");
+const Post = require("../../models/analyticModels/analyticPostModel");
 const User = require("../../models/userModel");
-const Comment = require("../../models/analyticModels/commentModel");
+const Comment = require("../../models/analyticModels/analyticCommentModel");
 const factory = require("../handllerFactory");
 
 //filter comments in specefic post by post id

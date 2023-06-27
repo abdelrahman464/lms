@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
-const Post = require("../../models/analyticModels/postModel");
+const Post = require("../../models/analyticModels/analyticPostModel");
 const User = require("../../models/userModel");
 const factory = require("../handllerFactory");
 

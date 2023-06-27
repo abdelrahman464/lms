@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const {
   uploadMixOfImages,
 } = require("../../middlewares/uploadImageMiddleware");
-const Product = require("../../models/storeModels/productModel");
+const Product = require("../../models/storeModels/storeProductModel");
 const factory = require("../handllerFactory");
 
 exports.uploadProductImages = uploadMixOfImages([

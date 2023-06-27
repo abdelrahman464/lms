@@ -1,6 +1,6 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
-const Comment = require("../../../models/analyticModels/commentModel");
+const Comment = require("../../../models/analyticModels/analyticCommentModel");
 const User = require("../../../models/userModel");
 
 exports.processCommentValidator = [

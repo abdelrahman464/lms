@@ -1,5 +1,5 @@
 const TelegramBot = require("node-telegram-bot-api");
-const TelegramBotMessage = require("../../models/analyticModels/telgramBotModel");
+const TelegramBotMessage = require("../../models/analyticModels/analyticTelgramBotModel");
 const factory = require("../handllerFactory");
 
 // Add a new message

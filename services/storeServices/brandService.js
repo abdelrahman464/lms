@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
-const Brand = require("../../models/storeModels/brandModel");
+const Brand = require("../../models/storeModels/storeBrandModel");
 const factory = require("../handllerFactory");
 const {
   uploadSingleImage,

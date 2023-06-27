@@ -1,15 +1,15 @@
 const { check, body } = require("express-validator");
-const Coupon = require("../../../models/storeModels/storeCouponModel");
+const Coupon = require("../../../models/educationModel/educationCouponModel");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
 
-exports.getCouponValidator = [
+exports.CouponIdValidator = [
   //rules
   check("id").isMongoId().withMessage("Invalid Coupon id format"),
   //catch error
   validatorMiddleware,
 ];
 exports.createCouponValidator = [
-  check("name")
+  check("title")
     .notEmpty()
     .withMessage("Coupon required")
     .custom((val) =>
@@ -25,10 +25,6 @@ exports.createCouponValidator = [
 ];
 exports.updateCouponValidator = [
   check("id").isMongoId().withMessage("Invalid Coupon id format"),
-  body("name").optional(),
-  validatorMiddleware,
-];
-exports.deleteCouponValidator = [
-  check("id").isMongoId().withMessage("Invalid Coupon id format"),
+  body("title").optional(),
   validatorMiddleware,
 ];

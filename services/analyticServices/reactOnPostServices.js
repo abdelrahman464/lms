@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const Reaction = require("../../models/analyticModels/reactionModel");
-const Post = require("../../models/analyticModels/postModel");
+const Reaction = require("../../models/analyticModels/analyticReactionModel");
+const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 
 //filter reacts in specefic post by post id

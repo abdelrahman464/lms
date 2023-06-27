@@ -1,5 +1,5 @@
 const { body } = require("express-validator");
-const Product = require("../../../models/storeModels/productModel");
+const Product = require("../../../models/storeModels/storeProductModel");
 const ApiError = require("../../apiError");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
 

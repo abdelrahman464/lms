@@ -1,4 +1,4 @@
-const SubCategory = require("../../models/storeModels/subCategoryModel");
+const SubCategory = require("../../models/storeModels/storeSubCategoryModel");
 const factory = require("../handllerFactory");
 
 // middleware to add categoryId to body
