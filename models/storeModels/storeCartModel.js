@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const cartStoreSchema = mongoose.Schema(
+const storeCartStoreSchema = mongoose.Schema(
   {
     cartItems: [
       {
         product: {
           type: mongoose.Schema.ObjectId,
-          ref: "Product",
+          ref: "StoreProduct",
         },
         quantity: {
           type: Number,
@@ -27,7 +27,8 @@ const cartStoreSchema = mongoose.Schema(
 );
 
 // ^find => it mean if part of of teh word contains find
-cartStoreSchema.pre(/^find/, function (next) {
+
+storeCartStoreSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
     select: "name -_id",
@@ -39,4 +40,4 @@ cartStoreSchema.pre(/^find/, function (next) {
   next();
 });
 
-module.exports = mongoose.model("CartStore", cartStoreSchema);
+module.exports = mongoose.model("StoreCart", storeCartStoreSchema);

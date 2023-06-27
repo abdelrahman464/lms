@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const subCategorySchema = new mongoose.Schema(
+const storeSubCategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -15,14 +15,14 @@ const subCategorySchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: "Category",
+      ref: "StoreCategory",
       required: [true, "subCategory must be belong to parent category"],
     },
   },
   { timestamps: true }
 );
 // ^find => it mean if part of of teh word contains find
-subCategorySchema.pre(/^find/, function (next) {
+storeSubCategorySchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "category",
@@ -31,5 +31,5 @@ subCategorySchema.pre(/^find/, function (next) {
   next();
 });
 
-const subCategory =  mongoose.model("subCategory", subCategorySchema);
+const subCategory = mongoose.model("StoresubCategory", storeSubCategorySchema);
 module.exports = subCategory;

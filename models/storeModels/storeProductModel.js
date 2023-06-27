@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const productSchema = new mongoose.Schema(
+const storeProductSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -45,18 +45,18 @@ const productSchema = new mongoose.Schema(
     images: [String],
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: "Category",
+      ref: "StoreCategory",
       required: [true, "Product category is required"],
     },
     subCategories: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: "subCategory",
+        ref: "StoresubCategory",
       },
     ],
     brand: {
       type: mongoose.Schema.ObjectId,
-      ref: "Brand",
+      ref: "StoreBrand",
     },
     ratingsAverage: {
       type: Number,
@@ -77,14 +77,14 @@ const productSchema = new mongoose.Schema(
 );
 
 // virtual field =>reviews
-productSchema.virtual("reviews", {
-  ref: "Review",
+storeProductSchema.virtual("reviews", {
+  ref: "StoreReview",
   foreignField: "product",
   localField: "_id",
 });
 
 // ^find => it mean if part of of teh word contains find
-productSchema.pre(/^find/, function (next) {
+storeProductSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "subCategories",
@@ -120,13 +120,13 @@ const setImageURL = (doc) => {
 //after initializ the doc in db
 // check if the document contains image
 // it work with findOne,findAll,update
-productSchema.post("init", (doc) => {
+storeProductSchema.post("init", (doc) => {
   setImageURL(doc);
 });
 // it work with create
-productSchema.post("save", (doc) => {
+storeProductSchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
-const ProductModel = mongoose.model("Product", productSchema);
+const ProductModel = mongoose.model("StoreProduct", storeProductSchema);
 module.exports = ProductModel;

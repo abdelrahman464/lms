@@ -1,13 +1,11 @@
 const express = require("express");
-const {
-  addAddressValidator,
-} = require("../../utils/validators/storeValidators/addressValidator");
+const { addAddressValidator } = require("../utils/validators/addressValidator");
 const {
   addAddress,
   removeAddressFromAddressList,
   getLoggedUseraddresses,
-} = require("../../services/storeServices/addressService");
-const authServices = require("../../services/authServices");
+} = require("../services/addressService");
+const authServices = require("../services/authServices");
 
 const router = express.Router();
 

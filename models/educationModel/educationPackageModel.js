@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const packageSchema = new mongoose.Schema({
+const educationPackageSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -29,11 +29,11 @@ const packageSchema = new mongoose.Schema({
   courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
+      ref: "EducationCourse",
     },
   ],
 });
 
-const Package = mongoose.model("Package", packageSchema);
+const Package = mongoose.model("EducationPackage", educationPackageSchema);
 
 module.exports = Package;

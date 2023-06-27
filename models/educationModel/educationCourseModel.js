@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Section = require("./educationSectionModel");
-const Lesson = require("./lessonModel");
+const Lesson = require("./educationLessonModel");
 
-const courseSchema = new mongoose.Schema({
+const educationCourseSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -31,19 +31,19 @@ const courseSchema = new mongoose.Schema({
   cateogry: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Cateogry",
+      ref: "EducationCateogry",
     },
   ],
   sections: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Section",
+      ref: "EducationSection",
     },
   ],
   lessons: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Lesson",
+      ref: "EducationLesson",
     },
   ],
   ratingsAverage: {
@@ -63,13 +63,13 @@ const courseSchema = new mongoose.Schema({
   toObject: { virtuals: true },
 });
 // virtual field =>reviews
-courseSchema.virtual("reviews", {
-  ref: "Review",
+educationCourseSchema.virtual("reviews", {
+  ref: "EducationReview",
   foreignField: "course",
   localField: "_id",
 });
 
-courseSchema.pre("remove", async function (next) {
+educationCourseSchema.pre("remove", async function (next) {
   // Remove all sections associated with the course
   await Section.deleteMany({ _id: { $in: this.sections } });
   // Remove all lessons associated with the course
@@ -77,6 +77,6 @@ courseSchema.pre("remove", async function (next) {
 
   next();
 });
-const Course = mongoose.model("Course", courseSchema);
+const Course = mongoose.model("EducationCourse", educationCourseSchema);
 
 module.exports = Course;

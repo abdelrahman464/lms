@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 
-const lessonSchema = new mongoose.Schema({
+const educationLessonSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
   section: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Section",
+    ref: "EducationSection",
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
+    ref: "EducationCourse",
   },
   videoUrl: {
     type: String,
@@ -19,6 +19,6 @@ const lessonSchema = new mongoose.Schema({
   },
 });
 
-const Lesson = mongoose.model("Lesson", lessonSchema);
+const Lesson = mongoose.model("EducationLesson", educationLessonSchema);
 
 module.exports = Lesson;

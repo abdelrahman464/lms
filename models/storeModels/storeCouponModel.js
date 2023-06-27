@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const couponSchema = mongoose.Schema(
+const storeCouponSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -21,4 +21,4 @@ const couponSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Coupon", couponSchema);
+module.exports = mongoose.model("StoreCoupon", storeCouponSchema);

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Course = require("./educationCourseModel");
 
-const reviewSchema = mongoose.Schema(
+const educationReviewSchema = mongoose.Schema(
   {
     title: {
       type: "String",
@@ -20,7 +20,7 @@ const reviewSchema = mongoose.Schema(
     // parent references (1 - many)
     course: {
       type: mongoose.Schema.ObjectId,
-      ref: "Course",
+      ref: "EducationCourse",
       required: [true, "review must belong to Course"],
     },
   },
@@ -28,13 +28,13 @@ const reviewSchema = mongoose.Schema(
 );
 
 // any query containe find
-reviewSchema.pre(/^find/, function (next) {
+educationReviewSchema.pre(/^find/, function (next) {
   this.populate({ path: "user", select: "firstName profileImg" });
   this.populate({ path: "course", select: " title " });
   next();
 });
 
-reviewSchema.statics.calcAverageRatingsAndQuantity = async function (courseId) {
+educationReviewSchema.statics.calcAverageRatingsAndQuantity = async function (courseId) {
   const result = await this.aggregate([
     // Stage 1 : get all reviews in specific course
     {
@@ -63,14 +63,14 @@ reviewSchema.statics.calcAverageRatingsAndQuantity = async function (courseId) {
   }
 };
 //this function is called when i delete a review
-reviewSchema.post("remove", async function () {
+educationReviewSchema.post("remove", async function () {
   await this.constructor.calcAverageRatingsAndQuantity(this.course);
 });
 //this function is called when i save a review
-reviewSchema.post("save", async function () {
+educationReviewSchema.post("save", async function () {
   await this.constructor.calcAverageRatingsAndQuantity(this.course);
 });
 
-const ReviewModel = mongoose.model("Review", reviewSchema);
+const ReviewModel = mongoose.model("EducationReview", educationReviewSchema);
 
 module.exports = ReviewModel;

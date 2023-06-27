@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Product = require("./storeProductModel");
 //1- create schema
-const reviewSchema = mongoose.Schema(
+const storeReviewSchema = mongoose.Schema(
   {
     title: {
       type: "String",
@@ -20,7 +20,7 @@ const reviewSchema = mongoose.Schema(
     // parent references (1 - many)
     product: {
       type: mongoose.Schema.ObjectId,
-      ref: "Product",
+      ref: "StoreProduct",
       required: [true, "review must belong to product"],
     },
   },
@@ -28,12 +28,12 @@ const reviewSchema = mongoose.Schema(
 );
 
 // any query containe find
-reviewSchema.pre(/^find/, function (next) {
+storeReviewSchema.pre(/^find/, function (next) {
   this.populate({ path: "user", select: "name profileImg" });
   next();
 });
 
-reviewSchema.statics.calcAverageRatingsAndQuantity = async function (
+storeReviewSchema.statics.calcAverageRatingsAndQuantity = async function (
   productId
 ) {
   const result = await this.aggregate([
@@ -66,16 +66,16 @@ reviewSchema.statics.calcAverageRatingsAndQuantity = async function (
     }
 };
 //this function is called when i delete a review
-reviewSchema.post("remove", async function () {
+storeReviewSchema.post("remove", async function () {
   await this.constructor.calcAverageRatingsAndQuantity(this.product);
 });
 //this function is called when i save a review
-reviewSchema.post("save", async function () {
+storeReviewSchema.post("save", async function () {
   await this.constructor.calcAverageRatingsAndQuantity(this.product);
 });
 
 
 //2- create model
-const BrandModel = mongoose.model("Review", reviewSchema);
+const BrandModel = mongoose.model("StoreReview", storeReviewSchema);
 
 module.exports = BrandModel;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const orderStoreSchema = new mongoose.Schema(
+const storeOrderStoreSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -11,7 +11,7 @@ const orderStoreSchema = new mongoose.Schema(
       {
         product: {
           type: mongoose.Schema.ObjectId,
-          ref: "Product",
+          ref: "StoreProduct",
         },
         quantity: Number,
         color: String,
@@ -54,7 +54,7 @@ const orderStoreSchema = new mongoose.Schema(
   { timestamp: true }
 );
 
-orderStoreSchema.pre(/^find/, function (next) {
+storeOrderStoreSchema.pre(/^find/, function (next) {
   this.populate({ path: "user", select: "name phone email " }).populate({
     path: "cartItems.product",
     select: "title imageCover category",
@@ -62,4 +62,4 @@ orderStoreSchema.pre(/^find/, function (next) {
   next();
 });
 
-module.exports = mongoose.model("OrderStore", orderStoreSchema);
+module.exports = mongoose.model("StoreOrder", storeOrderStoreSchema);

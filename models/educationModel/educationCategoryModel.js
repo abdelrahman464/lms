@@ -1,7 +1,7 @@
 // database
 const mongoose = require("mongoose");
 //1- create schema
-const categorySchema = mongoose.Schema(
+const educationCategorySchema = mongoose.Schema(
   {
     title: {
       type: String,
@@ -17,7 +17,7 @@ const categorySchema = mongoose.Schema(
     courses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Courses",
+        ref: "EducationCourses",
       },
     ],
     image: String,
@@ -35,15 +35,15 @@ const setImageURL = (doc) => {
 //after initializ the doc in db
 // check if the document contains image
 // it work with findOne,findAll,update
-categorySchema.post("init", (doc) => {
+educationCategorySchema.post("init", (doc) => {
   setImageURL(doc);
 });
 // it work with create
-categorySchema.post("save", (doc) => {
+educationCategorySchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
 //2- create model
-const CategoryModel = mongoose.model("Category", categorySchema);
+const CategoryModel = mongoose.model("EducationCategory", educationCategorySchema);
 
 module.exports = CategoryModel;

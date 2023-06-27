@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const commentSchema = new mongoose.Schema(
+const analyticCommentSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ const commentSchema = new mongoose.Schema(
     },
     post: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
+      ref: "AnalyticPost",
       required: true,
     },
   },
@@ -21,7 +21,7 @@ const commentSchema = new mongoose.Schema(
 );
 
 // ^find => it mean if part of of teh word contains find
-commentSchema.pre(/^find/, function (next) {
+analyticCommentSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "user",
@@ -29,5 +29,5 @@ commentSchema.pre(/^find/, function (next) {
   });
   next();
 });
-const Comment = mongoose.model("Comment", commentSchema);
+const Comment = mongoose.model("AnalyticComment", analyticCommentSchema);
 module.exports = Comment;

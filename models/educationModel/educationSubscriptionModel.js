@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const subscriptionSchema = new mongoose.Schema({
+const educationSubscriptionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -37,13 +37,13 @@ const subscriptionSchema = new mongoose.Schema({
     type: Number,
   },
 });
-subscriptionSchema.pre("save", async function (next) {
+educationSubscriptionSchema.pre("save", async function (next) {
   //if password field is not modified go to next middleware
   if (!this.isModified("subscriptionCode")) return next();
   // Hashing user password
   this.subscriptionCode = await bcrypt.hash(this.subscriptionCode, 12);
   next();
 });
-const Subscription = mongoose.model("Subscription", subscriptionSchema);
+const Subscription = mongoose.model("EducationSubscription", educationSubscriptionSchema);
 
 module.exports = Subscription;

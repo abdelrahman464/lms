@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const telegramBotMessageSchema = new mongoose.Schema({
+const analyticTelegramBotMessageSchema = new mongoose.Schema({
   chatId: {
     type: Number,
     required: true,
@@ -21,7 +21,7 @@ const telegramBotMessageSchema = new mongoose.Schema({
 
 const TelegramBotMessage = mongoose.model(
   "TelegramBotMessage",
-  telegramBotMessageSchema
+  analyticTelegramBotMessageSchema
 );
 
 module.exports = TelegramBotMessage;

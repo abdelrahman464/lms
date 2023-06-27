@@ -1,7 +1,7 @@
 // database
 const mongoose = require("mongoose");
 //1- create schema
-const brnadSchema = mongoose.Schema(
+const storeBrnadSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -29,17 +29,17 @@ const setImageURL = (doc) => {
 //after initializ the doc in db
 // check if the document contains image
 // it work with findOne,findAll,update
-brnadSchema.post("init", (doc) => {
+storeBrnadSchema.post("init", (doc) => {
   setImageURL(doc);
 });
 // it work with create
-brnadSchema.post("save", (doc) => {
+storeBrnadSchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
 
 
 //2- create model
-const BrandModel = mongoose.model("Brand", brnadSchema);
+const BrandModel = mongoose.model("StoreBrand", storeBrnadSchema);
 
 module.exports = BrandModel;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const cartSchema = mongoose.Schema(
+const educationCartSchema = mongoose.Schema(
   {
     cartItems: [
       {
@@ -22,7 +22,7 @@ const cartSchema = mongoose.Schema(
 );
 
 // ^find => it mean if part of of teh word contains find
-cartSchema.pre(/^find/, function (next) {
+educationCartSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
     select: "firstName -_id",
@@ -34,4 +34,4 @@ cartSchema.pre(/^find/, function (next) {
   next();
 });
 
-module.exports = mongoose.model("Cart", cartSchema);
+module.exports = mongoose.model("EducationCart", educationCartSchema);

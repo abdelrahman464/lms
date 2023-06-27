@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const orderSchema = new mongoose.Schema(
+const educationOrderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
       {
         course: {
           type: mongoose.Schema.ObjectId,
-          ref: "Course",
+          ref: "EducationCourse",
         },
         price: Number,
       },
@@ -37,7 +37,7 @@ const orderSchema = new mongoose.Schema(
   { timestamp: true }
 );
 
-orderSchema.pre(/^find/, function (next) {
+educationOrderSchema.pre(/^find/, function (next) {
   this.populate({ path: "user", select: "name phone email " }).populate({
     path: "cartItems.course",
     select: "title image category",
@@ -45,4 +45,4 @@ orderSchema.pre(/^find/, function (next) {
   next();
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = mongoose.model("EducationOrder", educationOrderSchema);

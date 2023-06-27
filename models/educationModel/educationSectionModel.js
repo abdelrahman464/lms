@@ -1,29 +1,29 @@
 const mongoose = require("mongoose");
 const Lesson = require("./educationLessonModel");
 
-const sectionSchema = new mongoose.Schema({
+const educationSectionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
+    ref: "EducationCourse",
   },
   lessons: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Lesson",
+      ref: "EducationLesson",
     },
   ],
 });
 
-sectionSchema.pre("remove", async function (next) {
+educationSectionSchema.pre("remove", async function (next) {
   // Remove all lessons associated with the section
   await Lesson.deleteMany({ _id: { $in: this.lessons } });
 
   next();
 });
-const Section = mongoose.model("Section", sectionSchema);
+const Section = mongoose.model("EducationSection", educationSectionSchema);
 
 module.exports = Section;

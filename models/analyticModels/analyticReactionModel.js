@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const reactionSchema = new mongoose.Schema({
+const analyticReactionSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true },
   type: {
@@ -10,7 +10,7 @@ const reactionSchema = new mongoose.Schema({
   },
 });
 // ^find => it mean if part of of teh word contains find
-reactionSchema.pre(/^find/, function (next) {
+analyticReactionSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "userId",
@@ -18,5 +18,5 @@ reactionSchema.pre(/^find/, function (next) {
   });
   next();
 });
-const Reaction = mongoose.model("Reaction", reactionSchema);
+const Reaction = mongoose.model("AnalyticReaction", analyticReactionSchema);
 module.exports = Reaction;

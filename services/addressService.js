@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const User = require("../../models/userModel");
+const User = require("../models/userModel");
 
 //@desc add address to user address list
 //@route POST /api/v1/addresses
