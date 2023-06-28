@@ -9,7 +9,7 @@ exports.getBrandValidator = [
   validatorMiddleware,
 ];
 exports.createBrandValidator = [
-  check("name")
+  check("title")
     .notEmpty()
     .withMessage("brand required")
     .isLength({ min: 2 })
@@ -25,7 +25,7 @@ exports.createBrandValidator = [
 ];
 exports.updateBrandValidator = [
   check("id").isMongoId().withMessage("Invalid brand id format"),
-  body("name")
+  body("title")
     .optional()
     .custom((val, { req }) => {
       req.body.slug = slugify(val);

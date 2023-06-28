@@ -28,7 +28,7 @@ const educationCategorySchema = mongoose.Schema(
 const setImageURL = (doc) => {
   //return image base url + iamge name
   if (doc.image) {
-    const imageUrl = `${process.env.BASE_URL}/categories/${doc.image}`;
+    const imageUrl = `${process.env.BASE_URL}/education/categories/${doc.image}`;
     doc.image = imageUrl;
   }
 };
@@ -44,6 +44,9 @@ educationCategorySchema.post("save", (doc) => {
 });
 
 //2- create model
-const CategoryModel = mongoose.model("EducationCategory", educationCategorySchema);
+const CategoryModel = mongoose.model(
+  "EducationCategory",
+  educationCategorySchema
+);
 
 module.exports = CategoryModel;

@@ -88,15 +88,15 @@ storeProductSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "subCategories",
-    select: "name -_id",
+    select: "title -_id",
   });
   this.populate({
     path: "category",
-    select: "name -_id",
+    select: "title -_id",
   });
   this.populate({
     path: "brand",
-    select: "name -_id",
+    select: "title -_id",
   });
 
   next();

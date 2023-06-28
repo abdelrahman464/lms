@@ -1,5 +1,5 @@
 const stripe = require("stripe")(
-  ""
+  "sk_test_51MwAUQGzwHa0nr5TTmR18s20ZIWn4BXVIJoKN36aJ6IDiykIH486DykrASrxdEXXNq0pk6zpQvfNmqschaQibIBF00dmluI50u"
 );
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
@@ -22,9 +22,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
   //1) get cart depend on catrId
   const cart = await CartStore.findById(cartId);
   if (!cart) {
-    return next(
-      new ApiError(`Cart Not Found`, 404)
-    );
+    return next(new ApiError(`Cart Not Found`, 404));
   }
   //2) get order price cart price  "check if copoun applied"
   const cartPrice = cart.totalCartpriceAfterDiscount

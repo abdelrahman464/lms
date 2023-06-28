@@ -9,7 +9,7 @@ exports.getCategoryValidator = [
   validatorMiddleware,
 ];
 exports.createCategroyValidator = [
-  check("name")
+  check("title")
     .notEmpty()
     .withMessage("category required")
     .isLength({ min: 3 })
@@ -25,7 +25,7 @@ exports.createCategroyValidator = [
 ];
 exports.updateCategroyValidator = [
   check("id").isMongoId().withMessage("Invalid category id format"),
-  body("name")
+  body("title")
     .optional()
     .custom((val, { req }) => {
       req.body.slug = slugify(val);

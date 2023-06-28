@@ -44,26 +44,24 @@ storeReviewSchema.statics.calcAverageRatingsAndQuantity = async function (
     // Stage 2: Grouping reviews based on productID and calc avgRatings, ratingsQuantity
     {
       $group: {
-        _id: 'product',
-        avgRatings: { $avg: '$ratings' },
+        _id: "product",
+        avgRatings: { $avg: "$ratings" },
         ratingsQuantity: { $sum: 1 },
       },
     },
-    
   ]);
 
-  
-    if(result.length>0){
-      await Product.findByIdAndUpdate(productId,{
-        ratingsAverage:result[0].avgRatings,
-        ratingsQuantity:result[0].ratingsQuantity,
-      })
-    }else{
-      await Product.findByIdAndUpdate(productId,{
-        ratingsAverage:0,
-        ratingsQuantity:0,
-      })
-    }
+  if (result.length > 0) {
+    await Product.findByIdAndUpdate(productId, {
+      ratingsAverage: result[0].avgRatings,
+      ratingsQuantity: result[0].ratingsQuantity,
+    });
+  } else {
+    await Product.findByIdAndUpdate(productId, {
+      ratingsAverage: 0,
+      ratingsQuantity: 0,
+    });
+  }
 };
 //this function is called when i delete a review
 storeReviewSchema.post("remove", async function () {
@@ -74,8 +72,7 @@ storeReviewSchema.post("save", async function () {
   await this.constructor.calcAverageRatingsAndQuantity(this.product);
 });
 
-
 //2- create model
-const BrandModel = mongoose.model("StoreReview", storeReviewSchema);
+const StoreReviewModel = mongoose.model("StoreReview", storeReviewSchema);
 
-module.exports = BrandModel;
+module.exports = StoreReviewModel;

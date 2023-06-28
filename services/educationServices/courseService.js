@@ -36,7 +36,7 @@ exports.createCourse = asyncHandler(async (req, res) => {
 exports.getAllCourses = factory.getALl(Course);
 
 // Get a specific course by ID
-exports.getCourseById = factory.getOne(Course, "sections");
+exports.getCourseById = factory.getOne(Course, "EducationSection");
 
 // Update a course by ID
 exports.updateCourse = factory.updateOne(Course);

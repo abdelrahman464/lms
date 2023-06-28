@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 //1- create schema
 const storeBrnadSchema = mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
       required: [true, "category required"],
       unique: [true, "category must be unique"],

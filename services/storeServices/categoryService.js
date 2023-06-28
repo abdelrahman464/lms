@@ -30,7 +30,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 //@desc get list of categories
 //@route GET /api/v1/categories
 //@access public
-exports.getCategories = factory.getALl(Category, "Category");
+exports.getCategories = factory.getALl(Category);
 //@desc get specific category by id
 //@route GET /api/v1/categories/:id
 //@access public

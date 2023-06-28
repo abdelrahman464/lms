@@ -29,7 +29,7 @@ const educationReviewSchema = mongoose.Schema(
 
 // any query containe find
 educationReviewSchema.pre(/^find/, function (next) {
-  this.populate({ path: "user", select: "firstName profileImg" });
+  this.populate({ path: "user", select: "name profileImg" });
   this.populate({ path: "course", select: " title " });
   next();
 });

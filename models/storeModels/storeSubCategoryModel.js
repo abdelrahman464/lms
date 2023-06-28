@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const storeSubCategorySchema = new mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
       trim: true,
       unique: [true, "category must be unique"],
@@ -26,7 +26,7 @@ storeSubCategorySchema.pre(/^find/, function (next) {
   // this => query
   this.populate({
     path: "category",
-    select: "name -_id",
+    select: "title -_id",
   });
   next();
 });

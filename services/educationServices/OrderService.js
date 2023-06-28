@@ -1,5 +1,5 @@
 const stripe = require("stripe")(
-  ""
+  "sk_test_51MwAUQGzwHa0nr5TTmR18s20ZIWn4BXVIJoKN36aJ6IDiykIH486DykrASrxdEXXNq0pk6zpQvfNmqschaQibIBF00dmluI50u"
 );
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
@@ -30,19 +30,16 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   const { cartId } = req.params;
   //app settings
   const taxPrice = 0;
-  const shippingPrice = 0;
   //1) get cart depend on catrId
   const cart = await Cart.findById(cartId);
   if (!cart) {
-    return next(
-      new ApiError(`there is no cart with id ${req.params.catrId}`, 404)
-    );
+    return next(new ApiError("There's Not Courses In you Cart", 404));
   }
   //2) get order price cart price  "check if copoun applied"
   const cartPrice = cart.totalCartpriceAfterDiscount
     ? cart.totalCartpriceAfterDiscount
     : cart.totalCartprice;
-  const totalOrderPrice = Math.ceil(cartPrice + taxPrice + shippingPrice);
+  const totalOrderPrice = Math.ceil(cartPrice + taxPrice);
 
   //3)create stripe checkout session
   const session = await stripe.checkout.sessions.create({
@@ -59,12 +56,12 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       },
     ],
     mode: "payment",
-    success_url: `${req.protocol}://${req.get("host")}`,
-    cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+    success_url: `${req.protocol}://${req.get("host")}/api/v1/education`,
+    cancel_url: `${req.protocol}://${req.get("host")}/api/v1/education/cart`,
     customer_email: req.user.email,
 
+
     client_reference_id: req.params.cartId, // i will use to create order
-    metadata: req.body.shippingAddress,
   });
 
   //4) send session to response
@@ -87,7 +84,7 @@ const createCardOrder = async (session) => {
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-  //4) after creating order increment product sold
+  //4) after creating order increment course sold
   if (order) {
     const bulkOptions = cart.cartItems.map((item) => ({
       updateOne: {
@@ -97,20 +94,21 @@ const createCardOrder = async (session) => {
     }));
     await Course.bulkWrite(bulkOptions, {});
 
-    //5)clear cart depend on cartId
+    //5) adding the course to user
+    user.courses.push(cart.cartItems.course._id);
+    await user.save();
+    //6)clear cart depend on cartId
     await Cart.findByIdAndDelete(cartId);
 
     const emailMessage = `Hi ${user.name},\n Your order has been created successfully \n 
-    you have to wait for 2 days at least before the order arrives to you \n
-    the order Price is : { ${orderPrice} } `  ;
-    //3-send the reset code via email
+                          the course added to your account successfully\n
+                          the order Price is : { ${orderPrice} } `;
+    //7-send the reset code via email
     await sendEmail({
       to: session.customer_email,
       subject: "Your Order has been created successfully",
       text: emailMessage,
     });
-
-
   }
 };
 

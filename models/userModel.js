@@ -46,7 +46,13 @@ const userShcema = new mongoose.Schema(
     storeWishlist: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: "Product",
+        ref: "StoreProduct",
+      },
+    ],
+    educationWishlist: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "EducationCourses",
       },
     ],
     addresses: [
@@ -63,6 +69,16 @@ const userShcema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
+      },
+    ],
+    subscription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EducationSubscription",
+    },
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EducationCourse",
       },
     ],
   },

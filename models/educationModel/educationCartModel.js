@@ -6,7 +6,7 @@ const educationCartSchema = mongoose.Schema(
       {
         course: {
           type: mongoose.Schema.ObjectId,
-          ref: "Course",
+          ref: "EducationCourse",
         },
         price: Number,
       },
@@ -25,7 +25,7 @@ const educationCartSchema = mongoose.Schema(
 educationCartSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "firstName -_id",
+    select: "name -_id",
   });
   this.populate({
     path: "cartItems.course",

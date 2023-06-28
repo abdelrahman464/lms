@@ -22,7 +22,7 @@ class ApiFeatures {
       const sortBy = this.queryStr.sort.split(".").join(" ");
       this.mongooseeQuery = this.mongooseeQuery.sort(sortBy);
     } else {
-        this.mongooseeQuery = this.mongooseeQuery.sort("-createAt");
+      this.mongooseeQuery = this.mongooseeQuery.sort("-createAt");
     }
     return this;
   }
@@ -37,30 +37,33 @@ class ApiFeatures {
     return this;
   }
 
-//   search(modelName) {
-//     if (this.queryStr.keyword) {
-//       const query = {};
-      
-//       query.$or = [
-//         { title: { $regex: this.queryStr.keyword, $options: "i" } },
-//         { description: { $regex: this.queryStr.keyword, $options: "i" } },
-//       ];
+  //   search(modelName) {
+  //     if (this.queryStr.keyword) {
+  //       const query = {};
 
-//       this.mongooseeQuery = this.mongooseeQuery.find(query);
-//     }
-//     return this;
-//   }
+  //       query.$or = [
+  //         { title: { $regex: this.queryStr.keyword, $options: "i" } },
+  //         { description: { $regex: this.queryStr.keyword, $options: "i" } },
+  //       ];
+
+  //       this.mongooseeQuery = this.mongooseeQuery.find(query);
+  //     }
+  //     return this;
+  //   }
 
   search(modelName) {
     if (this.queryStr.keyword) {
       let query = {};
-      if (modelName === 'Product') {
+      if (modelName === "User") {
         query.$or = [
-          { title: { $regex: this.queryStr.keyword, $options: 'i' } },
-          { description: { $regex: this.queryStr.keyword, $options: 'i' } },
+          { name: { $regex: this.queryStr.keyword, $options: "i" } },
+          { email: { $regex: this.queryStr.keyword, $options: "i" } },
         ];
       } else {
-        query = { name: { $regex: this.queryStr.keyword, $options: 'i' } };
+        query = [
+          { title: { $regex: this.queryStr.keyword, $options: "i" } },
+          { description: { $regex: this.queryStr.keyword, $options: "i" } },
+        ];
       }
       this.mongooseeQuery = this.mongooseeQuery.find(query);
     }

@@ -73,11 +73,11 @@ exports.convertToArray = (req, res, next) => {
 //@desc get list of products
 //@route GET /api/v1/products
 //@access public
-exports.getProducts = factory.getALl(Product, "Product");
+exports.getProducts = factory.getALl(Product);
 //@desc get specific product by id
 //@route GET /api/v1/products/:id
 //@access public
-exports.getProduct = factory.getOne(Product, "reviews");
+exports.getProduct = factory.getOne(Product, "StoreReview");
 //@desc create product
 //@route POST /api/v1/products
 //@access private

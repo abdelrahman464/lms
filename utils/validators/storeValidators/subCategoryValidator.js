@@ -14,7 +14,7 @@ exports.getsubCategoryValidator = [
   validatorMiddleware,
 ];
 exports.createSupCategroyValidator = [
-  check("name")
+  check("title")
     .notEmpty()
     .withMessage("subCategory required")
     .isLength({ min: 2 })
@@ -48,7 +48,7 @@ exports.updateCategroyValidator = [
     .withMessage("Invalid subCategory id format")
     .notEmpty()
     .withMessage("subCateogry must be belong to category"),
-  body("name").custom((val, { req }) => {
+  body("title").custom((val, { req }) => {
     req.body.slug = slugify(val);
     return true;
   }),

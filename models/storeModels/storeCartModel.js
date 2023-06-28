@@ -34,8 +34,8 @@ storeCartStoreSchema.pre(/^find/, function (next) {
     select: "name -_id",
   });
   this.populate({
-    path: "cartItems",
-    populate: "product",
+    path: "cartItems.product",
+    populate: "title imageCover category",
   });
   next();
 });
