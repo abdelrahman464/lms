@@ -8,11 +8,12 @@ const {
 } = require("../utils/validators/authValidator");
 const {
   signup,
+  verifyEmail,
   login,
   forgotPassword,
   verifyPassResetCode,
   resetPassword,
-  googleOauth
+  googleOauth,
 } = require("../services/authServices");
 
 // create a limiter for login requests
@@ -32,6 +33,7 @@ const forgotPasswordLimiter = rateLimit({
 const router = express.Router();
 
 router.route("/signup").post(signupValidator, signup);
+router.route("/verifyEmail").post(verifyEmail);
 router.route("/login").post(loginValidator, loginLimiter, login);
 router.route("/forgotPassword").post(forgotPasswordLimiter, forgotPassword);
 router.route("/verifyResetCode").post(verifyPassResetCode);

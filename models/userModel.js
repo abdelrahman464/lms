@@ -18,6 +18,10 @@ const userShcema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    emailVerifiedAt: Date,
+    emailVerifyCode: String,
+    emailVerifyExpires: Date,
+    emailVerified: Boolean,
     googleId: {
       type: String,
       unique: true,

@@ -14,15 +14,84 @@ const generateToken = require("../utils/generateToken");
 //@access public
 exports.signup = asyncHandler(async (req, res, next) => {
   //1-create user
-  const user = await User.create({
+  const user = await new User({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
+    active: false,
   });
-  //2- generate token
-  const token = generateToken(user._id);
+  //generate verification code
+  const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedVerifyCode = crypto
+    .createHash("sha256")
+    .update(verifyCode)
+    .digest("hex");
+  //save hashed email verification code
+  user.emailVerifyCode = hashedVerifyCode;
+  //add expiration time  for email verify code (10min)
+  user.emailVerifyExpires = Date.now() + 10 * 60 * 1000;
+  user.emailVerified = false;
 
-  res.status(201).json({ data: user, token });
+  await user.save();
+  //3-send the Verification code via email
+  try {
+    const emailMessage = `Hi ${user.name}, 
+                         \n ${verifyCode} 
+                         \n enter this code to complete the verification 
+                         \n thanks for helping us keep your account secure.
+                         \n the E-Website Team`;
+    await sendEmail({
+      to: user.email,
+      subject: "Your Verification code (valid for 10 min)",
+      text: emailMessage,
+    });
+  } catch (err) {
+    user.emailVerifyCode = undefined;
+    user.emailVerifyExpires = undefined;
+    user.emailVerified = undefined;
+
+    await user.save();
+    return next(
+      new ApiError(
+        "there is a problem with sending Email with your Verification code",
+        500
+      )
+    );
+  }
+
+  res.status(201).json({ data: user });
+});
+//@desc verfy email 
+//@route POST /api/v1/auth/verifyEmail
+//@access public
+exports.verifyEmail = asyncHandler(async (req, res, next) => {
+  //1-get user passed on verify code
+  const hashedVerifyCode = crypto
+    .createHash("sha256")
+    .update(req.body.verifyCode)
+    .digest("hex");
+
+  const user = await User.findOne({
+    emailVerifyCode: hashedVerifyCode,
+    //check if the verify code is valid
+    // if verify code expire date greater than Data.now() then reset code is valid
+    emailVerifyExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new ApiError("verification code invalid or expired"));
+  }
+  //2- verify code is valid
+  user.emailVerified = true;
+  user.active = true;
+  user.emailVerifyCode = undefined;
+  user.emailVerifyExpires = undefined;
+  user.emailVerified = undefined;
+  await user.save();
+
+  //3- generate token
+  const token = generateToken(user._id);
+  //3- send response to client side
+  res.status(200).json({ data: user, token });
 });
 //@desc login
 //@route POST /api/v1/auth/login
@@ -94,7 +163,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   next();
 });
 //@desc  Authorization (user permissions)
-// ....roles => retrun array for example ["admin","manager"]
+// ....roles => retrun array for example ["admin","user"]
 exports.allowedTo = (...roles) =>
   asyncHandler(async (req, res, next) => {
     //1- access roles
@@ -128,11 +197,14 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   user.passwordResetVerified = false;
 
   await user.save();
-  
+
   //3-send the reset code via email
   try {
-    const emailMessage = `Hi ${user.name},\n we recived a request to reset your password on your E-shop Account. 
-                          \n ${resetCode} \n enter this code to complete the reset \n thanks for helping us keep your account secure.
+    const emailMessage = `Hi ${user.name},
+                          \n we recived a request to reset your password on your E-shop Account. 
+                          \n ${resetCode} 
+                          \n enter this code to complete the reset 
+                          \n thanks for helping us keep your account secure.
                           \n the E-shop Team`;
     await sendEmail({
       to: user.email,
