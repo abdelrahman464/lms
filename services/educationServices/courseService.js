@@ -22,12 +22,13 @@ exports.createFilterObj = (req, res, next) => {
 };
 // Create a new course
 exports.createCourse = asyncHandler(async (req, res) => {
-  const { description, title, price, priceAfterDiscount } = req.body;
+  const { description, title, price, priceAfterDiscount,cateogry } = req.body;
   const course = await Course.create({
     description,
     title,
     price,
     priceAfterDiscount,
+    cateogry
   });
   res.json(course);
 });

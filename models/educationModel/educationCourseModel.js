@@ -28,12 +28,12 @@ const educationCourseSchema = new mongoose.Schema({
     type: String,
     // required: [true, "Course image is required"],
   },
-  cateogry: [
+  category: 
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCategory",
     },
-  ],
+  
   sections: [
     {
       type: mongoose.Schema.Types.ObjectId,
