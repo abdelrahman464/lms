@@ -38,7 +38,7 @@ const educationSubscriptionSchema = new mongoose.Schema({
   },
 });
 educationSubscriptionSchema.pre("save", async function (next) {
-  //if password field is not modified go to next middleware
+  //if subscriptionCode field is not modified go to next middleware
   if (!this.isModified("subscriptionCode")) return next();
   // Hashing user password
   this.subscriptionCode = await bcrypt.hash(this.subscriptionCode, 12);

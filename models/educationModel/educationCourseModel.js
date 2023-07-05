@@ -31,7 +31,7 @@ const educationCourseSchema = new mongoose.Schema({
   cateogry: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "EducationCateogry",
+      ref: "EducationCategory",
     },
   ],
   sections: [

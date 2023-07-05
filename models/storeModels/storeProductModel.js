@@ -51,7 +51,7 @@ const storeProductSchema = new mongoose.Schema(
     subCategories: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: "StoresubCategory",
+        ref: "StoreSubCategory",
       },
     ],
     brand: {

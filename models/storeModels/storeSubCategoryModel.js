@@ -31,5 +31,5 @@ storeSubCategorySchema.pre(/^find/, function (next) {
   next();
 });
 
-const subCategory = mongoose.model("StoresubCategory", storeSubCategorySchema);
+const subCategory = mongoose.model("StoreSubCategory", storeSubCategorySchema);
 module.exports = subCategory;
