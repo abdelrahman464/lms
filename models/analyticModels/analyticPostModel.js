@@ -42,10 +42,10 @@ const analyticPostSchema = new mongoose.Schema(
 // ^find => it mean if part of of teh word contains find
 analyticPostSchema.pre(/^find/, function (next) {
   // this => query
-  this.populate({
-    path: "user",
-    select: "name",
-  });
+  this.populate({ path: "user", select: "name" });
+  this.populate({ path: "comments", select: "content" });
+  this.populate({ path: "reactions.user", select: "name" });
+
   next();
 });
 const Post = mongoose.model("AnalyticPost", analyticPostSchema);
