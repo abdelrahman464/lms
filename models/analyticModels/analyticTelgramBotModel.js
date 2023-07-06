@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const analyticTelegramBotMessageSchema = new mongoose.Schema({
+  channelNumber: {
+    type: Number,
+    required: true,
+  },
   chatId: {
     type: Number,
     required: true,

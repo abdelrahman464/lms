@@ -9,6 +9,7 @@ const addMessage = async () => {
   });
   bot.on("message", async (msg) => {
     await TelegramBotMessage.create({
+      channelNumber: 1,
       chatId: msg.chat.id,
       messageId: msg.message_id,
       text: msg.text,
@@ -23,6 +24,7 @@ const addMessage2 = async () => {
   });
   bot.on("message", async (msg) => {
     await TelegramBotMessage.create({
+      channelNumber: 2,
       chatId: msg.chat.id,
       messageId: msg.message_id,
       text: msg.text,
@@ -30,6 +32,7 @@ const addMessage2 = async () => {
   });
 };
 addMessage2();
+
 //@desc get all messaege From bot
 //@route GET api/v1/analytic/telegram
 //@access protected user,admin
