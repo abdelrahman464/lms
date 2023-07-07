@@ -3,9 +3,6 @@ const ApiError = require("../../utils/apiError");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("./handllerFactory");
 
-
-
-
 // middleware to add categoryId to body
 exports.setCategoryIdToBody = (req, res, next) => {
   //Nested Route
@@ -22,15 +19,15 @@ exports.createFilterObj = (req, res, next) => {
 };
 // Create a new course
 exports.createCourse = asyncHandler(async (req, res) => {
-  const { description, title, price, priceAfterDiscount,cateogry } = req.body;
+  const { description, title, price, priceAfterDiscount, cateogry } = req.body;
   const course = await Course.create({
     description,
     title,
     price,
     priceAfterDiscount,
-    cateogry
+    cateogry,
   });
-  res.json(course);
+  res.status(201).json(course);
 });
 
 // Get all courses
@@ -51,7 +48,7 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     return next(new ApiError(`Course not found`, 404));
   }
   course.remove();
-  
+
   await Course.findByIdAndDelete(id);
 
   res.status(200).json({ success: true });

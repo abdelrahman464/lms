@@ -46,8 +46,11 @@ exports.deleteSection = asyncHandler(async (req, res, next) => {
   }
   //remove the section from the course
   course.sections = course.sections.filter((c) => c.toString() !== id);
+  //remove the section lessons from the course lessons array
+  course.lessons = course.lessons.filter(
+    (c) => !section.lessons.includes(c.toString())
+  );
   await course.save();
-
   await section.remove();
   await Section.findByIdAndDelete(id);
 

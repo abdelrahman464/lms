@@ -14,12 +14,6 @@ const educationCategorySchema = mongoose.Schema(
       type: String,
       lowercase: true,
     },
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "EducationCourse",
-      },
-    ],
     image: String,
   },
   { timestamps: true }
