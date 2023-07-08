@@ -68,6 +68,6 @@ exports.deleteOne = (Model) =>
       return next(new ApiError(`Document Not Found`, 404));
     }
     // Trigger "remove" event when delete document
-    await document.remove();
+    document.remove();
     res.status(200).json({ success: true });
   });

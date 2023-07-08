@@ -1,4 +1,3 @@
-const asyncHandler = require("express-async-handler");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
 
@@ -17,17 +16,7 @@ exports.createFilterObj = (req, res, next) => {
   next();
 };
 // Create a new course
-exports.createCourse = asyncHandler(async (req, res) => {
-  const { description, title, price, priceAfterDiscount, cateogry } = req.body;
-  const course = await Course.create({
-    description,
-    title,
-    price,
-    priceAfterDiscount,
-    cateogry,
-  });
-  res.status(201).json(course);
-});
+exports.createCourse = factory.createOne(Course);
 
 // Get all courses
 exports.getAllCourses = factory.getALl(Course);
