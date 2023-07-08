@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Course = require("../../models/educationModel/educationCourseModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 
 // middleware to add categoryId to body
 exports.setCategoryIdToBody = (req, res, next) => {

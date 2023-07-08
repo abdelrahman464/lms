@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Subscription = require("../../models/educationModel/educationSubscriptionModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 // Create a new subscription
 exports.createSubscription = asyncHandler(async (req, res, next) => {
   const { description, title, price, priceAfterDiscount, endDate } = req.body;

@@ -1,5 +1,5 @@
 const Coupon = require("../../models/educationModel/educationCouponModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 //@desc get list of coupons
 //@route GET /api/v1/coupons
 //@access private/admin-manager

@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Review = require("../../models/educationModel/educationReviewModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 const ApiError = require("../../utils/apiError");
 
 // GET products/:productId/reviews

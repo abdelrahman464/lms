@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const Lesson = require("../../models/educationModel/educationLessonModel");
 const Section = require("../../models/educationModel/educationSectionModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 // Create a new lesson
 exports.createLesson = asyncHandler(async (req, res, next) => {
   const { section, title, videoUrl } = req.body;

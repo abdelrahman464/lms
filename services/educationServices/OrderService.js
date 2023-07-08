@@ -3,7 +3,7 @@ const stripe = require("stripe")(
 );
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 
 const Order = require("../../models/educationModel/educationOrderModel");
 const Cart = require("../../models/educationModel/educationCartModel");

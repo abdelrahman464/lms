@@ -1,5 +1,5 @@
 const Package = require("../../models/educationModel/educationPackageModel");
-const factory = require("./handllerFactory");
+const factory = require("../handllerFactory");
 
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
