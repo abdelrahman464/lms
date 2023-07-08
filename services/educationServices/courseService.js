@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const ApiError = require("../../utils/apiError");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("./handllerFactory");
 
@@ -40,16 +39,4 @@ exports.getCourseById = factory.getOne(Course, "EducationSection");
 exports.updateCourse = factory.updateOne(Course);
 
 // Delete a course by ID
-exports.deleteCourse = asyncHandler(async (req, res, next) => {
-  const { id } = req.params; //sectionId
-  //check if lesson exists
-  const course = await Course.findById(id);
-  if (!course) {
-    return next(new ApiError(`Course not found`, 404));
-  }
-  course.remove();
-
-  await Course.findByIdAndDelete(id);
-
-  res.status(200).json({ success: true });
-});
+exports.deleteCourse = factory.deleteOne(Course);

@@ -9,10 +9,6 @@ const educationLessonSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "EducationSection",
   },
-  course: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "EducationCourse",
-  },
   videoUrl: {
     type: String,
     required: true,
