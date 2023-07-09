@@ -61,6 +61,11 @@ class ApiFeatures {
         ];
       } else if (modelName === "TelegramBotMessage") {
         query = { text: { $regex: this.queryStr.keyword, $options: "i" } };
+      } else if (
+        modelName === "AnalyticComment" ||
+        modelName === "AnalyticPost"
+      ) {
+        query = { content: { $regex: this.queryStr.keyword, $options: "i" } };
       } else {
         query = [
           { title: { $regex: this.queryStr.keyword, $options: "i" } },

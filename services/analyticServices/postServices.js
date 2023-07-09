@@ -1,32 +1,35 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const Post = require("../../models/analyticModels/analyticPostModel");
-const User = require("../../models/userModel");
 const factory = require("../handllerFactory");
+const Course = require("../../models/educationModel/educationCourseModel");
 
 //@desc create post
 //@route POST api/v1/posts
 //@access protected user
 exports.createPost = asyncHandler(async (req, res, next) => {
-  const { content } = req.body;
-  const userId = req.user._id;
-
+  const { content, course } = req.body;
   // Create a new post
   const post = new Post({
-    user: userId,
+    user: req.user._id,
     content,
+    course,
   });
-  //check user exists and push the post id in user
-  const user = await User.findById(userId);
-  if (!user) {
-    return next(new ApiError(`User not found`, 404));
-  }
-  user.posts.push(post._id);
-  await user.save();
 
+  //check group exists and push the post id in course
+  if (course) {
+    const currentCourse = await Course.findById(course);
+    if (!currentCourse) {
+      return next(new ApiError(`Course not found`, 404));
+    }
+    currentCourse.posts.push(post._id);
+    await currentCourse.save();
+    post.sharedTo = "course";
+  }
   await post.save();
-  res.status(201).json({ success: true, data: post });
+  res.status(201).json({ success: true, post });
 });
+
 //@desc update post
 //@route PUT api/v1/posts/:id
 //@access protected admin that create the post

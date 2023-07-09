@@ -1,6 +1,8 @@
 const express = require("express");
 const {
-  processCommentValidator,
+  deleteCommentValidator,
+  updateCommentValidator,
+  createCommentValidator
 } = require("../../utils/validators/analyticValidators/postCommentValidator");
 const authServices = require("../../services/authServices");
 
@@ -11,13 +13,20 @@ const {
   deleteComment,
   updateComment,
   createFilterObj,
+  setUserIdToBody
 } = require("../../services/analyticServices/commentOnPostServices");
 
 const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .post(authServices.protect, authServices.allowedTo("user"), createComment)
+  .post(
+    authServices.protect,
+    authServices.allowedTo("user"),
+    setUserIdToBody,
+    createCommentValidator,
+    createComment
+  )
   .get(
     authServices.protect,
     authServices.allowedTo("user", "admin"),
@@ -34,13 +43,13 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("user"),
-    processCommentValidator,
+    updateCommentValidator,
     updateComment
   )
   .delete(
     authServices.protect,
     authServices.allowedTo("user", "admin"),
-    processCommentValidator,
+    deleteCommentValidator,
     deleteComment
   );
 

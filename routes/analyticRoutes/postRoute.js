@@ -23,22 +23,26 @@ router
   .route("/")
   .get(
     authServices.protect,
-    authServices.allowedTo("user", "admin"),
+    authServices.allowedTo("user", "instructor", "admin"),
     getALlPosts
   )
-  .post(authServices.protect, authServices.allowedTo("admin"), createPost);
+  .post(
+    authServices.protect,
+    authServices.allowedTo("instructor", "admin"),
+    createPost
+  );
 router
   .route("/:id")
   .get(authServices.protect, authServices.allowedTo("user", "admin"), getPost)
   .put(
     authServices.protect,
-    authServices.allowedTo("admin"),
+    authServices.allowedTo("instructor", "admin"),
     processPostValidator,
     updatePost
   )
   .delete(
     authServices.protect,
-    authServices.allowedTo("admin"),
+    authServices.allowedTo("instructor", "admin"),
     processPostValidator,
     deletePost
   );

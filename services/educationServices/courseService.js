@@ -2,9 +2,8 @@ const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
 
 // middleware to add categoryId to body
-exports.setCategoryIdToBody = (req, res, next) => {
-  //Nested Route
-  if (!req.body.category) req.body.category = req.params.categoryId;
+exports.setinstructorIdToBody = (req, res, next) => {
+  req.body.instructor = req.user._id;
   next();
 };
 

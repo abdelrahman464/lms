@@ -39,13 +39,14 @@ const userShcema = new mongoose.Schema(
     passwordResetVerified: Boolean,
     role: {
       type: String,
-      enum: ["user", "manager", "admin"],
+      enum: ["user", "instructor", "admin"],
       default: "user",
     },
     active: {
       type: Boolean,
-      default: true,
+      default: false,
     },
+    about: String,
     //child references (1- manny )
     storeWishlist: [
       {
@@ -69,12 +70,6 @@ const userShcema = new mongoose.Schema(
         postalCode: String,
       },
     ],
-    posts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
-      },
-    ],
     subscription: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationSubscription",
@@ -94,6 +89,7 @@ userShcema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   // Hashing user password
   this.password = await bcrypt.hash(this.password, 12);
+
   next();
 });
 

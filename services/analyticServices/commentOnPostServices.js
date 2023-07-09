@@ -1,7 +1,3 @@
-const asyncHandler = require("express-async-handler");
-const ApiError = require("../../utils/apiError");
-const Post = require("../../models/analyticModels/analyticPostModel");
-const User = require("../../models/userModel");
 const Comment = require("../../models/analyticModels/analyticCommentModel");
 const factory = require("../handllerFactory");
 
@@ -12,35 +8,16 @@ exports.createFilterObj = (req, res, next) => {
   req.filterObj = filterObject;
   next();
 };
+
+exports.setUserIdToBody = (req, res, next) => {
+  //set user id in the body i will take it from logged user
+  req.body.user = req.user._id;
+  next();
+};
 //@desc create a new group
 //@route POST /api/v1/postComments
 //@access protected user
-exports.createComment = asyncHandler(async (req, res, next) => {
-  const { content, postId } = req.body;
-  const userId = req.user._id;
-  //check if post exist
-  const post = await Post.findById(postId);
-  if (!post) {
-    return next(new ApiError(`Post not found`, 404));
-  }
-  //check if user exist
-  const user = await User.findById(userId);
-  if (!user) {
-    return next(new ApiError(`User not found`, 404));
-  }
-  //create commnet
-  const comment = new Comment({
-    user: userId,
-    content,
-    post: postId,
-  });
-  //push the comment id to post
-  post.comments.push(comment._id);
-  await post.save();
-
-  await comment.save();
-  res.status(201).json({ success: true, comment });
-});
+exports.createComment = factory.createOne(Comment);
 //@desc get all comments
 //@route GET /api/v1/postComments
 //@access protected user
@@ -56,23 +33,4 @@ exports.updateComment = factory.updateOne(Comment);
 //@desc delete comment
 //@route POST /api/v1/postComments/:commentId
 //@access protected user that created the comment
-exports.deleteComment = asyncHandler(async (req, res, next) => {
-  const { id } = req.params; //commentId
-  //check if comment exists
-  const comment = await Comment.findById(id);
-  if (!comment) {
-    return next(new ApiError(`Comment not found`, 404));
-  }
-  //check if post exists
-  const post = await Post.findById(comment.post);
-  if (!post) {
-    return next(new ApiError(`Post not found`, 404));
-  }
-  //remove the comment from the post
-  post.comments = post.comments.filter((c) => c.toString() !== id);
-  await post.save();
-
-  await Comment.findByIdAndDelete(id);
-
-  res.status(200).json({ success: true });
-});
+exports.deleteComment = factory.deleteOne(Comment);

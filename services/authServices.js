@@ -61,7 +61,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({ data: user });
 });
-//@desc verfy email 
+//@desc verfy email
 //@route POST /api/v1/auth/verifyEmail
 //@access public
 exports.verifyEmail = asyncHandler(async (req, res, next) => {

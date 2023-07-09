@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Section = require("./educationSectionModel");
 const Lesson = require("./educationLessonModel");
+const POST = require("../analyticModels/analyticPostModel");
 
 const educationCourseSchema = new mongoose.Schema(
   {
@@ -10,6 +11,17 @@ const educationCourseSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      required: true,
+    },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "AnalyticPost",
+      },
+    ],
+    instructor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     sold: {
@@ -58,6 +70,12 @@ educationCourseSchema.virtual("reviews", {
   localField: "_id",
 });
 
+educationCourseSchema.pre(/^find/, function (next) {
+  this.populate({ path: "instructor", select: "name" });
+  this.populate({ path: "category", select: "title" });
+  next();
+});
+
 educationCourseSchema.pre("remove", async function (next) {
   //delete lessons related to sections related to course
   const sections = await Section.find({ course: this._id });
@@ -65,6 +83,9 @@ educationCourseSchema.pre("remove", async function (next) {
   await Lesson.deleteMany({ section: { $in: sectionIds } }); // worked
   //delete current course's sections
   await Section.deleteMany({ course: this._id });
+
+  //delete current course's posts
+  await POST.deleteMany({ course: this._id });
   next();
 });
 const Course = mongoose.model("EducationCourse", educationCourseSchema);

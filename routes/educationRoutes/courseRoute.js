@@ -1,14 +1,19 @@
 const express = require("express");
 const {
+  checkCourseIdParamValidator,
+  createCourseValidator,
+  updateCourseValidator,
+} = require("../../utils/validators/educationValidators/courseValidator");
+const {
   createCourse,
-  setCategoryIdToBody,
+  setinstructorIdToBody,
   getAllCourses,
   createFilterObj,
   getCourseById,
   deleteCourse,
   updateCourse,
 } = require("../../services/educationServices/courseService");
-
+const authServices = require("../../services/authServices");
 // nested routes
 const reviewsRoute = require("./reviewRoute");
 
@@ -17,18 +22,49 @@ const router = express.Router({ mergeParams: true });
 router.use("/:courseId/reviews", reviewsRoute);
 
 // Create a new course
-router.post("/", setCategoryIdToBody, createCourse);
+router.post(
+  "/",
+  authServices.protect,
+  authServices.allowedTo("instructor", "admin"),
+  setinstructorIdToBody,
+  createCourseValidator,
+  createCourse
+);
 
 // Get all courses
-router.get("/", createFilterObj, getAllCourses);
+router.get(
+  "/",
+  authServices.protect,
+  authServices.allowedTo("instructor", "admin"),
+  createFilterObj,
+  getAllCourses
+);
 
 // Get a specific course by ID
-router.get("/:id", getCourseById);
+router.get(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("instructor", "admin"),
+  checkCourseIdParamValidator,
+  getCourseById
+);
 
 // Update a course by ID
-router.put("/:id", updateCourse);
+router.put(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("instructor", "admin"),
+  updateCourseValidator,
+  updateCourse
+);
 
 // Delete a course by ID
-router.delete("/:id", deleteCourse);
+router.delete(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("instructor", "admin"),
+  checkCourseIdParamValidator,
+  deleteCourse
+);
 
 module.exports = router;

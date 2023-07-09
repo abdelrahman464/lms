@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Comment = require("./analyticCommentModel");
+const Reaction = require("./analyticReactionModel");
 
 const analyticPostSchema = new mongoose.Schema(
   {
@@ -15,26 +17,15 @@ const analyticPostSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    reactions: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        type: {
-          type: String,
-          enum: ["like", "love", "haha"],
-          required: true,
-        },
-      },
-    ],
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "AnalyticComment",
-      },
-    ],
+    sharedTo: {
+      type: String,
+      enum: ["public", "course"],
+      default: "public",
+    },
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EducationCourse",
+    },
   },
   { timestamps: true }
 );
@@ -43,9 +34,14 @@ const analyticPostSchema = new mongoose.Schema(
 analyticPostSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "user", select: "name" });
-  this.populate({ path: "comments", select: "content" });
-  this.populate({ path: "reactions.user", select: "name" });
+  next();
+});
 
+analyticPostSchema.pre("remove", async function (next) {
+  //delete comments reated with post
+  await Comment.deleteMany({ post: this._id }); // worked
+  //delete reacts reated with post
+  await Reaction.deleteMany({ postId: this._id });
   next();
 });
 const Post = mongoose.model("AnalyticPost", analyticPostSchema);
