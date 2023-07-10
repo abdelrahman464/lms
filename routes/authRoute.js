@@ -37,8 +37,8 @@ const forgotPasswordLimiter = rateLimit({
 const router = express.Router();
 
 router.route("/signup").post(signupValidator, signup);
-router.route("/verifyEmail").post(verifyEmailValidator, verifyEmail);
-router.route("/sendVerifyCode").get(protect,generateVerifyCode);
+router.route("/verifyEmail").post(protect, verifyEmailValidator, verifyEmail);
+router.route("/sendVerifyCode").get(protect, generateVerifyCode);
 router.route("/login").post(loginValidator, loginLimiter, login);
 router.route("/forgotPassword").post(forgotPasswordLimiter, forgotPassword);
 router

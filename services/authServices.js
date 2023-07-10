@@ -32,6 +32,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
   user.emailVerifyExpires = Date.now() + 10 * 60 * 1000;
   user.emailVerified = false;
 
+  const token = generateToken(user._id);
   await user.save();
   //3-send the Verification code via email
   try {
@@ -59,7 +60,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     );
   }
 
-  res.status(201).json({ data: user });
+  res.status(201).json({ data: user, token });
 });
 //@desc generate Verify Code
 //@route GET /api/v1/auth/sendVerifyCode
@@ -68,6 +69,9 @@ exports.generateVerifyCode = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user) {
     return next(new ApiError("User Not Found", 404));
+  }
+  if (user.emailVerified === true) {
+    return next(new ApiError("Email ALready verified ", 401));
   }
   //generate verification code
   const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -83,6 +87,7 @@ exports.generateVerifyCode = asyncHandler(async (req, res, next) => {
 
   await user.save();
   //3-send the Verification code via email
+
   try {
     const emailMessage = `Hi ${user.name}, 
                          \n ${verifyCode} 
@@ -134,7 +139,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
   user.active = true;
   user.emailVerifyCode = undefined;
   user.emailVerifyExpires = undefined;
-  user.emailVerified = undefined;
+  user.emailVerified = true;
   await user.save();
 
   //3- generate token
