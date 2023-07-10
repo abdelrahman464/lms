@@ -1,5 +1,6 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
+const {checkAuthority}=require("../../services/educationServices/packageServices")
 const {
   createSection,
   updateSection,
@@ -22,6 +23,7 @@ router.get("/:id", getSectionById);
 router.get(
   "/relatedSections/:courseId",
   authServices.protect,
+  checkAuthority,
   relatedSections
 );
 

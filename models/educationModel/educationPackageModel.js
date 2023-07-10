@@ -37,7 +37,8 @@ const educationPackageSchema = new mongoose.Schema({
   users: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      unique:[true,"user exists"]
     },
     start_date: {
       type: Date,

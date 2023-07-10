@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   checkCourseIdParamValidator,
   createCourseValidator,
@@ -12,7 +13,8 @@ const {
   getCourseById,
   deleteCourse,
   updateCourse,
-  relatedCourses
+  relatedCourses,
+  addUserToCourse
 } = require("../../services/educationServices/courseService");
 const authServices = require("../../services/authServices");
 // nested routes
@@ -49,12 +51,19 @@ router.get(
   checkCourseIdParamValidator,
   getCourseById
 );
-//Get course with CategoryId 
+//Get course with CategoryId  gomaa
 router.get(
   "/relatedCourses/:catId",
   authServices.protect,
   relatedCourses
 );
+// add user to course list   gomaa
+router.post(
+  "/addUserToCourse",
+  authServices.protect,
+  addUserToCourse
+  );
+
 
 // Update a course by ID
 router.put(

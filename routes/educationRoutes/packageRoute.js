@@ -1,4 +1,6 @@
 const express = require("express");
+const authServices = require("../../services/authServices");
+
 const {
   createPackage,
   convertToArray,
@@ -6,6 +8,8 @@ const {
   getPackageById,
   deletePackage,
   updatePackage,
+  addCourseToPlan,
+  addUserToPlan
 } = require("../../services/educationServices/packageServices");
 
 const router = express.Router();
@@ -17,5 +21,8 @@ router
   .get(getPackageById)
   .put(updatePackage)
   .delete(deletePackage);
+
+router.route("/addCourseToPlan").post(addCourseToPlan)  
+router.route("/addUserToPlan").post(authServices.protect,addUserToPlan)  
 
 module.exports = router;
