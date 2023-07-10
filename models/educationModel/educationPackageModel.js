@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { number } = require("sharp/lib/is");
 
 const educationPackageSchema = new mongoose.Schema({
   title: {
@@ -19,8 +20,9 @@ const educationPackageSchema = new mongoose.Schema({
     trim: true,
     max: [200000, "Too long Package price"],
   },
-  priceAfterDiscount: {
-    type: Number,
+  expirationTime:{
+    type:Number,
+    required: [true,"expirationTime required"]
   },
   image: {
     type: String,
@@ -32,6 +34,20 @@ const educationPackageSchema = new mongoose.Schema({
       ref: "EducationCourse",
     },
   ],
+  users: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    start_date: {
+      type: Date,
+      required: true
+    },
+    end_date: {
+      type: Date,
+      required: true
+    }
+  }]
 });
 
 const Package = mongoose.model("EducationPackage", educationPackageSchema);

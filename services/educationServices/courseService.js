@@ -1,6 +1,6 @@
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
-
+const asyncHandler = require("express-async-handler");
 // middleware to add categoryId to body
 exports.setinstructorIdToBody = (req, res, next) => {
   req.body.instructor = req.user._id;
@@ -28,3 +28,10 @@ exports.updateCourse = factory.updateOne(Course);
 
 // Delete a course by ID
 exports.deleteCourse = factory.deleteOne(Course);
+
+exports.relatedCourses=asyncHandler(async(req,res)=>{
+  const {catId}=req.params;
+  const courses=  await Course.find({category:catId});
+  res.status(200).json({data:courses});
+  
+})

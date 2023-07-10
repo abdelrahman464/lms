@@ -34,3 +34,10 @@ exports.updateLesson = factory.updateOne(Lesson);
 
 // Delete a lesson by ID
 exports.deleteLesson = factory.deleteOne(Lesson);
+
+exports.relatedLessons=asyncHandler(async(req,res)=>{
+  const {sectionId}=req.params;
+  const sections=  await Lesson.find({section:sectionId});
+  res.status(200).json({data:sections});
+  
+})

@@ -12,6 +12,7 @@ const {
   getCourseById,
   deleteCourse,
   updateCourse,
+  relatedCourses
 } = require("../../services/educationServices/courseService");
 const authServices = require("../../services/authServices");
 // nested routes
@@ -47,6 +48,12 @@ router.get(
   authServices.allowedTo("instructor", "admin"),
   checkCourseIdParamValidator,
   getCourseById
+);
+//Get course with CategoryId 
+router.get(
+  "/relatedCourses/:catId",
+  authServices.protect,
+  relatedCourses
 );
 
 // Update a course by ID

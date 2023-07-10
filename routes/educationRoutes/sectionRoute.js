@@ -1,10 +1,12 @@
 const express = require("express");
+const authServices = require("../../services/authServices");
 const {
   createSection,
   updateSection,
   deleteSection,
   getSectionById,
   getSectionsByCourseId,
+  relatedSections
 } = require("../../services/educationServices/sectionService");
 
 const router = express.Router();
@@ -16,6 +18,13 @@ router.get("/", getSectionsByCourseId);
 
 // Get a specific section by ID
 router.get("/:id", getSectionById);
+//Get sections with courseId 
+router.get(
+  "/relatedSections/:courseId",
+  authServices.protect,
+  relatedSections
+);
+
 
 // Update a section by ID
 router.put("/:id", updateSection);

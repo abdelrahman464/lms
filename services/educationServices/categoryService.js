@@ -47,3 +47,4 @@ exports.updateCategory = factory.updateOne(Category);
 //@route DELETE /api/v1/categories/:id
 //@access private
 exports.deleteCategory = factory.deleteOne(Category);
+
