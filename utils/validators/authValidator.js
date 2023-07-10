@@ -63,3 +63,12 @@ exports.loginValidator = [
     .withMessage("password must be at least 8 characters"),
   validatorMiddleware,
 ];
+
+exports.verifyEmailValidator = [
+  check("verifyCode").notEmpty().withMessage("Verifycode required"),
+  validatorMiddleware,
+];
+exports.verifyresetPasswordValidator = [
+  check("resetCode").notEmpty().withMessage("Verifycode required"),
+  validatorMiddleware,
+];

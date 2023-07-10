@@ -61,6 +61,55 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({ data: user });
 });
+//@desc generate Verify Code
+//@route GET /api/v1/auth/sendVerifyCode
+//@access protected
+exports.generateVerifyCode = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return next(new ApiError("User Not Found", 404));
+  }
+  //generate verification code
+  const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedVerifyCode = crypto
+    .createHash("sha256")
+    .update(verifyCode)
+    .digest("hex");
+  //save hashed email verification code
+  user.emailVerifyCode = hashedVerifyCode;
+  //add expiration time  for email verify code (10min)
+  user.emailVerifyExpires = Date.now() + 10 * 60 * 1000;
+  user.emailVerified = false;
+
+  await user.save();
+  //3-send the Verification code via email
+  try {
+    const emailMessage = `Hi ${user.name}, 
+                         \n ${verifyCode} 
+                         \n enter this code to complete the verification 
+                         \n thanks for helping us keep your account secure.
+                         \n the E-Website Team`;
+    await sendEmail({
+      to: user.email,
+      subject: "Your Verification code (valid for 10 min)",
+      text: emailMessage,
+    });
+  } catch (err) {
+    user.emailVerifyCode = undefined;
+    user.emailVerifyExpires = undefined;
+    user.emailVerified = undefined;
+
+    await user.save();
+    return next(
+      new ApiError(
+        "there is a problem with sending Email with your Verification code",
+        500
+      )
+    );
+  }
+
+  res.status(200).json({ succes: "true" });
+});
 //@desc verfy email
 //@route POST /api/v1/auth/verifyEmail
 //@access public

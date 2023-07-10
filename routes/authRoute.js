@@ -5,10 +5,14 @@ const passport = require("passport");
 const {
   signupValidator,
   loginValidator,
+  verifyEmailValidator,
+  verifyresetPasswordValidator,
 } = require("../utils/validators/authValidator");
 const {
+  protect,
   signup,
   verifyEmail,
+  generateVerifyCode,
   login,
   forgotPassword,
   verifyPassResetCode,
@@ -33,10 +37,13 @@ const forgotPasswordLimiter = rateLimit({
 const router = express.Router();
 
 router.route("/signup").post(signupValidator, signup);
-router.route("/verifyEmail").post(verifyEmail);
+router.route("/verifyEmail").post(verifyEmailValidator, verifyEmail);
+router.route("/sendVerifyCode").get(protect,generateVerifyCode);
 router.route("/login").post(loginValidator, loginLimiter, login);
 router.route("/forgotPassword").post(forgotPasswordLimiter, forgotPassword);
-router.route("/verifyResetCode").post(verifyPassResetCode);
+router
+  .route("/verifyResetCode")
+  .post(verifyresetPasswordValidator, verifyPassResetCode);
 router.route("/resetPassword").put(resetPassword);
 
 //auth with google
