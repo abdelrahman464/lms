@@ -4,6 +4,42 @@ const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 const Course = require("../../models/educationModel/educationCourseModel");
 
+//filter posts to get courses posts only
+exports.createFilterObj = async (req, res, next) => {
+  let filterObject = {};
+  if (req.user.role === "user") {
+    filterObject = {
+      $or: [
+        {
+          sharedTo: "course",
+          course: { $in: req.user.courses },
+        },
+        {
+          sharedTo: "public",
+        },
+      ],
+    };
+  }
+  if (req.user.role === "instructor") {
+    // all courses that the logged user is instructor in
+    const courses = await Course.find({ instructor: req.user._id });
+    const courseIds = courses.map((course) => course._id);
+
+    filterObject = {
+      $or: [
+        {
+          sharedTo: "course",
+          course: { $in: courseIds },
+        },
+        {
+          sharedTo: "public",
+        },
+      ],
+    };
+  }
+  req.filterObj = filterObject;
+  next();
+};
 //@desc create post
 //@route POST api/v1/posts
 //@access protected user
@@ -37,7 +73,7 @@ exports.updatePost = factory.updateOne(Post);
 //@desc get all posts post
 //@route GET api/v1/posts
 //@access protected user,admin
-exports.getALlPosts = factory.getALl(Post);
+exports.getLoggedUserAllowedPosts = factory.getALl(Post);
 //@desc get post
 //@route GET api/v1/posts/:id
 //@access protected user

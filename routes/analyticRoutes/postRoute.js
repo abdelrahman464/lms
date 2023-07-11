@@ -8,7 +8,8 @@ const {
 const authServices = require("../../services/authServices");
 const {
   createPost,
-  getALlPosts,
+  createFilterObj,
+  getLoggedUserAllowedPosts,
   getPost,
   updatePost,
   deletePost,
@@ -24,7 +25,8 @@ router
   .get(
     authServices.protect,
     authServices.allowedTo("user", "instructor", "admin"),
-    getALlPosts
+    createFilterObj,
+    getLoggedUserAllowedPosts
   )
   .post(
     authServices.protect,
@@ -33,7 +35,11 @@ router
   );
 router
   .route("/:id")
-  .get(authServices.protect, authServices.allowedTo("user", "admin"), getPost)
+  .get(
+    authServices.protect,
+    authServices.allowedTo("user", "instructor", "admin"),
+    getPost
+  )
   .put(
     authServices.protect,
     authServices.allowedTo("instructor", "admin"),

@@ -1,6 +1,6 @@
+const asyncHandler = require("express-async-handler");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
-const asyncHandler = require("express-async-handler");
 // middleware to add categoryId to body
 exports.setinstructorIdToBody = (req, res, next) => {
   req.body.instructor = req.user._id;
@@ -65,7 +65,7 @@ exports.addUserToCourse=asyncHandler(async(req,res)=>{
 exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
   
   const userId=req.user.id;
-  const courseId=req.params.courseId;
+  const {courseId} = req.params;
 
 
   const course = await Course.findOne({
@@ -78,7 +78,7 @@ exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
   
     if (!course) {
       //check whether has access on courses 
-     res.json(sadsad);
+    //  res.json(sadsad);
     }
     // res.json(package)
      next()
