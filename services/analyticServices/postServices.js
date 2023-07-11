@@ -4,7 +4,7 @@ const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 const Course = require("../../models/educationModel/educationCourseModel");
 
-//filter posts to get courses posts only
+
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
   if (req.user.role === "user") {

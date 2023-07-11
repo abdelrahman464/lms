@@ -3,6 +3,7 @@ const authServices = require("../../services/authServices");
 const {
   getAllMessages,
   getMessage,
+  createFilterObj,
 } = require("../../services/analyticServices/telegramBotServiecs");
 
 const router = express.Router();
@@ -11,6 +12,7 @@ router
   .get(
     authServices.protect,
     authServices.allowedTo("user", "admin"),
+    createFilterObj,
     getAllMessages
   );
 router

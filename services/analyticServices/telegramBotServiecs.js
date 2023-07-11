@@ -33,6 +33,18 @@ const addMessage2 = async () => {
 };
 addMessage2();
 
+//filter posts to get courses posts only
+exports.createFilterObj = async (req, res, next) => {
+  let filterObject = {};
+  // all TELGRAM CHANELES that the logged user is instructor in
+  if (req.user.role === "user") {
+    filterObject = {
+      channelNumber: { $in: req.user.telgramChannels },
+    };
+  }
+  req.filterObj = filterObject;
+  next();
+};
 //@desc get all messaege From bot
 //@route GET api/v1/analytic/telegram
 //@access protected user,admin

@@ -80,6 +80,7 @@ const userShcema = new mongoose.Schema(
         ref: "EducationCourse",
       },
     ],
+    telgramChannels: [Number],
   },
   { timestamps: true }
 );
