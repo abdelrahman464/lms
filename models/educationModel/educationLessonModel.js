@@ -5,9 +5,13 @@ const educationLessonSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  section: {
+  course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "EducationSection",
+    ref: "EducationCourse",
+  },
+  type:{
+    type:String ,
+    required:[true,"lesson's type is required"]
   },
   videoUrl: {
     type: String,

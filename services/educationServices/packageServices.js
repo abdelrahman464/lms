@@ -1,7 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Package = require("../../models/educationModel/educationPackageModel");
 const factory = require("../handllerFactory");
-const checkCourseAuthority = require("./courseService");
+const { checkCourseAuthority } = require("./courseService");
+const Course = require("../../models/educationModel/educationCourseModel");
 
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
@@ -41,7 +42,7 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 
 // to be done when user purchase a package
 exports.addUserToPlan = asyncHandler(async (req, res) => {
-  const { planId } = req.body;
+  const { planId } = req.body; //params
   const userId = req.user._id;
 
   const plan = await Package.findById(planId);
@@ -65,13 +66,14 @@ exports.addUserToPlan = asyncHandler(async (req, res) => {
 
   res.status(200).json({ status: "success", plan: plan });
 });
-
+// lessons courses
 //middleware to check user Authority to courses
 exports.checkAuthority = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   const { courseId } = req.params;
 
   const package = await Package.findOne(
+
     {
       courses: { $in: [courseId] },
       "users.user": userId,
@@ -82,10 +84,11 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
   );
 
   if (!package) {
+    //course    user
     //check whether has access on courses
-    // checkCourseAuthority(req);
+    checkCourseAuthority2();
 
-    return res.status(403).json({ error: "Access denied" });
+    return res.status(403).json({ error: "Access denied" }); //Api Error
   }
   // res.json(package)
   const user = package.users[0];
@@ -99,7 +102,7 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
       { $pull: { users: { _id: user._id } } } // Specify the field and the element to remove
     );
 
-    res.status(403).json({ error: "Invalid start date" });
+    res.status(403).json({ error: "your subscription expired " });
   } else {
     // User has authority, proceed to the next middleware
     next();
@@ -127,11 +130,47 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
 
 // })
 
-//create route for add course to plan
-//create route for add user to plan
-//add middleware that Validate user  *
+const checkCourseAuthority2 = async (req, res, next) => {
+  const userId = req.user.id;
+  const { courseId } = req.params;
 
-// create categories
-// create courses
-// create sections
-// create lessons
+const course = await Course.findOne(
+    {
+      _id: courseId,
+      "users.user": userId,
+    },
+    {
+      "users.$": 1, // Select only the matched user object
+    }
+  );
+
+  if (!course) {
+    //check whether has access on courses
+    res.json({ msg: "not allowed" });
+  }
+  // res.json(package)
+  next();
+};
+
+exports.checkCourseAuthority = () =>
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user.id;
+    const { courseId } = req.params;
+
+    const course = await Course.findOne(
+      {
+        _id: courseId,
+        "users.user": userId,
+      },
+      {
+        "users.$": 1, // Select only the matched user object
+      }
+    );
+
+    if (!course) {
+      //check whether has access on courses
+      res.json({ msg: "not allowed" });
+    }
+    // res.json(package)
+    next();
+  });

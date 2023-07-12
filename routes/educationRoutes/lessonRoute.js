@@ -1,5 +1,6 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
+const {checkAuthority2}=require("../../utils/validators/educationValidators/lessonsValidator")
 const {
   createLesson,
   updateLesson,
@@ -19,8 +20,9 @@ router.get("/", getLessonsBySectionId);
 router.get("/:id", getLessonById);
 //Get course with CategoryId 
 router.get(
-  "/relatedLessons/:sectionId",
+  "/relatedLessons/:courseId",
   authServices.protect,
+  checkAuthority2,
   relatedLessons
 );
 

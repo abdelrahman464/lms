@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
-// middleware to add categoryId to body
+// middleware to add instructorId to body
 exports.setinstructorIdToBody = (req, res, next) => {
   req.body.instructor = req.user._id;
   next();
@@ -21,7 +21,7 @@ exports.createCourse = factory.createOne(Course);
 exports.getAllCourses = factory.getALl(Course);
 
 // Get a specific course by ID
-exports.getCourseById = factory.getOne(Course, "EducationSection");
+exports.getCourseById = factory.getOne(Course);
 
 // Update a course by ID
 exports.updateCourse = factory.updateOne(Course);
@@ -62,26 +62,26 @@ exports.addUserToCourse=asyncHandler(async(req,res)=>{
    res.status(200).json({status:"success",course:course});
 })
 
-exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
+exports.checkCourseAuthority=()=>asyncHandler(async(req,res,next)=>{
   
   const userId=req.user.id;
   const {courseId} = req.params;
 
 
-  const course = await Course.findOne({
-    '_id':courseId,
-    'users.user': userId,
-    },
-    {
-    'users.$': 1 // Select only the matched user object
-    }); 
-  
-    if (!course) {
-      //check whether has access on courses 
-    //  res.json(sadsad);
-    }
-    // res.json(package)
-     next()
-  
+    const course = await Course.findOne({
+      '_id':courseId,
+      'users.user': userId,
+      },
+      {
+      'users.$': 1 // Select only the matched user object
+      }); 
+    
+      if (!course) {
+        //check whether has access on courses 
+      res.json({msg:"not allowed"});
+      }
+      // res.json(package)
+      next()
+    
 
 })

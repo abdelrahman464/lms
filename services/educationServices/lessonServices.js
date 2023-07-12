@@ -1,21 +1,22 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const Lesson = require("../../models/educationModel/educationLessonModel");
-const Section = require("../../models/educationModel/educationSectionModel");
+const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
 // Create a new lesson
 exports.createLesson = asyncHandler(async (req, res, next) => {
-  const { section, title, videoUrl } = req.body;
+  const { course, title,type, videoUrl } = req.body;
   // Create a new section
   const lesson = new Lesson({
     title,
-    section,
+    course,
+    type,
     videoUrl,
   });
   //check if section exists
-  const currentSection = await Section.findById(section);
-  if (!currentSection) {
-    return next(new ApiError(`Section not found`, 404));
+  const currentCourse = await Course.findById(course);
+  if (!currentCourse) {
+    return next(new ApiError(`course not found`, 404));
   }
   //save
   await lesson.save();
@@ -36,8 +37,8 @@ exports.updateLesson = factory.updateOne(Lesson);
 exports.deleteLesson = factory.deleteOne(Lesson);
 
 exports.relatedLessons=asyncHandler(async(req,res)=>{
-  const {sectionId}=req.params;
-  const sections=  await Lesson.find({section:sectionId});
-  res.status(200).json({data:sections});
+  const {courseId}=req.params;
+  const lessons=  await Lesson.find({course:courseId});
+  res.status(200).json({data:lessons});
   
 })

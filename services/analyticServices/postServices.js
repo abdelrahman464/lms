@@ -4,6 +4,10 @@ const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 const Course = require("../../models/educationModel/educationCourseModel");
 
+// package = req.user.package 
+// package.courses
+
+// course  [users]
 
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};

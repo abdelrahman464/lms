@@ -19,7 +19,7 @@ const educationPackageSchema = new mongoose.Schema({
     trim: true,
     max: [200000, "Too long Package price"],
   },
-  expirationTime: {
+  expirationTime: { //0  //30   //  //expirtaioInDays
     type: Number,
     required: [true, "expirationTime required"],
   },
@@ -38,7 +38,7 @@ const educationPackageSchema = new mongoose.Schema({
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        unique: [true, "user exists"],
+        unique: [true, "user already exists"],
       },
       start_date: {
         type: Date,

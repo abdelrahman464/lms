@@ -45,21 +45,23 @@ const educationCourseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCategory",
     },
-    users: [{
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        unique:[true,"user exists"]
+    users: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          unique: [true, "user exists"],
+        },
+        start_date: {
+          type: Date,
+          required: true,
+        },
+        end_date: {
+          type: Date,
+          required: true,
+        },
       },
-      start_date: {
-        type: Date,
-        required: true
-      },
-      end_date: {
-        type: Date,
-        required: true
-      }
-    }],
+    ],
 
     ratingsAverage: {
       type: Number,
@@ -93,11 +95,8 @@ educationCourseSchema.pre(/^find/, function (next) {
 
 educationCourseSchema.pre("remove", async function (next) {
   //delete lessons related to sections related to course
-  const sections = await Section.find({ course: this._id });
-  const sectionIds = sections.map((section) => section._id);
-  await Lesson.deleteMany({ section: { $in: sectionIds } }); // worked
-  //delete current course's sections
-  await Section.deleteMany({ course: this._id });
+ 
+  await Lesson.deleteMany({ course: this._id });
 
   //delete current course's posts
   await POST.deleteMany({ course: this._id });

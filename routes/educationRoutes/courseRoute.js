@@ -38,7 +38,7 @@ router.post(
 router.get(
   "/",
   authServices.protect,
-  authServices.allowedTo("instructor", "admin"),
+  authServices.allowedTo("instructor", "admin", "user"),
   createFilterObj,
   getAllCourses
 );
@@ -47,7 +47,7 @@ router.get(
 router.get(
   "/:id",
   authServices.protect,
-  authServices.allowedTo("instructor", "admin"),
+  authServices.allowedTo("instructor", "admin", "user"),
   checkCourseIdParamValidator,
   getCourseById
 );

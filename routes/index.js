@@ -29,6 +29,8 @@ const educationSectionRoute = require("./educationRoutes/sectionRoute");
 const educationLessonRoute = require("./educationRoutes/lessonRoute");
 const educationOrderRoute = require("./educationRoutes/OrderRoute");
 
+const landingPageRoute=require("./landingPageRoute");
+const LiveRoute=require("./educationRoutes/LiveRoute");
 const mountRoutes = (app) => {
   // Mount Routes
   app.use("/api/v1/auth", authRoute);
@@ -62,5 +64,8 @@ const mountRoutes = (app) => {
   app.use("/api/v1/analytic/postComments", analyticPostCommentRoute);
   app.use("/api/v1/analytic/postReacts", analyticPostReactRoute);
   app.use("/api/v1/analytic/telegram", analyticTelegramBotRoute);
+  
+  app.use("/api/v1/landingPage",landingPageRoute);
+  app.use("/api/v1/live",LiveRoute);
 };
 module.exports = mountRoutes;
