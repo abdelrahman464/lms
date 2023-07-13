@@ -70,17 +70,17 @@ const userShcema = new mongoose.Schema(
         postalCode: String,
       },
     ],
-    subscription: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "EducationSubscription",
-    },
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "EducationCourse",
-      },
-    ],
-    telgramChannels: [Number],
+    // subscription: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "EducationSubscription",
+    // },
+    // courses: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "EducationCourse",
+    //   },
+    // ],
+    // telgramChannels: [Number],
   },
   { timestamps: true }
 );

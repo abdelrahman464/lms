@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Section = require("./educationSectionModel");
 const Lesson = require("./educationLessonModel");
 const POST = require("../analyticModels/analyticPostModel");
 
@@ -50,16 +49,12 @@ const educationCourseSchema = new mongoose.Schema(
         user: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
-          unique: [true, "user exists"],
         },
         start_date: {
           type: Date,
           required: true,
         },
-        end_date: {
-          type: Date,
-          required: true,
-        },
+       
       },
     ],
 

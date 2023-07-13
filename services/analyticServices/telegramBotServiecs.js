@@ -16,7 +16,7 @@ const addMessage = async () => {
     });
   });
 };
-addMessage();
+// addMessage();
 // Add a new message channel 2
 const addMessage2 = async () => {
   const bot = new TelegramBot(process.env.TELEGRAM_TOKEN2, {
@@ -31,7 +31,7 @@ const addMessage2 = async () => {
     });
   });
 };
-addMessage2();
+// addMessage2();
 
 //filter posts to get courses posts only
 exports.createFilterObj = async (req, res, next) => {

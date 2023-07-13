@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Package = require("../../models/educationModel/educationPackageModel");
 const factory = require("../handllerFactory");
 const { checkCourseAuthority } = require("./courseService");
-const Course = require("../../models/educationModel/educationCourseModel");
+
 
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
@@ -86,7 +86,7 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
   if (!package) {
     //course    user
     //check whether has access on courses
-    checkCourseAuthority2();
+    checkCourseAuthority(req,res,next);
 
     return res.status(403).json({ error: "Access denied" }); //Api Error
   }
@@ -130,47 +130,47 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
 
 // })
 
-const checkCourseAuthority2 = async (req, res, next) => {
-  const userId = req.user.id;
-  const { courseId } = req.params;
+// const checkCourseAuthority2 = async (req, res, next) => {
+//   const userId = req.user.id;
+//   const { courseId } = req.params;
 
-const course = await Course.findOne(
-    {
-      _id: courseId,
-      "users.user": userId,
-    },
-    {
-      "users.$": 1, // Select only the matched user object
-    }
-  );
+// const course = await Course.findOne(
+//     {
+//       _id: courseId,
+//       "users.user": userId,
+//     },
+//     {
+//       "users.$": 1, // Select only the matched user object
+//     }
+//   );
 
-  if (!course) {
-    //check whether has access on courses
-    res.json({ msg: "not allowed" });
-  }
-  // res.json(package)
-  next();
-};
+//   if (!course) {
+//     //check whether has access on courses
+//     res.json({ msg: "not allowed" });
+//   }
+//   // res.json(package)
+//   next();
+// };
 
-exports.checkCourseAuthority = () =>
-  asyncHandler(async (req, res, next) => {
-    const userId = req.user.id;
-    const { courseId } = req.params;
+// exports.checkCourseAuthority = () =>
+//   asyncHandler(async (req, res, next) => {
+//     const userId = req.user.id;
+//     const { courseId } = req.params;
 
-    const course = await Course.findOne(
-      {
-        _id: courseId,
-        "users.user": userId,
-      },
-      {
-        "users.$": 1, // Select only the matched user object
-      }
-    );
+//     const course = await Course.findOne(
+//       {
+//         _id: courseId,
+//         "users.user": userId,
+//       },
+//       {
+//         "users.$": 1, // Select only the matched user object
+//       }
+//     );
 
-    if (!course) {
-      //check whether has access on courses
-      res.json({ msg: "not allowed" });
-    }
-    // res.json(package)
-    next();
-  });
+//     if (!course) {
+//       //check whether has access on courses
+//       res.json({ msg: "not allowed" });
+//     }
+//     // res.json(package)
+//     next();
+//   });

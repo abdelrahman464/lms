@@ -1,6 +1,6 @@
+const asyncHandler = require("express-async-handler");
 const Section = require("../../models/educationModel/educationSectionModel");
 const factory = require("../handllerFactory");
-const asyncHandler = require("express-async-handler");
 
 // Create a new section
 exports.createSection = factory.createOne(Section);

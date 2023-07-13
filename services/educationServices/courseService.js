@@ -29,59 +29,55 @@ exports.updateCourse = factory.updateOne(Course);
 // Delete a course by ID
 exports.deleteCourse = factory.deleteOne(Course);
 
-exports.relatedCourses=asyncHandler(async(req,res)=>{
-  const {catId}=req.params;
-  const courses=  await Course.find({category:catId});
-  res.status(200).json({data:courses});
-  
-})
-// to be done when user purchase a course  
-exports.addUserToCourse=asyncHandler(async(req,res)=>{
-
-  const {courseId}=req.body;
-  const userId=req.user._id;
+exports.relatedCourses = asyncHandler(async (req, res) => {
+  const { catId } = req.params;
+  const courses = await Course.find({ category: catId });
+  res.status(200).json({ data: courses });
+});
+// to be done when user purchase a course
+exports.addUserToCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.body;
+  const userId = req.user._id;
 
   const course = await Course.findById(courseId);
-  
+
   if (!Course) {
-    res.status(400).json({status:`no package for that id: ${courseId}`})
+    res.status(400).json({ status: `no package for that id: ${courseId}` });
   }
   const startDate = new Date();
-  const endDate = new Date();;
-   // Add the user object to the users array
-   const newUser = {
+
+  // Add the user object to the users array
+  const newUser = {
     user: userId,
     start_date: startDate,
-    end_date: endDate
   };
 
-   course.users.push(newUser);
+  course.users.push(newUser);
 
-   await course.save();
+  await course.save();
 
-   res.status(200).json({status:"success",course:course});
-})
+  res.status(200).json({ status: "success", course: course });
+});
 
-exports.checkCourseAuthority=()=>asyncHandler(async(req,res,next)=>{
-  
-  const userId=req.user.id;
-  const {courseId} = req.params;
+exports.checkCourseAuthority = (req, res, next) =>
+  asyncHandler(async (_req, _res, _next) => {
+    const userId = req.user.id;
+    const { courseId } = req.params;
 
-
-    const course = await Course.findOne({
-      '_id':courseId,
-      'users.user': userId,
+    const course = await Course.findOne(
+      {
+        _id: courseId,
+        "users.user": userId,
       },
       {
-      'users.$': 1 // Select only the matched user object
-      }); 
-    
-      if (!course) {
-        //check whether has access on courses 
-      res.json({msg:"not allowed"});
+        "users.$": 1, // Select only the matched user object
       }
-      // res.json(package)
-      next()
-    
+    );
 
-})
+    if (!course) {
+      //check whether has access on courses
+      res.json({ msg: "not allowed" });
+    }
+    // res.json(package)
+    next();
+  });

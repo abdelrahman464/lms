@@ -17,7 +17,6 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
-    if(Model=='Course') req.body.instructor=req.user._id
     const document = await Model.create(req.body);
     res.status(201).json({ data: document });
   });

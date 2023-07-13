@@ -3,20 +3,46 @@ const ApiError = require("../../utils/apiError");
 const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 const Course = require("../../models/educationModel/educationCourseModel");
+const Package = require("../../models/educationModel/educationPackageModel");
 
-// package = req.user.package 
+// package = req.user.package
 // package.courses
 
 // course  [users]
 
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
+
   if (req.user.role === "user") {
+    // all courses that the logged user is subscripe in
+    const courses = await Course.find({ "users.user": req.user._id });
+    const userPackages = await Package.find({
+      "users.user": req.user._id,
+      "users.end_date": { $gt: new Date() },
+    });
+
+    const courseIds = courses.map((course) => course._id.toString());
+    const coursePackageIds = userPackages.map((package) => package.courses);
+
+    const coursesFromPackages = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const nestedArray of coursePackageIds) {
+      const flattenedArray = nestedArray.flat();
+      const uniqueElements = new Set(
+        flattenedArray.map((element) => element.toString())
+      );
+      coursesFromPackages.push(...uniqueElements);
+    }
+    const userCourses = Array.from(
+      new Set([...coursesFromPackages, ...courseIds])
+    );
+
     filterObject = {
       $or: [
         {
           sharedTo: "course",
-          course: { $in: req.user.courses },
+          course: { $in: userCourses },
         },
         {
           sharedTo: "public",
