@@ -1,6 +1,7 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
 const Post = require("../../../models/analyticModels/analyticPostModel");
+const Course = require("../../../models/educationModel/educationCourseModel");
 
 exports.processPostValidator = [
   check("id")
@@ -11,14 +12,37 @@ exports.processPostValidator = [
         if (!post) {
           return Promise.reject(new Error(`Post not found`));
         }
-        console.log(post.user._id.toString());
-        console.log(req.user._id.toString());
         if (
           post.user._id.toString() !== req.user._id.toString() &&
           req.user.role !== "admin"
         ) {
           return Promise.reject(
             new Error(`Your are not allowed to perform this action`)
+          );
+        }
+      })
+    ),
+
+  validatorMiddleware,
+];
+
+exports.createPostValidator = [
+  check("course")
+    .isMongoId()
+    .withMessage("Invalid Requst id format")
+    .custom((val, { req }) =>
+      Course.findById(val).then((course) => {
+        //check if course exists
+        if (!course) {
+          return Promise.reject(new Error(`Course not found`));
+        }
+        //check if the logged user is the instractor of this course to add post in this course
+        if (req.user.role === "admin") {
+          return true;
+        }
+        if (req.user._id.toString() !== course.instructor.toString()) {
+          return Promise.reject(
+            new Error(`You Are Not The instractor of this course`)
           );
         }
       })

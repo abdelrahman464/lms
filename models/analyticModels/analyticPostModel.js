@@ -26,6 +26,7 @@ const analyticPostSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCourse",
     },
+    image: String,
   },
   { timestamps: true }
 );
@@ -43,6 +44,24 @@ analyticPostSchema.pre("remove", async function (next) {
   //delete reacts reated with post
   await Reaction.deleteMany({ postId: this._id });
   next();
+});
+
+const setImageURL = (doc) => {
+  //return image base url + iamge name
+  if (doc.image) {
+    const imageUrl = `${process.env.BASE_URL}/analytic/posts/${doc.image}`;
+    doc.image = imageUrl;
+  }
+};
+//after initializ the doc in db
+// check if the document contains image
+// it work with findOne,findAll,update
+analyticPostSchema.post("init", (doc) => {
+  setImageURL(doc);
+});
+// it work with create
+analyticPostSchema.post("save", (doc) => {
+  setImageURL(doc);
 });
 const Post = mongoose.model("AnalyticPost", analyticPostSchema);
 module.exports = Post;

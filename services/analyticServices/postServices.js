@@ -1,14 +1,34 @@
 const asyncHandler = require("express-async-handler");
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const ApiError = require("../../utils/apiError");
 const Post = require("../../models/analyticModels/analyticPostModel");
 const factory = require("../handllerFactory");
 const Course = require("../../models/educationModel/educationCourseModel");
 const Package = require("../../models/educationModel/educationPackageModel");
+const {
+  uploadSingleImage,
+} = require("../../middlewares/uploadImageMiddleware");
 
-// package = req.user.package
-// package.courses
+//upload Single image
+exports.uploadPostImage = uploadSingleImage("image");
+//image processing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `post-${uuidv4()}-${Date.now()}.jpeg`;
 
-// course  [users]
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/analytic/posts/${filename}`);
+
+    //save image into our db
+    req.body.image = filename;
+  }
+
+  next();
+});
 
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
@@ -74,12 +94,13 @@ exports.createFilterObj = async (req, res, next) => {
 //@route POST api/v1/posts
 //@access protected user
 exports.createPost = asyncHandler(async (req, res, next) => {
-  const { content, course } = req.body;
+  const { content, course, image } = req.body;
   // Create a new post
   const post = new Post({
     user: req.user._id,
     content,
     course,
+    image,
   });
 
   //check group exists and push the post id in course

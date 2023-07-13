@@ -4,6 +4,7 @@ const postReactRoute = require("./postReactRoute");
 
 const {
   processPostValidator,
+  createPostValidator,
 } = require("../../utils/validators/analyticValidators/postValidator");
 const authServices = require("../../services/authServices");
 const {
@@ -13,6 +14,8 @@ const {
   getPost,
   updatePost,
   deletePost,
+  uploadPostImage,
+  resizeImage,
 } = require("../../services/analyticServices/postServices");
 
 const router = express.Router();
@@ -31,6 +34,9 @@ router
   .post(
     authServices.protect,
     authServices.allowedTo("instructor", "admin"),
+    uploadPostImage,
+    resizeImage,
+    createPostValidator,
     createPost
   );
 router
@@ -43,6 +49,8 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("instructor", "admin"),
+    uploadPostImage,
+    resizeImage,
     processPostValidator,
     updatePost
   )
