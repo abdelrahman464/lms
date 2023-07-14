@@ -49,11 +49,7 @@ app.post(
 
 //middlewares
 //pasring the comming data to json
-app.use(
-  express.json({
-    limit: "250kp",
-  })
-);
+app.use(express.json());
 //serve static files inside 'uploads'
 app.use(express.static(path.join(__dirname, "uploads")));
 

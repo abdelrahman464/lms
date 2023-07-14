@@ -27,7 +27,12 @@ exports.processPostValidator = [
 ];
 
 exports.createPostValidator = [
+  check("images")
+    .optional()
+    .isArray()
+    .withMessage("images should be array of string"),
   check("course")
+    .optional()
     .isMongoId()
     .withMessage("Invalid Requst id format")
     .custom((val, { req }) =>

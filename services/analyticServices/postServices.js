@@ -29,8 +29,8 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 
   next();
 });
-
-exports.createFilterObj = async (req, res, next) => {
+//filter to get allowed posts for each user
+exports.createFilterObjAllowedPosts = async (req, res, next) => {
   let filterObject = {};
 
   if (req.user.role === "user") {
@@ -90,6 +90,12 @@ exports.createFilterObj = async (req, res, next) => {
   req.filterObj = filterObject;
   next();
 };
+//filter to get public posts only
+exports.createFilterObjPublicPosts = async (req, res, next) => {
+  const filterObject = { sharedTo: "public" };
+  req.filterObj = filterObject;
+  next();
+};
 //@desc create post
 //@route POST api/v1/posts
 //@access protected user
@@ -125,6 +131,10 @@ exports.updatePost = factory.updateOne(Post);
 //@route GET api/v1/posts
 //@access protected user,admin
 exports.getLoggedUserAllowedPosts = factory.getALl(Post);
+//@desc get all posts post
+//@route GET api/v1/posts
+//@access protected user,admin
+exports.getPublicPosts = factory.getALl(Post);
 //@desc get post
 //@route GET api/v1/posts/:id
 //@access protected user
