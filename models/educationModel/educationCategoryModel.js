@@ -1,7 +1,6 @@
 // database
 const mongoose = require("mongoose");
 const Course = require("./educationCourseModel");
-const Section = require("./educationSectionModel");
 const Lesson = require("./educationLessonModel");
 //1- create schema
 const educationCategorySchema = mongoose.Schema(
@@ -44,14 +43,8 @@ educationCategorySchema.pre("remove", async function (next) {
   // Remove sections of courses relted to category
   const courses = await Course.find({ category: this._id });
   const courseIds = courses.map((course) => course._id); //[1.2.3]
+  await Lesson.deleteMany({ course: { $in: courseIds } });
 
-  const sections = await Section.find({ course: { $in: courseIds } });
-  const sectionIds = sections.map((section) => section._id); //[1.2.3]
-  //delete sections related to courses related to category
-  await Section.deleteMany({ course: { $in: courseIds } });
-  //delete sections related to lessons related to category
-  await Lesson.deleteMany({ section: { $in: sectionIds } });
-  // Delte the course
   await Course.deleteMany({ category: this._id });
 
   next();

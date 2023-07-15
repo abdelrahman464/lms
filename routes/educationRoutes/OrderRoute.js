@@ -12,15 +12,15 @@ const router = express.Router();
 router.use(authServices.protect);
 
 router.get(
-  "/checkout-session/:cartId",
-  authServices.allowedTo("user"),
+  "/checkout-session/:packageId",
+  authServices.allowedTo("user","instructor"),
   checkoutSession
 );
 
 router
   .route("/")
   .get(
-    authServices.allowedTo("user", "admin"),
+    authServices.allowedTo("user", "admin","instructor"),
     filterOrderForLoggedUser,
     findAllOrders
   );

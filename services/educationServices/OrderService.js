@@ -4,8 +4,7 @@ const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
 const Order = require("../../models/educationModel/educationOrderModel");
-const Cart = require("../../models/educationModel/educationCartModel");
-const Course = require("../../models/educationModel/educationCourseModel");
+const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
@@ -25,19 +24,21 @@ exports.findSpecificOrder = factory.getOne(Order);
 //@route GET /api/v1/orders/checkout-session/cartId
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
-  const { cartId } = req.params;
+  const { packageId } = req.params;
   //app settings
   const taxPrice = 0;
+
   //1) get cart depend on catrId
-  const cart = await Cart.findById(cartId);
-  if (!cart) {
-    return next(new ApiError("There's Not Courses In you Cart", 404));
+  const package = await Package.findById(packageId);
+  if (!package) {
+    return next(new ApiError("There's no package", 404));
   }
   //2) get order price cart price  "check if copoun applied"
-  const cartPrice = cart.totalCartpriceAfterDiscount
-    ? cart.totalCartpriceAfterDiscount
-    : cart.totalCartprice;
-  const totalOrderPrice = Math.ceil(cartPrice + taxPrice);
+  const packagePrice = package.priceAfterDiscount
+    ? package.priceAfterDiscount
+    : package.price;
+
+  const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
   //3)create stripe checkout session
   const session = await stripe.checkout.sessions.create({
@@ -45,7 +46,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       {
         price_data: {
           unit_amount: totalOrderPrice * 100,
-          currency: "egp",
+          currency: "usd",
           product_data: {
             name: req.user.name,
           },
@@ -54,48 +55,45 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       },
     ],
     mode: "payment",
-    success_url: `${req.protocol}://${req.get("host")}/api/v1/education`,
-    cancel_url: `${req.protocol}://${req.get("host")}/api/v1/education/cart`,
+    success_url: `https://www.wealthmakers-fx.com`,
+    cancel_url: `https://sdcbm.com`,
     customer_email: req.user.email,
 
-    client_reference_id: req.params.cartId, // i will use to create order
+    client_reference_id: req.params.packageId, // i will use to create order
   });
 
   //4) send session to response
   res.status(200).json({ status: "success", session });
 });
-
+//*-------------------------------------------------------------------------------------- */
 const createCardOrder = async (session) => {
-  const cartId = session.client_reference_id;
+  const packageId = session.client_reference_id;
   const orderPrice = session.amount_total / 100;
-
-  const cart = await Cart.findById(cartId);
+  //1)retrieve importsant objects
+  const package = await Package.findById(packageId);
   const user = await User.findOne({ email: session.customer_email });
 
-  //3)create order with default payment method cash
+  //2)create order with default payment method cash
   const order = await Order.create({
     user: user._id,
-    cartItems: cart.cartItems,
     totalOrderPrice: orderPrice,
     isPaid: true,
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-  //4) after creating order increment course sold
+  //3) after creating order assign user to plan & related info
   if (order) {
-    const bulkOptions = cart.cartItems.map((item) => ({
-      updateOne: {
-        filter: { _id: item.course },
-        update: { $inc: { sold: +1 } },
-      },
-    }));
-    await Course.bulkWrite(bulkOptions, {});
-
-    //5) adding the course to user
-    user.courses.push(cart.cartItems.course._id);
-    await user.save();
-    //6)clear cart depend on cartId
-    await Cart.findByIdAndDelete(cartId);
+    //4) assign the user to plan 
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + package.expirationTime);
+    // 2)Add the user object to the users array
+    const newUser = ;
+  
+    package.users.push(newUser);
+    
+    
+    await package.save();
   }
 };
 
@@ -122,3 +120,22 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ received: true });
 });
+/*-----------------------------------------------------------------------------*/
+// const addUserToPlan = async (package,userId) => {
+//   //1)set time boundries
+//   const startDate = new Date();
+//   const endDate = new Date(startDate);
+//   endDate.setDate(endDate.getDate() + package.expirationTime);
+//   // 2)Add the user object to the users array
+//   const newUser = {
+//     user: userId ,
+//     start_date: startDate,
+//     end_date: endDate,
+//   };
+
+//   package.users.push(newUser);
+//   package.sold += 1;
+  
+//   await package.save();
+//   // return package ? true : false;
+// };

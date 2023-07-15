@@ -41,6 +41,7 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 });
 
 // to be done when user purchase a package
+//old version 
 exports.addUserToPlan = asyncHandler(async (req, res) => {
   const { planId } = req.body; //params
   const userId = req.user._id;

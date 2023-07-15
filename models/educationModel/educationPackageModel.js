@@ -19,6 +19,12 @@ const educationPackageSchema = new mongoose.Schema({
     trim: true,
     max: [200000, "Too long Package price"],
   },
+  priceAfterDiscount: {
+    type: Number,
+    required: [true, "Package priceAfterDiscount is required"],
+    trim: true,
+    max: [200000, "Too long Package priceAfterDiscount"],
+  },
   expirationTime: { //0  //30   //  //expirtaioInDays
     type: Number,
     required: [true, "expirationTime required"],
