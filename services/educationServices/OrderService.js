@@ -1,6 +1,4 @@
-const stripe = require("stripe")(
-  ""
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
@@ -9,19 +7,19 @@ const Order = require("../../models/educationModel/educationOrderModel");
 const Cart = require("../../models/educationModel/educationCartModel");
 const Course = require("../../models/educationModel/educationCourseModel");
 const User = require("../../models/userModel");
-const sendEmail = require("../../utils/sendEmail");
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
+  if (req.user.role === "instructor") req.filterObj = { user: req.user._id };
   next();
 });
 //@desc get all orders
 //@route GET /api/v1/orders
-//@access protected/user-admin-manager
+//@access protected
 exports.findAllOrders = factory.getALl(Order);
 //@desc get specifi orders
 //@route GET /api/v1/orders/:orderId
-//@access protected/user-admin-manager
+//@access protected/
 exports.findSpecificOrder = factory.getOne(Order);
 //@desc Get checkout session from stripe and send it as response
 //@route GET /api/v1/orders/checkout-session/cartId
@@ -59,7 +57,6 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     success_url: `${req.protocol}://${req.get("host")}/api/v1/education`,
     cancel_url: `${req.protocol}://${req.get("host")}/api/v1/education/cart`,
     customer_email: req.user.email,
-
 
     client_reference_id: req.params.cartId, // i will use to create order
   });
@@ -99,16 +96,6 @@ const createCardOrder = async (session) => {
     await user.save();
     //6)clear cart depend on cartId
     await Cart.findByIdAndDelete(cartId);
-
-    const emailMessage = `Hi ${user.name},\n Your order has been created successfully \n 
-                          the course added to your account successfully\n
-                          the order Price is : { ${orderPrice} } `;
-    //7-send the reset code via email
-    await sendEmail({
-      to: session.customer_email,
-      subject: "Your Order has been created successfully",
-      text: emailMessage,
-    });
   }
 };
 
@@ -124,7 +111,7 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET_EDUCATION
     );
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);

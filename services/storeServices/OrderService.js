@@ -10,20 +10,21 @@ const Product = require("../../models/storeModels/storeProductModel");
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
+  if (req.user.role === "instructor") req.filterObj = { user: req.user._id };
   next();
 });
 //@desc get all orders
 //@route GET /api/v1/orders
-//@access protected/user-admin-manager
+//@access protected/
 exports.findAllOrders = factory.getALl(OrderStore);
 //@desc get specifi orders
 //@route GET /api/v1/orders/:orderId
-//@access protected/user-admin-manager
+//@access protected/
 exports.findSpecificOrder = factory.getOne(OrderStore);
 
 //@desc Get checkout session from stripe and send it as response
 //@route GET /api/v1/orders/checkout-session/cartId
-//@access protected/user
+//@access protected/
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
   const { cartId } = req.params;
   //app settings
@@ -45,7 +46,6 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     line_items: [
       {
         price_data: {
-          name: req.user.name,
           unit_amount: totalOrderPrice * 100,
           currency: "usd",
           product_data: {
@@ -101,22 +101,50 @@ const createCardOrder = async (session) => {
 
 //@desc this webhook will run when the stripe payment success paied
 //@route POST /webhook-checkout
-//@access protected/user
+//@access protected/
 exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
+
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET_STORE
     );
   } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
-  if (event.type === "checkout.session.completed") {
-    createCardOrder(event.data.object);
+
+  switch (event.type) {
+    case "checkout.session.completed":
+      createCardOrder(event.data.object);
+
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
   }
 
   res.status(200).json({ received: true });
+
+  // const sig = req.headers['stripe-signature'];
+
+  // let event;
+  // try {
+  //   event = stripe.webhooks.constructEvent(
+  //     req.body,
+  //     sig,
+  //     process.env.STRIPE_WEBHOOK_SECRET
+  //   );
+  // } catch (err) {
+  //   return res.status(400).send(`Webhook Error: ${err.message}`);
+  // }
+  // if (event.type === "checkout.session.completed") {
+  //   createCardOrder(event.data.object);
+  // }
+
+  // res.status(200).json({ received: true });
 });

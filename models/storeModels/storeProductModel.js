@@ -9,11 +9,13 @@ const storeProductSchema = new mongoose.Schema(
       minlength: [3, "Too short product title"],
       maxlength: [100, "too Shot product title"],
     },
+    auther: String,
     slug: {
       type: String,
       required: true,
       lowercase: true,
     },
+    pdf: [String],
     description: {
       type: String,
       required: [true, "Product description is required"],
@@ -114,6 +116,14 @@ const setImageURL = (doc) => {
       imageListWithUrl.push(imageUrl);
     });
     doc.images = imageListWithUrl;
+  }
+  if (doc.pdf) {
+    const pdfListWithUrl = [];
+    doc.pdf.forEach((pdf) => {
+      const pdfUrl = `${process.env.BASE_URL}/store/products/pdf/${pdf}`;
+      pdfListWithUrl.push(pdfUrl);
+    });
+    doc.pdf = pdfListWithUrl;
   }
 };
 //after initializ the doc in db

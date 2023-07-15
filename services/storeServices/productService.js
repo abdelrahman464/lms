@@ -1,5 +1,6 @@
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
 const asyncHandler = require("express-async-handler");
 const {
   uploadMixOfImages,
@@ -15,6 +16,10 @@ exports.uploadProductImages = uploadMixOfImages([
   {
     name: "images",
     maxCount: 5,
+  },
+  {
+    name: "pdf",
+    maxCount: 1,
   },
 ]);
 
@@ -51,7 +56,21 @@ exports.resizeProductImages = asyncHandler(async (req, res, next) => {
       })
     );
   }
+  // 3. PDF processing
+  if (req.files.pdf) {
+    const pdfFile = req.files.pdf[0];
+    const pdfFileName = `product-pdf-${uuidv4()}-${Date.now()}.pdf`;
 
+    // Save the PDF file
+    // await req.files.pdf[0].mv(`uploads/store/products/pdf/${pdfFileName}`);
+
+    const pdfPath = `uploads/store/products/pdf/${pdfFileName}`;
+
+    // Save the PDF file using fs
+    fs.writeFileSync(pdfPath, pdfFile.buffer);
+    // Save PDF into our db
+    req.body.pdf = pdfFileName;
+  }
   next();
 });
 exports.convertToArray = (req, res, next) => {
@@ -59,12 +78,6 @@ exports.convertToArray = (req, res, next) => {
     // If it's not an array, convert it to an array
     if (!Array.isArray(req.body.subCategories)) {
       req.body.subCategories = [req.body.subCategories];
-    }
-  }
-  if (req.body.colors) {
-    // If it's not an array, convert it to an array
-    if (!Array.isArray(req.body.colors)) {
-      req.body.colors = [req.body.colors];
     }
   }
   next();
