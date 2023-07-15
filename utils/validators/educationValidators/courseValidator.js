@@ -43,6 +43,7 @@ exports.createCourseValidator = [
       }
       return true;
     }),
+  check("image").notEmpty().withMessage("Course Image Required"),
 
   check("category")
     .notEmpty()

@@ -24,7 +24,12 @@ const ApiError = require("./utils/apiError");
 //GLobal error handling middleware for express
 const globalError = require("./middlewares/errorMiddleware");
 
-const { webhookCheckout } = require("./services/storeServices/OrderService");
+const {
+  webhookCheckoutStore,
+} = require("./services/storeServices/OrderService");
+const {
+  webhookCheckoutEducation,
+} = require("./services/educationServices/OrderService");
 
 //connect with database
 dbConnection();
@@ -42,9 +47,14 @@ app.use(compression());
 
 //checkout webhook
 app.post(
-  "/webhook-checkout",
+  "/store/webhook-checkout",
   express.raw({ type: "application/json" }),
-  webhookCheckout
+  webhookCheckoutStore
+);
+app.post(
+  "/education/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckoutEducation
 );
 
 //middlewares

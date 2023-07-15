@@ -1,7 +1,35 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
+const ApiError = require("../../apiError");
 const Course = require("../../../models/educationModel/educationCourseModel");
 const Package = require("../../../models/educationModel/educationPackageModel");
+
+exports.createLessonValidator = [
+  check("title")
+    .isLength({ min: 2 })
+    .withMessage("must be at least 2 chars")
+    .notEmpty()
+    .withMessage("Course required"),
+
+  check("image").notEmpty().withMessage("Course Image Required"),
+
+  check("course")
+    .notEmpty()
+    .withMessage("Lesson must be belong to a Course")
+    .isMongoId()
+    .withMessage("Invalid ID format")
+    // before i add product to category i must check if category is in database
+    .custom((courseId) =>
+      Course.findById(courseId).then((course) => {
+        if (!course) {
+          return Promise.reject(new ApiError(`Course Not Found`, 404));
+        }
+      })
+    ),
+
+  //catch error and return it as a response
+  validatorMiddleware,
+];
 
 exports.checkAuthority2 = [
   check("courseId")

@@ -1,24 +1,37 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
-const {checkAuthority2}=require("../../utils/validators/educationValidators/lessonsValidator")
 const {
+  checkAuthority2,
+  createLessonValidator,
+} = require("../../utils/validators/educationValidators/lessonsValidator");
+const {
+  uploadlessonImage,
+  resizeImage,
   createLesson,
   updateLesson,
   deleteLesson,
   getLessonById,
   getLessonsBySectionId,
-  relatedLessons
+  relatedLessons,
 } = require("../../services/educationServices/lessonServices");
 
 const router = express.Router();
+
 // Create a new lesson
-router.post("/", createLesson);
+router.post(
+  "/",
+  authServices.protect,
+  uploadlessonImage,
+  resizeImage,
+  createLessonValidator,
+  createLesson
+);
 // Get all lessons of a section
-router.get("/", getLessonsBySectionId);
+router.get("/", authServices.protect, getLessonsBySectionId);
 
 // Get a specific lesson by ID
-router.get("/:id", getLessonById);
-//Get course with CategoryId 
+router.get("/:id", authServices.protect, getLessonById);
+//Get course with CategoryId
 router.get(
   "/relatedLessons/:courseId",
   authServices.protect,
@@ -27,9 +40,15 @@ router.get(
 );
 
 // Update a lesson by ID
-router.put("/:id", updateLesson);
+router.put(
+  "/:id",
+  authServices.protect,
+  uploadlessonImage,
+  resizeImage,
+  updateLesson
+);
 
 // Delete a lesson by ID
-router.delete("/:id", deleteLesson);
+router.delete("/:id", authServices.protect, deleteLesson);
 
 module.exports = router;

@@ -6,6 +6,8 @@ const {
   updateCourseValidator,
 } = require("../../utils/validators/educationValidators/courseValidator");
 const {
+  uploadCourseImage,
+  resizeImage,
   createCourse,
   setinstructorIdToBody,
   getAllCourses,
@@ -14,7 +16,7 @@ const {
   deleteCourse,
   updateCourse,
   relatedCourses,
-  addUserToCourse
+  addUserToCourse,
 } = require("../../services/educationServices/courseService");
 const authServices = require("../../services/authServices");
 // nested routes
@@ -29,6 +31,8 @@ router.post(
   "/",
   authServices.protect,
   authServices.allowedTo("instructor", "admin"),
+  uploadCourseImage,
+  resizeImage,
   setinstructorIdToBody,
   createCourseValidator,
   createCourse
@@ -52,24 +56,17 @@ router.get(
   getCourseById
 );
 //Get course with CategoryId  gomaa
-router.get(
-  "/relatedCourses/:catId",
-  authServices.protect,
-  relatedCourses
-);
+router.get("/relatedCourses/:catId", authServices.protect, relatedCourses);
 // add user to course list   gomaa
-router.post(
-  "/addUserToCourse",
-  authServices.protect,
-  addUserToCourse
-  );
-
+router.post("/addUserToCourse", authServices.protect, addUserToCourse);
 
 // Update a course by ID
 router.put(
   "/:id",
   authServices.protect,
   authServices.allowedTo("instructor", "admin"),
+  uploadCourseImage,
+  resizeImage,
   updateCourseValidator,
   updateCourse
 );

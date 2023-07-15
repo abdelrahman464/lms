@@ -38,7 +38,7 @@ const educationCourseSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      // required: [true, "Course image is required"],
+      required: [true, "Course image is required"],
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,7 +54,6 @@ const educationCourseSchema = new mongoose.Schema(
           type: Date,
           required: true,
         },
-       
       },
     ],
 
@@ -82,15 +81,35 @@ educationCourseSchema.virtual("reviews", {
   localField: "_id",
 });
 
+
+
 educationCourseSchema.pre(/^find/, function (next) {
   this.populate({ path: "instructor", select: "name" });
   this.populate({ path: "category", select: "title" });
   next();
 });
 
+const setImageURL = (doc) => {
+  //return image base url + iamge name
+  if (doc.image) {
+    const imageUrl = `${process.env.BASE_URL}/education/courses/${doc.image}`;
+    doc.image = imageUrl;
+  }
+};
+//after initializ the doc in db
+// check if the document contains image
+// it work with findOne,findAll,update
+educationCourseSchema.post("init", (doc) => {
+  setImageURL(doc);
+});
+// it work with create
+educationCourseSchema.post("save", (doc) => {
+  setImageURL(doc);
+});
+
 educationCourseSchema.pre("remove", async function (next) {
   //delete lessons related to sections related to course
- 
+
   await Lesson.deleteMany({ course: this._id });
 
   //delete current course's posts

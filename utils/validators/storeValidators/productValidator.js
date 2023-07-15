@@ -50,10 +50,6 @@ exports.createProductValidator = [
       }
       return true;
     }),
-  check("colors")
-    .optional()
-    .isArray()
-    .withMessage("availableColors should be array of string"),
   check("imageCover").notEmpty().withMessage("Product imageCover is required"),
   check("images")
     .optional()
@@ -188,10 +184,7 @@ exports.updateProductValidator = [
       }
       return true;
     }),
-  check("colors")
-    .optional()
-    .isArray()
-    .withMessage("availableColors should be array of string"),
+
   check("imageCover").optional(),
   check("images")
     .optional()

@@ -77,7 +77,7 @@ exports.getProducts = factory.getALl(Product);
 //@desc get specific product by id
 //@route GET /api/v1/products/:id
 //@access public
-exports.getProduct = factory.getOne(Product, "StoreReview");
+exports.getProduct = factory.getOne(Product, "reviews");
 //@desc create product
 //@route POST /api/v1/products
 //@access private
@@ -86,7 +86,6 @@ exports.createProduct = factory.createOne(Product);
 //@route PUT /api/v1/products/:id
 //@access private
 exports.updateProduct = factory.updateOne(Product);
-
 //@desc delete product
 //@route DELETE /api/v1/products/:id
 //@access private

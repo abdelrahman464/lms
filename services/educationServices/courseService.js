@@ -1,6 +1,31 @@
 const asyncHandler = require("express-async-handler");
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const Course = require("../../models/educationModel/educationCourseModel");
 const factory = require("../handllerFactory");
+const {
+  uploadSingleImage,
+} = require("../../middlewares/uploadImageMiddleware");
+
+//upload Singel image
+exports.uploadCourseImage = uploadSingleImage("image");
+//image processing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `course-${uuidv4()}-${Date.now()}.jpeg`;
+
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/education/courses/${filename}`);
+
+    //save image into our db
+    req.body.image = filename;
+  }
+
+  next();
+});
 // middleware to add instructorId to body
 exports.setinstructorIdToBody = (req, res, next) => {
   req.body.instructor = req.user._id;

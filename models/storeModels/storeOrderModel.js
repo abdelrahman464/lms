@@ -14,7 +14,6 @@ const storeOrderStoreSchema = new mongoose.Schema(
           ref: "StoreProduct",
         },
         quantity: Number,
-        color: String,
         price: Number,
       },
     ],
@@ -22,34 +21,19 @@ const storeOrderStoreSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    shippingPrice: {
-      type: Number,
-      default: 0,
-    },
-    shippingAddress: {
-      details: String,
-      phone: String,
-      city: String,
-      postalCode: String,
-    },
     totalOrderPrice: {
       type: Number,
     },
     paymentMethodType: {
       type: String,
-      enum: ["card", "cash"],
-      default: "cash",
+      enum: ["card"],
+      default: "card",
     },
     isPaid: {
       type: Boolean,
       default: false,
     },
     paidAt: Date,
-    isDelivered: {
-      type: Boolean,
-      default: false,
-    },
-    deliveredAt: Date,
   },
   { timestamp: true }
 );

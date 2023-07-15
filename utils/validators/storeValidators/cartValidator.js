@@ -12,21 +12,10 @@ exports.addProductToCartValidator = [
     .custom((productId) =>
       Product.findById(productId).then((product) => {
         if (!product) {
-          return Promise.reject(
-            new Error(`No product for this id : ${productId}`)
-          );
+          return Promise.reject(new Error("Product Not Found"));
         }
       })
     ),
-  check("color")
-    .optional()
-    .custom(async (val, { req }) => {
-      const product = await Product.findById(req.body.productId);
-      if (!product.colors.includes(val)) {
-        throw new Error("Invalid color selected for this item");
-      }
-      return true;
-    }),
 
   validatorMiddleware,
 ];
@@ -49,7 +38,7 @@ exports.updateCartItemQuantityValidator = [
         throw new Error("Invalid quantity selected for this item");
       }
     } else {
-      return new Error(`there is no item for this id `);
+      return new Error(`Item Not Found`);
     }
     return true;
   }),
