@@ -168,3 +168,17 @@ exports.checkCourseIdParamValidator = [
   check("id").isMongoId().withMessage("Invalid ID format"),
   validatorMiddleware,
 ];
+
+exports.getRelatedCoursesValidator=[
+  check("catId")
+  .isMongoId().withMessage("invalid mongo id ")
+  
+  .custom((courseId) =>
+      Category.findById(courseId).then((category) => {
+        if (!category) {
+          return Promise.reject(new ApiError(`category Not Found`, 404));
+        }
+      }))
+  ,
+  validatorMiddleware,
+];

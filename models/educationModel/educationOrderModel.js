@@ -29,4 +29,5 @@ const educationOrderSchema = new mongoose.Schema(
 );
 
 
+
 module.exports = mongoose.model("EducationOrder", educationOrderSchema);

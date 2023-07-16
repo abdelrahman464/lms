@@ -21,7 +21,6 @@ const educationPackageSchema = new mongoose.Schema({
   },
   priceAfterDiscount: {
     type: Number,
-    required: [true, "Package priceAfterDiscount is required"],
     trim: true,
     max: [200000, "Too long Package priceAfterDiscount"],
   },
@@ -37,6 +36,11 @@ const educationPackageSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCourse",
+    },
+  ],
+  telegramChannelNames: [
+    {
+      type: String
     },
   ],
   users: [

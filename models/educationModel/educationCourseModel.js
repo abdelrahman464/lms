@@ -44,19 +44,6 @@ const educationCourseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCategory",
     },
-    users: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        start_date: {
-          type: Date,
-          required: true,
-        },
-      },
-    ],
-
     ratingsAverage: {
       type: Number,
       min: [1, "rating must be between 1.0 and 5.0"],

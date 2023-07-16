@@ -21,7 +21,7 @@ exports.findAllOrders = factory.getALl(Order);
 //@access protected/
 exports.findSpecificOrder = factory.getOne(Order);
 //@desc Get checkout session from stripe and send it as response
-//@route GET /api/v1/orders/checkout-session/cartId
+//@route GET /api/v1/orders/checkout-session/packageId
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
   const { packageId } = req.params;
@@ -82,19 +82,23 @@ const createCardOrder = async (session) => {
     paymentMethodType: "card",
   });
   //3) after creating order assign user to plan & related info
-  if (order) {
+
     //4) assign the user to plan 
     const startDate = new Date();
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + package.expirationTime);
     // 2)Add the user object to the users array
-    const newUser = ;
+    const newUser = {
+      user: user._id ,
+      start_date: startDate,
+      end_date: endDate,
+    };
   
     package.users.push(newUser);
     
     
     await package.save();
-  }
+  
 };
 
 //@desc this webhook will run when the stripe payment success paied

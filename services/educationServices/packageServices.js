@@ -45,12 +45,12 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 exports.addUserToPlan = asyncHandler(async (req, res) => {
   const { planId } = req.body; //params
   const userId = req.user._id;
-
   const plan = await Package.findById(planId);
-
+  
   if (!plan) {
     res.status(400).json({ status: `no package for that id: ${planId}` });
   }
+  
   const startDate = new Date();
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + plan.expirationTime);

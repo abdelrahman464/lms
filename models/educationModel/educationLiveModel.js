@@ -29,6 +29,17 @@ const educationLiveSchema = new mongoose.Schema({
   link: {
     type: String,
   },
+  followers:[
+    {
+      user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+      },
+      email:{
+        type:String,
+      }
+    },
+  ]
 });
 
 const Live = mongoose.model("Educationlive", educationLiveSchema);

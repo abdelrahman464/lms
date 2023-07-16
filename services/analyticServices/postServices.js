@@ -35,13 +35,13 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
 
   if (req.user.role === "user") {
     // all courses that the logged user is subscripe in
-    const courses = await Course.find({ "users.user": req.user._id });
+
     const userPackages = await Package.find({
       "users.user": req.user._id,
       "users.end_date": { $gt: new Date() },
     });
 
-    const courseIds = courses.map((course) => course._id.toString());
+
     const coursePackageIds = userPackages.map((package) => package.courses);
 
     const coursesFromPackages = [];
@@ -54,15 +54,12 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
       );
       coursesFromPackages.push(...uniqueElements);
     }
-    const userCourses = Array.from(
-      new Set([...coursesFromPackages, ...courseIds])
-    );
 
     filterObject = {
       $or: [
         {
           sharedTo: "course",
-          course: { $in: userCourses },
+          course: { $in: coursesFromPackages },
         },
         {
           sharedTo: "public",

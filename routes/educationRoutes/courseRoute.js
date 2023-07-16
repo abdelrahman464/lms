@@ -4,6 +4,7 @@ const {
   checkCourseIdParamValidator,
   createCourseValidator,
   updateCourseValidator,
+  getRelatedCoursesValidator
 } = require("../../utils/validators/educationValidators/courseValidator");
 const {
   uploadCourseImage,
@@ -56,7 +57,7 @@ router.get(
   getCourseById
 );
 //Get course with CategoryId  gomaa
-router.get("/relatedCourses/:catId", authServices.protect, relatedCourses);
+router.get("/relatedCourses/:catId", authServices.protect,getRelatedCoursesValidator,relatedCourses);
 // add user to course list   gomaa
 router.post("/addUserToCourse", authServices.protect, addUserToCourse);
 
