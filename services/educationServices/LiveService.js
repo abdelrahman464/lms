@@ -3,6 +3,14 @@ const ApiError = require("../../utils/apiError");
 const Live = require("../../models/educationModel/educationLiveModel");
 const factory = require("../handllerFactory");
 const sendEmail = require("../../utils/sendEmail");
+
+exports.createFilterObj = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.courseId) filterObject =  {course: req.params.courseId };
+  req.filterObj = filterObject;
+  next();
+};
+
 // Create a new live
 exports.createLive = factory.createOne(Live);
 //---------------------------------------------------------------------------------//
@@ -21,6 +29,7 @@ exports.updateLive = factory.updateOne(Live);
 
 // Delete a live  by ID
 exports.deleteLive = factory.deleteOne(Live);
+
 //---------------------------------------------------------------------------------//
 exports.followLive = asyncHandler(async (req, res, next) => {
   const { liveId } = req.params;
@@ -59,17 +68,18 @@ exports.SendEmailsToLiveFollwers = asyncHandler(async (req, res, next) => {
   live.followers.forEach(async (follower) => {
     try {
       let emailMessage = "";
-      if (req.body.info) {
+      if (!req.body.info) {
         emailMessage = `Hi ${follower.email} 
-                            \n The Life Is About to Start `;
-      }
+                            \n The Life starts soon , be ready `;
+      }else{ 
       emailMessage = `Hi ${follower.email} 
-                            \n The Life Is About to Start 
-                            \n Here Is Some Information you gonna need 
+                            \n The Life starts soon , be ready
+                            \n Here Is Some Information you might need 
                             \n ${req.body.info}`;
+      }
       await sendEmail({
         to: follower.email,
-        subject: "remmeber the live",
+        subject: `remmeber the live ${live.title}`,
         text: emailMessage,
       });
     } catch (err) {

@@ -103,7 +103,7 @@ const createOrder = async (session) => {
     end_date: endDate,
   };
 
-  package.users.push(newUser);
+  package.users.addToSet(newUser);
 
   await package.save();
 };

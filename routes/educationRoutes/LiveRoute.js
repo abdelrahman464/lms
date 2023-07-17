@@ -11,27 +11,31 @@ const {
   deleteLive,
   followLive,
   SendEmailsToLiveFollwers,
+  createFilterObj
 } = require("../../services/educationServices/LiveService");
 
 const router = express.Router();
 
+
+router.get("/:courseId", authServices.protect,createFilterObj, getAllLives)
+
 router
-  .route("/")
-  .post(authServices.protect, authServices.allowedTo("user"), createLive)
-  .get(authServices.protect, authServices.allowedTo("user"), getAllLives);
+  .route("/") //middleware    
+  .post(authServices.protect, authServices.allowedTo("admin","instructor"), createLive)
+
 router
   .route("/sendEmailsToFollowers/:liveId")
   .post(
     authServices.protect,
-    authServices.allowedTo("user"),
+    authServices.allowedTo("instructor","admin"),
     SendEmailsToLiveFollwers
   );
 
 router
   .route("/:id")
-  .get(authServices.protect, authServices.allowedTo("user"), getLivebyId)
-  .put(authServices.protect, authServices.allowedTo("user"), updateLive)
-  .delete(authServices.protect, authServices.allowedTo("user"), deleteLive);
+  .get(authServices.protect,getLivebyId)
+  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), updateLive)
+  .delete(authServices.protect, authServices.allowedTo("instructor","admin"), deleteLive);
 
 //follow a specific live
 router.put(
@@ -41,5 +45,8 @@ router.put(
   checkAuthority2,
   followLive
 );
+//send emails to followes 
+
+//          middleware-> link 
 
 module.exports = router;

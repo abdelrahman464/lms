@@ -12,6 +12,8 @@ const educationLessonSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, "lesson's type is required"],
+    enum:["recorded","live"],
+    default:"recorded"
   },
   image: {
     type: String,
