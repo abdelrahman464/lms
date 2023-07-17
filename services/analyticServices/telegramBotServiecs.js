@@ -1,7 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 const TelegramBotMessage = require("../../models/analyticModels/analyticTelgramBotModel");
 const factory = require("../handllerFactory");
-const Package = require("../../models/educationModel/educationPackageModel");
+
 
 // Add a new message channel 1
 const addMessage = async () => {
@@ -17,7 +17,7 @@ const addMessage = async () => {
     });
   });
 };
-addMessage();
+// addMessage();
 // Add a new message channel 2
 const addMessage2 = async () => {
   const bot = new TelegramBot(process.env.TELEGRAM_TOKEN2, {
@@ -32,7 +32,7 @@ const addMessage2 = async () => {
     });
   });
 };
-addMessage2();
+// addMessage2();
 exports.createFilterObj = async (req, res, next) => {
   const filterObject = {
     channelName: req.params.channelName,
