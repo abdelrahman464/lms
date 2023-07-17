@@ -61,6 +61,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     customer_email: req.user.email,
 
     client_reference_id: req.params.cartId, // i will use to create order
+    metadata: { type: "store" },
   });
 
   //4) send session to response
@@ -100,7 +101,7 @@ const createCardOrder = async (session) => {
 };
 
 //@desc this webhook will run when the stripe payment success paied
-//@route POST /webhook-checkout
+//@route POST store/webhook-checkout
 //@access protected/
 exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
@@ -118,33 +119,16 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
     return;
   }
 
-  switch (event.type) {
-    case "checkout.session.completed":
-      createCardOrder(event.data.object);
+  if (event.data.object.metadata.type === "store") {
+    switch (event.type) {
+      case "checkout.session.completed":
+        createCardOrder(event.data.object);
 
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
   }
-
   res.status(200).json({ received: true });
-
-  // const sig = req.headers['stripe-signature'];
-
-  // let event;
-  // try {
-  //   event = stripe.webhooks.constructEvent(
-  //     req.body,
-  //     sig,
-  //     process.env.STRIPE_WEBHOOK_SECRET
-  //   );
-  // } catch (err) {
-  //   return res.status(400).send(`Webhook Error: ${err.message}`);
-  // }
-  // if (event.type === "checkout.session.completed") {
-  //   createCardOrder(event.data.object);
-  // }
-
-  // res.status(200).json({ received: true });
 });

@@ -16,6 +16,7 @@ const analyticCommentSchema = new mongoose.Schema(
       ref: "AnalyticPost",
       required: true,
     },
+    image: String,
   },
   { timestamps: true }
 );
@@ -25,6 +26,24 @@ analyticCommentSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "user", select: "name " });
   next();
+});
+
+const setImageURL = (doc) => {
+  //return image base url + iamge name
+  if (doc.image) {
+    const imageUrl = `${process.env.BASE_URL}/analytic/commentPost/${doc.image}`;
+    doc.image = imageUrl;
+  }
+};
+//after initializ the doc in db
+// check if the document contains image
+// it work with findOne,findAll,update
+analyticCommentSchema.post("init", (doc) => {
+  setImageURL(doc);
+});
+// it work with create
+analyticCommentSchema.post("save", (doc) => {
+  setImageURL(doc);
 });
 const Comment = mongoose.model("AnalyticComment", analyticCommentSchema);
 module.exports = Comment;

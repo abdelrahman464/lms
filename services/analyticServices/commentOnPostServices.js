@@ -1,6 +1,31 @@
+const asyncHandler = require("express-async-handler");
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const Comment = require("../../models/analyticModels/analyticCommentModel");
 const factory = require("../handllerFactory");
+const {
+  uploadSingleImage,
+} = require("../../middlewares/uploadImageMiddleware");
 
+//upload Single image
+exports.uploadCommentImage = uploadSingleImage("image");
+//image processing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `comment-${uuidv4()}-${Date.now()}.jpeg`;
+
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/analytic/commentPost/${filename}`);
+
+    //save image into our db
+    req.body.image = filename;
+  }
+
+  next();
+});
 //filter comments in specefic post by post id
 exports.createFilterObj = (req, res, next) => {
   let filterObject = {};

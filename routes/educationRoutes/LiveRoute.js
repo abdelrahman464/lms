@@ -1,6 +1,8 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
-const {checkAuthority2}=require("../../utils/validators/educationValidators/lessonsValidator")
+const {
+  checkAuthority2,
+} = require("../../utils/validators/educationValidators/lessonsValidator");
 const {
   createLive,
   getAllLives,
@@ -8,27 +10,36 @@ const {
   updateLive,
   deleteLive,
   followLive,
+  SendEmailsToLiveFollwers,
 } = require("../../services/educationServices/LiveService");
 
 const router = express.Router();
 
-// Create a new video
-router.post("/", createLive);
-// Get all videos
-router.get("/", getAllLives);
+router
+  .route("/")
+  .post(authServices.protect, authServices.allowedTo("user"), createLive)
+  .get(authServices.protect, authServices.allowedTo("user"), getAllLives);
+router
+  .route("/sendEmailsToFollowers/:liveId")
+  .post(
+    authServices.protect,
+    authServices.allowedTo("user"),
+    SendEmailsToLiveFollwers
+  );
 
-// Get a specific lesson by ID
-router.get("/:id", getLivebyId);
+router
+  .route("/:id")
+  .get(authServices.protect, authServices.allowedTo("user"), getLivebyId)
+  .put(authServices.protect, authServices.allowedTo("user"), updateLive)
+  .delete(authServices.protect, authServices.allowedTo("user"), deleteLive);
 
-// Update a lesson by ID
-router.put("/:id", updateLive);
-
-// Delete a lesson by ID
-router.delete("/:id", deleteLive);
 //follow a specific live
-router.put("/followLive/:courseId/:liveId",
- authServices.protect,
- checkAuthority2,
- followLive);
+router.put(
+  "/followLive/:courseId/:liveId",
+  authServices.protect,
+  authServices.allowedTo("user"),
+  checkAuthority2,
+  followLive
+);
 
 module.exports = router;

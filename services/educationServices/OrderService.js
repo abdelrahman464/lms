@@ -60,19 +60,26 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     customer_email: req.user.email,
 
     client_reference_id: req.params.packageId, // i will use to create order
+    metadata: { type: "education" },
   });
 
   //4) send session to response
   res.status(200).json({ status: "success", session });
 });
 //*-------------------------------------------------------------------------------------- */
-const createCardOrder = async (session) => {
+const createOrder = async (session) => {
   const packageId = session.client_reference_id;
   const orderPrice = session.amount_total / 100;
   //1)retrieve importsant objects
   const package = await Package.findById(packageId);
   const user = await User.findOne({ email: session.customer_email });
 
+  if (!package) {
+    return new Error("Package Not Found");
+  }
+  if (!user) {
+    return new Error(" User Not Found");
+  }
   //2)create order with default payment method cash
   const order = await Order.create({
     user: user._id,
@@ -81,28 +88,28 @@ const createCardOrder = async (session) => {
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-  //3) after creating order assign user to plan & related info
 
-    //4) assign the user to plan 
-    const startDate = new Date();
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + package.expirationTime);
-    // 2)Add the user object to the users array
-    const newUser = {
-      user: user._id ,
-      start_date: startDate,
-      end_date: endDate,
-    };
-  
-    package.users.push(newUser);
-    
-    
-    await package.save();
-  
+  if (!order) {
+    return new Error("Couldn't Create Order");
+  }
+
+  const startDate = new Date();
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + package.expirationTime);
+  // 2)Add the user object to the users array
+  const newUser = {
+    user: user._id,
+    start_date: startDate,
+    end_date: endDate,
+  };
+
+  package.users.push(newUser);
+
+  await package.save();
 };
 
 //@desc this webhook will run when the stripe payment success paied
-//@route POST /webhook-checkout
+//@route POST education/webhook-checkout
 //@access protected/user
 exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
@@ -116,10 +123,20 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
       process.env.STRIPE_WEBHOOK_SECRET_EDUCATION
     );
   } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
-  if (event.type === "checkout.session.completed") {
-    createCardOrder(event.data.object);
+
+  if (event.data.object.metadata.type === "education") {
+    switch (event.type) {
+      case "checkout.session.completed":
+        createOrder(event.data.object);
+
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
   }
 
   res.status(200).json({ received: true });
@@ -139,7 +156,7 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
 
 //   package.users.push(newUser);
 //   package.sold += 1;
-  
+
 //   await package.save();
 //   // return package ? true : false;
 // };
