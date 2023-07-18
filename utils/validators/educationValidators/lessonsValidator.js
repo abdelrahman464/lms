@@ -71,7 +71,10 @@ exports.checkAuthority2 = [
           }
           // Check if the user has a subscription for the course
           Package.findOne({
-            courses: {$in : [courseId, "*"]},
+            $or: [
+              { courses: { $in: [courseId] } },
+              { allCourses: true }
+            ],
             // eslint-disable-next-line no-underscore-dangle
             "users.user": req.user._id,
             "users.end_date": { $gt: new Date() }, // renew  delete 

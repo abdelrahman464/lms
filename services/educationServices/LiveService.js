@@ -1,20 +1,51 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../../utils/apiError");
 const Live = require("../../models/educationModel/educationLiveModel");
+const Package=require("../../models/educationModel/educationPackageModel")
 const factory = require("../handllerFactory");
 const sendEmail = require("../../utils/sendEmail");
 
-exports.createFilterObj = (req, res, next) => {
+
+//---------------------------------------------------------------------------------------------------//
+exports.createFilterObj = async(req, res, next) => {
   let filterObject = {};
-  if (req.params.courseId) filterObject =  {course: req.params.courseId };
+  //1)-if user is admin 
+  // eslint-disable-next-line no-empty
+  if(req.user.role==="admin"){ }
+  //2)-if user is the instructor 
+  else if(req.user.role==="instructor"){
+    filterObject={
+      creator:req.user._id
+    }; 
+  }
+  else{ 
+  //3)-get courses they are in and send in filter  3 conditions
+  const package=await Package.findOne({
+    "users.user":req.user._id,
+    "users.end_date": { $gt: new Date() },
+  })
+    if(!package){
+      res.status(400).json({msg:"no lives for you"})
+    }
+
+    // eslint-disable-next-line no-empty
+    else if(package.allCourses === true ){  }
+    else {
+      const coursesArray = package.courses.map(courseId => courseId.toString());
+      filterObject.course = { $in: coursesArray };
+    }
+  }
+
   req.filterObj = filterObject;
+  // req.selectFields = "field1 field2"; // Add the desired fields to select
   next();
 };
+//---------------------------------------------------------------------------------------------------//
 exports.setCreatorIdToBody = (req, res, next) => {
   req.body.creator = req.user._id;
   next();
 };
-
+//---------------------------------------------------------------------------------------------------//
 // Create a new live
 exports.createLive = factory.createOne(Live);
 //---------------------------------------------------------------------------------//

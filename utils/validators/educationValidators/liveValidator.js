@@ -1,6 +1,7 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
 const ApiError = require("../../apiError");
+const Course = require("../../../models/educationModel/educationCourseModel");
 const Live = require("../../../models/educationModel/educationLiveModel");
 //delete | update | follow  
 exports.checkLiveAuthority=[
@@ -37,4 +38,93 @@ exports.checkLiveAuthority=[
 
 ,
 validatorMiddleware
+]
+
+exports.createLiveValidator=[
+  check("title").notEmpty().withMessage("title is required")
+  .isString().withMessage("Strings only allowed")
+  .isLength({min:3}).withMessage("too short title")
+  .isLength({max:40}).withMessage("too long title"),
+
+  check("course").notEmpty().withMessage("course is required")
+  .isMongoId().withMessage("invalid id")
+  .custom((courseId,{req})=>
+       new Promise((resolve,reject) => {
+        if(req.user.role === "admin") 
+        {resolve();}
+        Course.findById(courseId).then((course)=>{
+          if(!course){
+            reject(new Error(`Course Not Found`, 404));
+          }
+          else if(course.instructor !== req.user._id){
+            reject(new Error(`you are Not allowed to create live for this course`, 404));   
+          }
+          else{
+            resolve();
+          }
+
+        }).catch((error)=>{
+          reject(new Error(`error happened ${error}`))
+        })
+       })
+  ),
+  check("day")
+  .notEmpty().withMessage("day is required")
+  .isInt({ min: 1, max: 31 }).withMessage("Enter a day between 1 and 31"),
+  check("month")
+  .notEmpty().withMessage("day is required")
+  .isInt({ min: 1, max: 12 }).withMessage("Enter a day between 1 and 12"),
+
+
+  check("duration")
+  .notEmpty().withMessage("duration is required")
+  .isInt({ min: .5, max: 5 }).withMessage("Enter a duration with hours")
+
+  ,
+
+  validatorMiddleware
+]
+exports.updateLiveValidator=[
+  check("title").optional()
+  .isString().withMessage("Strings only allowed")
+  .isLength({min:3}).withMessage("too short title")
+  .isLength({max:40}).withMessage("too long title"),
+
+  check("course").optional()
+  .isMongoId().withMessage("invalid id")
+  .custom((courseId,{req})=>
+       new Promise((resolve,reject) => {
+        if(req.user.role === "admin") 
+        {resolve();}
+        Course.findById(courseId).then((course)=>{
+          if(!course){
+            reject(new Error(`Course Not Found`, 404));
+          }
+          else if(course.instructor !== req.user._id){
+            reject(new Error(`you are Not allowed to create live for this course`, 404));   
+          }
+          else{
+            resolve();
+          }
+
+        }).catch((error)=>{
+          reject(new Error(`error happened ${error}`))
+        })
+       })
+  ),
+  check("day")
+  .optional()
+  .isInt({ min: 1, max: 31 }).withMessage("Enter a day between 1 and 31"),
+  check("month")
+  .optional()
+  .isInt({ min: 1, max: 12 }).withMessage("Enter a day between 1 and 12"),
+
+
+  check("duration")
+  .optional()
+  .isInt({ min: .5, max: 5 }).withMessage("Enter a duration with hours")
+
+  ,
+
+  validatorMiddleware
 ]

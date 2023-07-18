@@ -2,6 +2,10 @@ const express = require("express");
 const authServices = require("../../services/authServices");
 
 const {
+  updatePackageValidator,
+  createPackageValidator} =require("../../utils/validators/educationValidators/packageValidator")
+
+const {
   createPackage,
   convertToArray,
   getAllPackages,
@@ -14,12 +18,12 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getAllPackages).post(convertToArray, createPackage);
+router.route("/").get(getAllPackages).post(createPackageValidator, createPackage);
 
 router
   .route("/:id")
   .get(getPackageById)
-  .put(updatePackage)
+  .put(updatePackageValidator,updatePackage)
   .delete(deletePackage);
 
 router.route("/addCourseToPlan").post(addCourseToPlan)  

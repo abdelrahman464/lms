@@ -1,9 +1,15 @@
 18/7  july 23 
 
 live validation 
-    -createLive + check if user is the insturtor or admin
-    -updateLive
+    -createLive + check if user is the insturtor or admin  'done'
+    -updateLive  'done' 
 
 live services   
-    -get live without Link 
     -get Live by day month year 
+
+Mostafa edits    
+    populate courses with packages 'done'-> 7mos
+    create filter object on courses  on lives   'done'
+
+
+    

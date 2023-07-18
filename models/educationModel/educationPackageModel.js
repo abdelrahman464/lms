@@ -38,6 +38,10 @@ const educationPackageSchema = new mongoose.Schema({
       ref: "EducationCourse",
     },
   ],
+  allCourses:{
+    type:Boolean,
+    default:false
+  },
   telegramChannelNames: [
     {
       type: String

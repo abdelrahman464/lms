@@ -15,18 +15,25 @@ const {
   setCreatorIdToBody
 } = require("../../services/educationServices/LiveService");
 // Validation 
-const{checkLiveAuthority}=require("../../utils/validators/educationValidators/liveValidator")
+const{checkLiveAuthority,
+  createLiveValidator,
+  updateLiveValidator
+}=require("../../utils/validators/educationValidators/liveValidator")
 
 const router = express.Router();
 
 //create   admin  instructor of course 
 //update delete admin instructorof course 
 //send emails to students 
-router.get("/:courseId", authServices.protect,createFilterObj, getAllLives)
+router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
 
 router
   .route("/") //middleware    
-  .post(authServices.protect, authServices.allowedTo("admin","instructor"),setCreatorIdToBody,createLive)
+  .post(authServices.protect,
+    authServices.allowedTo("admin","instructor"),
+    createLiveValidator,
+    setCreatorIdToBody,
+    createLive)
 
 router
   .route("/sendEmailsToFollowers/:liveId")
@@ -40,7 +47,7 @@ router
 router
   .route("/:liveId")
   .get(authServices.protect,checkLiveAuthority,getLivebyId)
-  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLive)
+  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLiveValidator,updateLive)
   .delete(authServices.protect, authServices.allowedTo("instructor","admin"), checkLiveAuthority ,deleteLive);
 
 //follow a specific live
