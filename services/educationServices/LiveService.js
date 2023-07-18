@@ -10,6 +10,10 @@ exports.createFilterObj = (req, res, next) => {
   req.filterObj = filterObject;
   next();
 };
+exports.setCreatorIdToBody = (req, res, next) => {
+  req.body.creator = req.user._id;
+  next();
+};
 
 // Create a new live
 exports.createLive = factory.createOne(Live);

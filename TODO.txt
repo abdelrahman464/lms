@@ -1,0 +1,9 @@
+18/7  july 23 
+
+live validation 
+    -createLive + check if user is the insturtor or admin
+    -updateLive
+
+live services   
+    -get live without Link 
+    -get Live by day month year 
