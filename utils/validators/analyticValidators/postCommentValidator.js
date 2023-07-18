@@ -1,6 +1,5 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
-const ApiError = require("../../apiError");
 const Comment = require("../../../models/analyticModels/analyticCommentModel");
 const Post = require("../../../models/analyticModels/analyticPostModel");
 
@@ -8,10 +7,10 @@ exports.createCommentValidator = [
   check("post")
     .isMongoId()
     .withMessage("Invalid Requst id format")
-    .custom(async (val, { req, res, next }) => {
+    .custom(async (val, { req }) => {
       const post = await Post.findById(val);
       if (!post) {
-        return next(new ApiError(`Post not found`, 404));
+        return Promise.reject(new Error(`Post not found`));
       }
     }),
 
@@ -38,11 +37,7 @@ exports.updateCommentValidator = [
   validatorMiddleware,
 ];
 exports.getCommentValidator = [
-  check("id")
-    .isMongoId()
-    .withMessage("Invalid Requst id format")
-    ,
-
+  check("id").isMongoId().withMessage("Invalid Requst id format"),
   validatorMiddleware,
 ];
 exports.deleteCommentValidator = [

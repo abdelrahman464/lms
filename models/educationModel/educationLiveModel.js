@@ -28,7 +28,7 @@ const educationLiveSchema = new mongoose.Schema({
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: "User",
   },
   link: {
     type: String,
@@ -47,6 +47,13 @@ const educationLiveSchema = new mongoose.Schema({
   ],
 });
 
+// ^find => it mean if part of of teh word contains find
+educationLiveSchema.pre(/^find/, function (next) {
+  // this => query
+  this.populate({ path: "creator", select: "name" });
+  this.populate({ path: "course", select: "title" });
+  next();
+});
 const Live = mongoose.model("Educationlive", educationLiveSchema);
 
 module.exports = Live;

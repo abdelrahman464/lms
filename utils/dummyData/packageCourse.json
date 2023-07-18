@@ -1,79 +1,82 @@
 [
   {
-    "title": "gold",
+    "title": "GOLD VIP",
     "description": "access to all reasources as you want + 50hr with the specialist",
     "price": 3000,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":2990,
-    "expirationTime":0,
-    "courses":["*"],
-    "telegram":["*"]
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 0,
+    "allCourses": true,
+    "telegram": ["*"]
   },
 
   {
     "title": "package2",
-    "description": "only all courses per year ",
+    "description": "access courses for year ",
     "price": 700,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount": 699,
-    "expirationTime":356,
-    "courses":["*"]
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 356,
+    "allCourses": true
   },
   {
     "title": "package3",
     "description": "only all courses per month ",
     "price": 100,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":99,
-    "expirationTime":30,
-    "courses":["*"]
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 30,
+    "allCourses": true
   },
   {
-    "title": "package4",
-    "description": "only all telegram chanels ",
-    "price": 50,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":49,
-    "expirationTime":30,
-    "telegram":["*"]
-  },
-  {
-    "title": "package4",
-    "description": "only all telegram chanels ",
-    "price": 50,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":49,
-    "expirationTime":30,
-    "telegram":["*"]
-  },
-  {
-    "title": "package5",
-    "description": "specific courses and 2telegram chanels ",
+    "title": "باقة التحليل الفني و ict and smc ",
+    "description": "courses and no lives",
     "price": 300,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":299,
-    "expirationTime":30,
-    "courses":[1,2,3],
-    "telegram":["1","2"] 
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 3000000000,
+    "courses": ["64b6eb249167f9b380b59fc4", "64b6e90d7fa3a5706c686026"],
+    "telegram": ["*"]
   },
   {
-    "title": "package6",
+    "title": "SK",
+    "description": "sk course and no lives",
+    "price": 300,
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 3000000000,
+    "courses": ["64b6ee1a2c7bd7548d4994fb"],
+    "telegram": ["*"]
+  },
+  {
+    "title": "الزمني",
+    "description": "specific courses and 2telegram chanels ",
+    "price": 200,
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 3000000000,
+    "courses": ["64b6f27c3261c6da087f2977"],
+    "telegram": ["*"]
+  },
+  {
+    "title": "ادارة المخاطر",
     "description": "1 courses and 1 telegram chanels ",
     "price": 50,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":49,
-    "expirationTime":30,
-    "courses":["64afde301326a39f783ffeb1"],
-    "telegram":["1"]
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "expirationTime": 3000000000,
+    "courses": ["64b6ede12c7bd7548d4994ef"],
+    "telegram": ["*"]
   },
   {
-    "title": "package7",
+    "title": "التوصيات",
     "description": "1 courses and 1 telegram chanels ",
-    "price": 150,
-    "image" :"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    "priceAfterDiscount":149,
-    "expirationTime":30,
-    "courses":["64afde301326a39f783ffeb1"],
-    "telegram":["1"]
+    "price": 50,
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "priceAfterDiscount": 149,
+    "expirationTime": 30,
+    "telegram": ["*"]
+  },
+  {
+    "title": "telgram",
+    "description": "all telegram channels",
+    "price": 50,
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "priceAfterDiscount": 149,
+    "expirationTime": 30,
+    "telegram": ["*"]
   }
 ]

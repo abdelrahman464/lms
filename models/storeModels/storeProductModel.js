@@ -10,6 +10,7 @@ const storeProductSchema = new mongoose.Schema(
       maxlength: [100, "too Shot product title"],
     },
     auther: String,
+    publisher: String,
     slug: {
       type: String,
       required: true,

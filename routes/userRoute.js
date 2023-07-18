@@ -10,6 +10,8 @@ const {
 } = require("../utils/validators/userValidator");
 const authServices = require("../services/authServices");
 const {
+  createFilterObj,
+  getInstructors,
   getUsers,
   createUser,
   getUser,
@@ -24,7 +26,6 @@ const {
   deleteMyAccount,
   uploadProfileImage,
   resizeImage,
-  createInstructor
 } = require("../services/userService");
 
 const router = express.Router();
@@ -39,6 +40,7 @@ router.put(
   changeLoggedUserPasswordValidator,
   updateLoggedUserPassword
 );
+router.get("/instractors", createFilterObj, getInstructors);
 router.put(
   "/changeMyData",
   authServices.protect,
@@ -57,11 +59,7 @@ router.put(
 
 router
   .route("/")
-  .get(
-    authServices.protect,
-    authServices.allowedTo("admin", "manager"),
-    getUsers
-  )
+  .get(authServices.protect, authServices.allowedTo("admin"), getUsers)
   .post(
     authServices.protect,
     authServices.allowedTo("admin"),
@@ -92,13 +90,5 @@ router
     deleteUserValidator,
     deleteUser
   );
-  //new 
-  router.post("/createInstructor",
-  authServices.protect, //authentication
-  authServices.allowedTo("admin"), //authorization
-  uploadProfileImage,
-  resizeImage,
-  createInstructor
-  )
 
 module.exports = router;

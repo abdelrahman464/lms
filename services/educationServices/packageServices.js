@@ -3,7 +3,6 @@ const Package = require("../../models/educationModel/educationPackageModel");
 const factory = require("../handllerFactory");
 const { checkCourseAuthority } = require("./courseService");
 
-
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
     // If it's not an array, convert it to an array
@@ -18,7 +17,7 @@ exports.createPackage = factory.createOne(Package);
 // Get all packages
 exports.getAllPackages = factory.getALl(Package);
 // Get a specific package by ID
-exports.getPackageById = factory.getOne(Package);
+exports.getPackageById = factory.getOne(Package, "courses");
 // Update a package by ID
 exports.updatePackage = factory.updateOne(Package);
 // Delete a package by ID
@@ -41,16 +40,16 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 });
 
 // to be done when user purchase a package
-//old version 
+//old version
 exports.addUserToPlan = asyncHandler(async (req, res) => {
   const { planId } = req.body; //params
   const userId = req.user._id;
   const plan = await Package.findById(planId);
-  
+
   if (!plan) {
     res.status(400).json({ status: `no package for that id: ${planId}` });
   }
-  
+
   const startDate = new Date();
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + plan.expirationTime);
@@ -74,7 +73,6 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
   const { courseId } = req.params;
 
   const package = await Package.findOne(
-
     {
       courses: { $in: [courseId] },
       "users.user": userId,
@@ -87,7 +85,7 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
   if (!package) {
     //course    user
     //check whether has access on courses
-    checkCourseAuthority(req,res,next);
+    checkCourseAuthority(req, res, next);
 
     return res.status(403).json({ error: "Access denied" }); //Api Error
   }

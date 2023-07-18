@@ -1,0 +1,312 @@
+[
+  {
+    "_id": "64b6e65ba7009ccbcb1141fb",
+    "title": "تعريف التحليل الاساسي ",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-fcc584bc-e831-4e3b-9db6-3a0c591391eb-1689708122680.jpeg",
+    "videoUrl": "link"
+  },
+  {
+    "_id": "64b6e668a7009ccbcb114204",
+    "title": "المحاضرة  التعريفية الثانية ",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-07d7e638-d21d-472c-82d3-5b171334387b-1689708135950.jpeg",
+    "videoUrl": "link"
+  },
+  {
+    "_id": "64b6e673a7009ccbcb11420d",
+    "title": "المحاضرة التعريفية الثالثة",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-1f97c3f5-09c7-4eda-87fa-6c4f14cc34b4-1689708146494.jpeg",
+    "videoUrl": "link"
+  },
+  {
+    "_id": "64b6e67da7009ccbcb114216",
+    "title": "المحاضرة الاولة من دورة التحليل الاساسي",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-324aa385-9702-46b1-a403-331a318491a9-1689708157282.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e689a7009ccbcb11421f",
+    "title": "المحاضرة الثانية من دورة التحليل الاساسي",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-ee993bf9-bf38-4a93-8afd-6f53d30c1e60-1689708169076.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e696a7009ccbcb114228",
+    "title": "المحاضرة الثالثة من دورة التحليل الاساسي",
+    "course": "64b6e58ca7009ccbcb1141dc",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-e81ab4ac-56a4-486c-82cb-fcd73fae8522-1689708182188.jpeg",
+    "videoUrl": "link"
+  },
+  {
+    "_id": "64b6e7d70364326eb86343dd",
+    "title": "المحاضرة الاولة: من تعريف الفوركس ",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-aa93fd71-840a-46b4-b518-4dbb06df2894-1689708502842.jpeg",
+    "videoUrl": "link"
+
+  },
+  {
+    "_id": "64b6e7ee0364326eb86343e6",
+    "title": "المحاضرة الثانية: من الفوركس",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-c9f6ec22-78a1-4545-b4f8-a1cb860dee3a-1689708526036.jpeg",
+    "videoUrl": "link"
+  },
+  {
+    "_id": "64b6e8290364326eb86343ef",
+    "title": "المحاضرة الثالثة: تطبيق و عمل حساب ديمو",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-ea3dede2-8ec2-4e32-9265-03bcd453d508-1689708584584.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e8530364326eb8634401",
+    "title": "pipالمحاضرة الرابعة: تعريف ال",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-c6d60a75-3e6e-4584-89be-4b776e756d61-1689708627350.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e8830364326eb863440d",
+    "title": "المحاضرة الخامسة: الاوامر بكل انواعها",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-bdb59f3b-3dfe-441b-ab45-c0fe190ce6c2-1689708675054.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e8900364326eb8634416",
+    "title": "المحاضرة السادسة: السبريد و حجم العقد",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-17fbf7c5-83ec-49a6-ba85-7095f99c925a-1689708688058.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e8a20364326eb863441f",
+    "title": "المحاضرة السابعة: تطبيق يدوي على كل ما سبق",
+    "course": "64b6e76a0364326eb86343d7",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-7b29286d-f4a1-412d-9f77-9f083eefdb19-1689708705712.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e93e7fa3a5706c68602c",
+    "title": "المحاضرة الاولة: الدعم و المقاومة",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-3c72f829-c93e-4bf4-bc58-0961ef802e47-1689708862050.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e98a7fa3a5706c686041",
+    "title": "المحاضرة الثانية: الدعوم و المقاومات",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-b95673b1-1506-465a-afa6-e43d184b011e-1689708937793.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9927fa3a5706c68604a",
+    "title": "المحاضرة الثالثة:  دعوم، مقاومات و اليات الدخول",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-07f49549-2e5f-47dd-bca8-df3d0e6fa5dd-1689708946493.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e99d7fa3a5706c686053",
+    "title": "المحاضرة الرابعة: الدعوم، المقاومات و ترابط الفريمات عليها",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-3e37510f-d5c5-4466-8108-b7a06cd44fb4-1689708957034.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9a97fa3a5706c68605c",
+    "title": "المحاضرة الخامسة: استراتيجية الانعكاس",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-80b5ff37-6513-4e75-8824-a3d10cce70f6-1689708969522.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9b37fa3a5706c686065",
+    "title": "المحاضرة السادسة: القوة النسبية",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-9bd547ec-3bbf-4f10-8f8e-c437250f7fde-1689708979433.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9bd7fa3a5706c68606e",
+    "title": "المحاضرة السابعة: الفيبوناتشي",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-6f1ac78e-3b76-4a0a-9c0a-e5831ac7e557-1689708988960.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9c87fa3a5706c686077",
+    "title": "المحاضرة الثامنة: الفيبوناتشي",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-84066567-7c61-4de3-a04b-3513f9d7f45a-1689708999675.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9d67fa3a5706c686080",
+    "title": "المحاضرة التاسعة: الفيبوناتشي",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-fe82e25e-efa9-4b47-aab9-60ab8637d345-1689709014379.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6e9e57fa3a5706c686089",
+    "title": "المحاضرة العاشرة: الفيبو الانقلابي",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-128e693e-ef13-4653-9681-802fc1823194-1689709029399.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ea0c7fa3a5706c686092",
+    "title": "المحاضرة الحادي عشر؛ دمج الفيبو",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-b0dbdf29-10c4-4f80-bcbb-05bbb96b3d69-1689709067728.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ea177fa3a5706c68609b",
+    "title": "المحاضرة الثانية عشر: الاشكال الهندسية",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-f927c655-ad39-4864-a1ed-0ae61677b16e-1689709079473.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ea397fa3a5706c6860a4",
+    "title": "المحاضرة الثالثة عشر؛ الاشكال الهندسية 2",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-27f01067-b327-4a02-aae1-ab14fc2a8cbc-1689709113309.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ea747fa3a5706c6860bb",
+    "title": "1 المحاضرة الرابعة عشر: داو",
+    "course": "64b6e90d7fa3a5706c686026",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-4ef0ebbb-bfde-45dc-9487-c86b9dbe8757-1689709172261.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6eb3b9167f9b380b59fca",
+    "title": "المحاضرة الاولة؛ هيكلية السوق",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-3367f24a-9eda-4e73-af6f-5dc3800271de-1689709371089.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6eb499167f9b380b59fd3",
+    "title": "المحاضرة الثانية: الاوردر بلوك ",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-c76835b8-b96c-439e-b9d4-7fcab818b466-1689709385361.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6eb569167f9b380b59fdc",
+    "title": "الاورد بلوك ",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-98a7e5f2-dab1-4691-86bc-82cdba15f87f-1689709398513.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6eb6b9167f9b380b59fe5",
+    "title": "فترة اسيا",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-0cce0ff9-774e-47ee-8eea-ea54b918c09f-1689709418841.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ebca9167f9b380b59ffa",
+    "title": "OB السيولة و",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-b37cbb12-5c2e-4cf9-bbb2-18c700adff3b-1689709514012.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ec029167f9b380b5a003",
+    "title": " ICT 2023  من المسيطر",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-411c6717-8af0-4580-b6e4-34210a267822-1689709570254.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ec109167f9b380b5a00c",
+    "title": "المحاضرة السادسة: ربط الاسواق",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-cb177a88-a67d-4068-a3a4-3a03e3f77fa0-1689709583885.jpeg",
+    "videoUrl": "link"
+ 
+  },
+  {
+    "_id": "64b6ec209167f9b380b5a015",
+    "title": "تطبيق على كل ما سبق",
+    "course": "64b6eb249167f9b380b59fc4",
+    "type": "recorded",
+    "image": "http://localhost:8000/education/lessons/lesson-ca0c74c6-5223-412b-9b17-80bf6d89e8b1-1689709600483.jpeg",
+    "videoUrl": "link"
+ 
+  }
+]
