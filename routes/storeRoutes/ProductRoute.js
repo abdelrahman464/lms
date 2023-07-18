@@ -8,6 +8,8 @@ const {
 const authServices = require("../../services/authServices");
 const {
   getProducts,
+  createFilterObjMyProducts,
+  getMyProducts,
   getProduct,
   createProduct,
   updateProduct,
@@ -24,12 +26,19 @@ const router = express.Router();
 
 router.use("/:productId/reviews", reviewsRoute);
 
+router.get(
+  "/MyProducts",
+  authServices.protect,
+  authServices.allowedTo("user"),
+  createFilterObjMyProducts,
+  getMyProducts
+);
 router
   .route("/")
   .get(getProducts)
   .post(
     authServices.protect,
-    authServices.allowedTo("admin", "manager"),
+    authServices.allowedTo("admin"),
     uploadProductImages,
     resizeProductImages,
     convertToArray,
@@ -38,10 +47,16 @@ router
   );
 router
   .route("/:id")
-  .get(getProductValidator, getProduct)
+  .get(
+    authServices.protect,
+    authServices.allowedTo("user"),
+    getProductValidator,
+    createFilterObjMyProducts,
+    getProduct
+  )
   .put(
     authServices.protect,
-    authServices.allowedTo("admin", "manager"),
+    authServices.allowedTo("admin"),
     uploadProductImages,
     resizeProductImages,
     convertToArray,

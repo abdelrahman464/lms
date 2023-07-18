@@ -209,6 +209,10 @@ exports.protect = asyncHandler(async (req, res, next) => {
       );
     }
   }
+  //check if user email veryified
+  // if (currentUser.emailVerified === false) {
+  //   return next(new ApiError("please active your account", 401));
+  // }
   //add user to request
   //to use this in authorization
   // check if user is already registered

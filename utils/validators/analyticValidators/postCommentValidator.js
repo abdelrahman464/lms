@@ -37,6 +37,14 @@ exports.updateCommentValidator = [
 
   validatorMiddleware,
 ];
+exports.getCommentValidator = [
+  check("id")
+    .isMongoId()
+    .withMessage("Invalid Requst id format")
+    ,
+
+  validatorMiddleware,
+];
 exports.deleteCommentValidator = [
   check("id")
     .isMongoId()

@@ -55,3 +55,12 @@ exports.createPostValidator = [
 
   validatorMiddleware,
 ];
+
+exports.getPostValidator = [
+  check("id")
+    .isMongoId()
+    .withMessage("Invalid Requst id format")
+    ,
+
+  validatorMiddleware,
+];

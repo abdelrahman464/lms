@@ -7,6 +7,9 @@ const {
 } = require("../../middlewares/uploadImageMiddleware");
 const Product = require("../../models/storeModels/storeProductModel");
 const factory = require("../handllerFactory");
+const ApiFeatures = require("../../utils/apiFeatures");
+const ApiError = require("../../utils/apiError");
+const Order = require("../../models/storeModels/storeOrderModel");
 
 exports.uploadProductImages = uploadMixOfImages([
   {
@@ -82,15 +85,69 @@ exports.convertToArray = (req, res, next) => {
   }
   next();
 };
+//filter pruducts to each user
+exports.createFilterObjMyProducts = asyncHandler(async (req, res, next) => {
+  let filterObject = {};
+  const order = await Order.find({ user: req.user._id, isPaid: true });
+  const userProducts = [];
 
+  order.forEach((item) => {
+    item.cartItems.forEach((cartItem) => {
+      userProducts.push(cartItem.product._id.toString());
+    });
+  });
+
+  filterObject = {
+    _id: { $in: userProducts },
+  };
+  req.filterObj = filterObject;
+  next();
+});
 //@desc get list of products
 //@route GET /api/v1/products
 //@access public
-exports.getProducts = factory.getALl(Product);
+exports.getMyProducts = factory.getALl(Product);
+exports.getProducts = asyncHandler(async (req, res) => {
+  let filter = {};
+  if (req.filterObj) {
+    filter = req.filterObj;
+  }
+  const documentsCounts = await Product.countDocuments();
+  const apiFeatures = new ApiFeatures(Product.find(filter, "-pdf"), req.query)
+    .paginate(documentsCounts)
+    .filter()
+    .search(Product)
+    .limitFields()
+    .sort();
+
+  const { mongooseeQuery, paginationResult } = apiFeatures;
+  const documents = await mongooseeQuery;
+
+  res
+    .status(200)
+    .json({ results: documents.length, paginationResult, data: documents });
+});
 //@desc get specific product by id
 //@route GET /api/v1/products/:id
 //@access public
-exports.getProduct = factory.getOne(Product, "reviews");
+exports.getProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const filter = req.filterObj;
+  const userProducts = filter._id.$in;
+
+  let product = {};
+
+  if (userProducts.includes(id.toString())) {
+    product = await Product.findById(id).populate("reviews");
+  } else {
+    product = await Product.findById(id, "-pdf").populate("reviews");
+  }
+
+  if (!product) {
+    return next(new ApiError(`Product Not Found`, 404));
+  }
+  res.status(200).json({ data: product });
+});
 //@desc create product
 //@route POST /api/v1/products
 //@access private
