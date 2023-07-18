@@ -2,6 +2,7 @@ const express = require("express");
 const {
   deleteCommentValidator,
   updateCommentValidator,
+  getCommentValidator,
   createCommentValidator,
 } = require("../../utils/validators/analyticValidators/postCommentValidator");
 const authServices = require("../../services/authServices");
@@ -24,7 +25,7 @@ router
   .route("/")
   .post(
     authServices.protect,
-    authServices.allowedTo("user"),
+    authServices.allowedTo("user", "instructor", "admin"),
     uploadCommentImage,
     resizeImage,
     setUserIdToBody,
@@ -33,7 +34,7 @@ router
   )
   .get(
     authServices.protect,
-    authServices.allowedTo("user", "admin"),
+    authServices.allowedTo("user", "admin", "instructor"),
     createFilterObj,
     getAllComment
   );
@@ -41,12 +42,13 @@ router
   .route("/:id")
   .get(
     authServices.protect,
-    authServices.allowedTo("user", "admin"),
+    authServices.allowedTo("user", "admin", "instructor"),
+    getCommentValidator,
     getComment
   )
   .put(
     authServices.protect,
-    authServices.allowedTo("user"),
+    authServices.allowedTo("user", "instructor", "admin"),
     uploadCommentImage,
     resizeImage,
     updateCommentValidator,
@@ -54,7 +56,7 @@ router
   )
   .delete(
     authServices.protect,
-    authServices.allowedTo("user", "admin"),
+    authServices.allowedTo("user", "admin", "instructor"),
     deleteCommentValidator,
     deleteComment
   );

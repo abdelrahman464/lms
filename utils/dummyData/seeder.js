@@ -8,7 +8,7 @@ dotenv.config({ path: "../../config.env" });
 
 dbconnection();
 
-const products = JSON.parse(fs.readFileSync("./products.json"));
+const products = JSON.parse(fs.readFileSync("./packageCourse.json"));
 
 //insert data into db
 const insertData = async () => {

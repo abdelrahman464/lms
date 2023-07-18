@@ -5,6 +5,7 @@ const postReactRoute = require("./postReactRoute");
 const {
   processPostValidator,
   createPostValidator,
+  getPostValidator,
 } = require("../../utils/validators/analyticValidators/postValidator");
 const authServices = require("../../services/authServices");
 const {
@@ -53,6 +54,7 @@ router
   .get(
     authServices.protect,
     authServices.allowedTo("user", "instructor", "admin"),
+    getPostValidator,
     getPost
   )
   .put(
