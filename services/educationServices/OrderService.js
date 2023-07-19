@@ -40,7 +40,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     : package.price;
 
    //gomaa edit ' discount value' ----------------------------------------
-   if(req.body.copun){
+   if(req.body.coupon){
     const coupon = await Coupon.findOne({
       title: req.body.coupon,
       expire: { $gt: Date.now() },
@@ -48,8 +48,8 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       if(!coupon){
         return next(new ApiError("Coupon is Invalid or Expired "));
       }
-      
-      packagePrice -= ( (coupon.discount / 100) * packagePrice );
+
+      packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
    }
   //----------------------------------------------------------------------
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);

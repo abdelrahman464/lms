@@ -11,5 +11,8 @@ Mostafa edits
     populate courses with packages 'done'-> 7mos
     create filter object on courses  on lives   'done'
 
+19/7 july 23
+-package image 
 
+-validation and rules on all routes
     

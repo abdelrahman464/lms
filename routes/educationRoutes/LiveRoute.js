@@ -45,7 +45,7 @@ router
   );
 
 router
-  .route("/:liveId")
+  .route("/:id")
   .get(authServices.protect,checkLiveAuthority,getLivebyId)
   .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLiveValidator,updateLive)
   .delete(authServices.protect, authServices.allowedTo("instructor","admin"), checkLiveAuthority ,deleteLive);
@@ -58,8 +58,6 @@ router.put(
   checkAuthority2,
   followLive
 );
-//send emails to followes 
 
-//          middleware-> link 
 
 module.exports = router;

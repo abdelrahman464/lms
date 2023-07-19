@@ -8,6 +8,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const compression = require("compression");
 
+const fileUpload = require('express-fileupload')
+
 const rateLimit = require("express-rate-limit");
 
 const dotenv = require("dotenv");
@@ -39,6 +41,7 @@ const app = express();
 //enable other domains access your application
 app.use(cors());
 app.options("*", cors());
+app.use(fileUpload());
 
 app.use(passport.initialize());
 

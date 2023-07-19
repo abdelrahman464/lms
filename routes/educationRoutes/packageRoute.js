@@ -3,7 +3,8 @@ const authServices = require("../../services/authServices");
 
 const {
   updatePackageValidator,
-  createPackageValidator} =require("../../utils/validators/educationValidators/packageValidator")
+  createPackageValidator,
+} = require("../../utils/validators/educationValidators/packageValidator");
 
 const {
   createPackage,
@@ -13,20 +14,34 @@ const {
   deletePackage,
   updatePackage,
   addCourseToPlan,
-  addUserToPlan
+  addUserToPlan,
 } = require("../../services/educationServices/packageServices");
 
 const router = express.Router();
 
-router.route("/").get(getAllPackages).post(createPackageValidator, createPackage);
+router
+  .route("/")
+  .get(getAllPackages)
+  .post(convertToArray, createPackageValidator, createPackage);
 
 router
   .route("/:id")
   .get(getPackageById)
-  .put(updatePackageValidator,updatePackage)
-  .delete(deletePackage);
+  .put(
+    authServices.protect,
+    authServices.allowedTo("admin"),
+    convertToArray,
+    updatePackageValidator,
+    updatePackage
+  )
+  .delete(authServices.allowedTo("admin"), convertToArray, deletePackage);
 
-router.route("/addCourseToPlan").post(addCourseToPlan)  
-router.route("/addUserToPlan").post(authServices.protect,addUserToPlan)  
+router
+  .route("/addCourseToPlan")
+  .post(authServices.protect, authServices.allowedTo("admin"), addCourseToPlan);
+
+router
+  .route("/addUserToPlan")
+  .post(authServices.protect, authServices.allowedTo("admin"), addUserToPlan);
 
 module.exports = router;
