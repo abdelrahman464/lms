@@ -32,7 +32,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 
   //1) get cart depend on catrId
   const cart = await CartStore.findById(cartId);
-  if (!cart) {
+  if (!cart || cart.cartItems.length === 0) {
     return next(new ApiError("There's No Cart", 404));
   }
   //2) get order price cart price  "check if copoun applied"

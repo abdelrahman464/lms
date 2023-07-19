@@ -68,7 +68,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     }
   );
   if (!user) {
-    return next(new ApiError(`No document For this id ${req.params.id}`, 404));
+    return next(new ApiError(`User Not Found`, 404));
   }
 
   res.status(200).json({ data: user });

@@ -30,7 +30,7 @@ router
   // the request will set the cateogryId if exist in params and go to validation{createSupCategroyValidator} then createSubCategroy
   .post(
     authServices.protect,
-    authServices.allowedTo("admin", "manager"),
+    authServices.allowedTo("admin"),
     setCategoryIdToBody,
     createSupCategroyValidator,
     createSubCategory
@@ -40,7 +40,7 @@ router
   .get(getsubCategoryValidator, getSubCategory)
   .put(
     authServices.protect,
-    authServices.allowedTo("admin", "manager"),
+    authServices.allowedTo("admin"),
     updateCategroyValidator,
     updateSubCategory
   )
