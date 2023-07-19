@@ -83,6 +83,12 @@ educationPackageSchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
+
+educationPackageSchema.pre(/^find/, function (next) {
+  this.populate({ path: "courses", select: "title" });
+  next();
+});
+
 const Package = mongoose.model("EducationPackage", educationPackageSchema);
 
 module.exports = Package;
