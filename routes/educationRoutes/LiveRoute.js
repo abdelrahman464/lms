@@ -12,8 +12,7 @@ const {
   followLive,
   SendEmailsToLiveFollwers,
   createFilterObj,
-  setCreatorIdToBody,
-  myFollowedLives,
+  setCreatorIdToBody
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -24,24 +23,20 @@ const {
 
 const router = express.Router();
 
-// get myFollowed Lives 
-router.get("/myFollowedLives", authServices.protect, myFollowedLives);
-//create   admin  instructor of course
-//update delete admin instructorof course
-//send emails to students
-router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
+//create   admin  instructor of course 
+//update delete admin instructorof course 
+//send emails to students 
+router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
 
 router
-.route("/") //middleware
-.post(
-  authServices.protect,
-  authServices.allowedTo("admin", "instructor"),
-  createLiveValidator,
-  setCreatorIdToBody,
-  createLive
-  );
-  
-  router
+  .route("/") //middleware    
+  .post(authServices.protect,
+    authServices.allowedTo("admin","instructor"),
+    createLiveValidator,
+    setCreatorIdToBody,
+    createLive)
+
+router
   .route("/sendEmailsToFollowers/:liveId")
   .post(
     authServices.protect,
@@ -52,20 +47,9 @@ router
 
 router
   .route("/:id")
-  .get(authServices.protect, checkLiveAuthority, getLivebyId)
-  .put(
-    authServices.protect,
-    authServices.allowedTo("instructor", "admin"),
-    checkLiveAuthority,
-    updateLiveValidator,
-    updateLive
-  )
-  .delete(
-    authServices.protect,
-    authServices.allowedTo("instructor", "admin"),
-    checkLiveAuthority,
-    deleteLive
-  );
+  .get(authServices.protect,checkLiveAuthority,getLivebyId)
+  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLiveValidator,updateLive)
+  .delete(authServices.protect, authServices.allowedTo("instructor","admin"), checkLiveAuthority ,deleteLive);
 
 //follow a specific live
 router.put(
@@ -75,7 +59,7 @@ router.put(
   checkAuthority2,
   followLive
 );
-//get my lives plz
 
+//          middleware-> link
 
 module.exports = router;
