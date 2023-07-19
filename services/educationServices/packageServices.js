@@ -1,7 +1,42 @@
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
 const Package = require("../../models/educationModel/educationPackageModel");
 const factory = require("../handllerFactory");
 const { checkCourseAuthority } = require("./courseService");
+
+const {
+  uploadSingleImage,
+} = require("../../middlewares/uploadImageMiddleware");
+
+//upload Singel image
+exports.uploadPackageImage = uploadSingleImage("image");
+//image processing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `package-${uuidv4()}-${Date.now()}.jpeg`;
+
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/education/packages/${filename}`);
+
+    //save image into our db
+    req.body.image = filename;
+  }
+
+  next();
+});
+
+
+
+
+
+
+
+
+
 
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
@@ -107,6 +142,24 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
     next();
   }
 });
+
+//-------------------------------------------------------------------------
+exports.getMyPackages = asyncHandler(async (req, res) => {
+  const packages = await Package.find({
+    "users.user": req.user._id,
+  });
+
+  if (packages.length === 0) {
+    res.json({ message: "you are not subscribed to any package" });
+  } else {
+    res.status(200).json({ packages });
+  }
+});
+
+
+
+
+
 // exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
 //   try {
 //   const userId=req.user.id;

@@ -30,7 +30,7 @@ exports.createPackageValidator=[
     .isNumeric()
     .withMessage("expirationTime must be a number"),
 
-    check("image").notEmpty().withMessage("Course Image Required"),
+    check("image").optional(),
 
     check("courses")
     .optional()
