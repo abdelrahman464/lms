@@ -51,6 +51,7 @@ const educationPackageSchema = new mongoose.Schema({
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
+        
         ref: "User",
       },
       start_date: {

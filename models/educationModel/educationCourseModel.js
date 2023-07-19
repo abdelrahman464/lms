@@ -68,14 +68,11 @@ educationCourseSchema.virtual("reviews", {
   localField: "_id",
 });
 
-
-
 educationCourseSchema.pre(/^find/, function (next) {
   this.populate({ path: "instructor", select: "name" });
   this.populate({ path: "category", select: "title" });
   next();
 });
-
 const setImageURL = (doc) => {
   //return image base url + iamge name
   if (doc.image) {

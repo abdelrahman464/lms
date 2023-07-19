@@ -35,6 +35,7 @@ const analyticPostSchema = new mongoose.Schema(
 analyticPostSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "user", select: "name" });
+  this.populate({ path: "course", select: "title" });
   next();
 });
 

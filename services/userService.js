@@ -27,6 +27,12 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 
   next();
 });
+//filter user to get instractors
+exports.createFilterObj = async (req, res, next) => {
+  const filterObject = { role: "instructor" };
+  req.filterObj = filterObject;
+  next();
+};
 //@desc get list of user
 //@route GET /api/v1/users
 //@access private
@@ -39,10 +45,10 @@ exports.getUser = factory.getOne(User);
 //@route POST /api/v1/users
 //@access private
 exports.createUser = factory.createOne(User);
-//@desc create instructor
-//@route POST /api/v1/users/instructor
-//@access private
-exports.createInstructor = factory.createOne(User);
+//@desc get all instructors
+//@route Get /api/v1/users/instractors
+//@access public
+exports.getInstructors = factory.getALl(User);
 //@desc update specific user
 //@route PUT /api/v1/user/:id
 //@access private

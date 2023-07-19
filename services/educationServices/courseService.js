@@ -46,7 +46,7 @@ exports.createCourse = factory.createOne(Course);
 exports.getAllCourses = factory.getALl(Course);
 
 // Get a specific course by ID
-exports.getCourseById = factory.getOne(Course);
+exports.getCourseById = factory.getOne(Course,"reviews");
 
 // Update a course by ID
 exports.updateCourse = factory.updateOne(Course);
