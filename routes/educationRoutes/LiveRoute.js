@@ -12,7 +12,7 @@ const {
   followLive,
   SendEmailsToLiveFollwers,
   createFilterObj,
-  setCreatorIdToBody,
+  setCreatorIdToBody
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -23,20 +23,18 @@ const {
 
 const router = express.Router();
 
-//create   admin  instructor of course
-//update delete admin instructorof course
-//send emails to students
-router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
+//create   admin  instructor of course 
+//update delete admin instructorof course 
+//send emails to students 
+router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
 
 router
-  .route("/") //middleware
-  .post(
-    authServices.protect,
-    authServices.allowedTo("admin", "instructor"),
+  .route("/") //middleware    
+  .post(authServices.protect,
+    authServices.allowedTo("admin","instructor"),
     createLiveValidator,
     setCreatorIdToBody,
-    createLive
-  );
+    createLive)
 
 router
   .route("/sendEmailsToFollowers/:liveId")
@@ -48,31 +46,19 @@ router
   );
 
 router
-  .route("/:liveId")
-  .get(authServices.protect, checkLiveAuthority, getLivebyId)
-  .put(
-    authServices.protect,
-    authServices.allowedTo("instructor", "admin"),
-    checkLiveAuthority,
-    updateLiveValidator,
-    updateLive
-  )
-  .delete(
-    authServices.protect,
-    authServices.allowedTo("instructor", "admin"),
-    checkLiveAuthority,
-    deleteLive
-  );
+  .route("/:id")
+  .get(authServices.protect,checkLiveAuthority,getLivebyId)
+  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLiveValidator,updateLive)
+  .delete(authServices.protect, authServices.allowedTo("instructor","admin"), checkLiveAuthority ,deleteLive);
 
 //follow a specific live
 router.put(
   "/followLive/:courseId/:liveId",
   authServices.protect,
-  authServices.allowedTo("user"),
+  authServices.allowedTo("user","admin"),
   checkAuthority2,
   followLive
 );
-//send emails to followes
 
 //          middleware-> link
 

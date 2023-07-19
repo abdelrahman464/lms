@@ -15,14 +15,26 @@ const {
   updatePackage,
   addCourseToPlan,
   addUserToPlan,
+  getMyPackages,
+  resizeImage,
+  uploadPackageImage,
 } = require("../../services/educationServices/packageServices");
 
 const router = express.Router();
 
+//get My packages
+router.get("/myPackages", authServices.protect, getMyPackages);
+
 router
   .route("/")
   .get(getAllPackages)
-  .post(convertToArray, createPackageValidator, createPackage);
+  .post(
+    uploadPackageImage,
+    resizeImage,
+    convertToArray,
+    createPackageValidator,
+    createPackage
+  );
 
 router
   .route("/:id")
@@ -30,11 +42,18 @@ router
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),
+    uploadPackageImage,
+    resizeImage,
     convertToArray,
     updatePackageValidator,
     updatePackage
   )
-  .delete(authServices.allowedTo("admin"), convertToArray, deletePackage);
+  .delete(
+    authServices.protect,
+    authServices.allowedTo("admin"),
+    convertToArray,
+    deletePackage
+  );
 
 router
   .route("/addCourseToPlan")

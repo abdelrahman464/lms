@@ -24,34 +24,33 @@ const educationPackageSchema = new mongoose.Schema({
     trim: true,
     max: [200000, "Too long Package priceAfterDiscount"],
   },
-  expirationTime: { //0  //30   //  //expirtaioInDays
+  expirationTime: {
+    //0  //30   //  //expirtaioInDays
     type: Number,
     required: [true, "expirationTime required"],
   },
-  image: {
-    type: String,
-    required: [true, "package image is required"],
-  },
+  image: String,
+
   courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCourse",
     },
   ],
-  allCourses:{
-    type:Boolean,
-    default:false
+  allCourses: {
+    type: Boolean,
+    default: false,
   },
   telegramChannelNames: [
     {
-      type: String
+      type: String,
     },
   ],
   users: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
-        
+
         ref: "User",
       },
       start_date: {
@@ -64,6 +63,24 @@ const educationPackageSchema = new mongoose.Schema({
       },
     },
   ],
+});
+
+const setImageURL = (doc) => {
+  //return image base url + iamge name
+  if (doc.image) {
+    const imageUrl = `${process.env.BASE_URL}/education/packages/${doc.image}`;
+    doc.image = imageUrl;
+  }
+};
+//after initializ the doc in db
+// check if the document contains image
+// it work with findOne,findAll,update
+educationPackageSchema.post("init", (doc) => {
+  setImageURL(doc);
+});
+// it work with create
+educationPackageSchema.post("save", (doc) => {
+  setImageURL(doc);
 });
 
 const Package = mongoose.model("EducationPackage", educationPackageSchema);
