@@ -1,11 +1,10 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
-const ApiError = require("../../apiError");
 const Course = require("../../../models/educationModel/educationCourseModel");
 const Live = require("../../../models/educationModel/educationLiveModel");
 //delete | update | follow  
 exports.checkLiveAuthority=[
-    check("liveId")
+    check("id")
     .notEmpty()
     .withMessage("send courseId in param please")
     .isMongoId()

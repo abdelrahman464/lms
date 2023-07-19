@@ -6,6 +6,7 @@ const factory = require("../handllerFactory");
 const Order = require("../../models/educationModel/educationOrderModel");
 const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
+const Coupon =require("../../models/educationModel/educationCouponModel")
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
@@ -34,10 +35,23 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     return next(new ApiError("There's no package", 404));
   }
   //2) get order price cart price  "check if copoun applied"
-  const packagePrice = package.priceAfterDiscount
+  let packagePrice = package.priceAfterDiscount
     ? package.priceAfterDiscount
     : package.price;
 
+   //gomaa edit ' discount value' ----------------------------------------
+   if(req.body.coupon){
+    const coupon = await Coupon.findOne({
+      title: req.body.coupon,
+      expire: { $gt: Date.now() },
+    });
+      if(!coupon){
+        return next(new ApiError("Coupon is Invalid or Expired "));
+      }
+
+      packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
+   }
+  //----------------------------------------------------------------------
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
   //3)create stripe checkout session
