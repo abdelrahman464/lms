@@ -51,3 +51,5 @@ exports.getAllMessages = factory.getALl(TelegramBotMessage);
 //@route GET api/v1/analytic/telegram/:id
 //@access protected user,admin
 exports.getMessage = factory.getOne(TelegramBotMessage);
+
+

@@ -29,15 +29,6 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
   next();
 });
 
-
-
-
-
-
-
-
-
-
 exports.convertToArray = async (req, res, next) => {
   if (req.body.courses) {
     // If it's not an array, convert it to an array
@@ -156,10 +147,6 @@ exports.getMyPackages = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
-
 // exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
 //   try {
 //   const userId=req.user.id;
@@ -226,3 +213,62 @@ exports.getMyPackages = asyncHandler(async (req, res) => {
 //     // res.json(package)
 //     next();
 //   });
+//<,--------------------------------.>
+exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
+  const { id } = req.params; // Replace this with the ID of the user you want to update
+  const { telgramId } = req.body; // Replace this with the Telegram ID to be added
+
+  const existUser = await Package.findOne({
+    "users.user": id,
+    "users.telgramId": telgramId,
+  });
+  if (existUser) {
+    res.send("User Already Exists");
+  } else {
+    // Use findOneAndUpdate to update the telegram_id for the specific user
+    const filter = { "users.user": id }; // Find the document that contains the user with the given ID in the users array
+    const update = { $set: { "users.$.telgramId": telgramId } }; // Update the telegram_id for the matched user
+
+    // Set the new option to true to get the updated document as the result of the update operation
+    const options = { new: true };
+
+    // Perform the update operation
+    const updatedPackage = await Package.findOneAndUpdate(
+      filter,
+      update,
+      options
+    );
+
+    if (updatedPackage) {
+      res.send(`Telegram ID updated for user with ID ${id}`);
+    } else {
+      res.send(`User with ID ${id} not found in the package`);
+    }
+  }
+});
+//<,--------------------------------.>
+//<,--------------------------------.>
+//<,--------------------------------.>
+//<,--------------------------------.>
+exports.getMyChannels = asyncHandler(async (req, res, next) => {
+  const { telegramId } = req.params;
+
+  const packages = await Package.find({
+    "users.telgramId": telegramId,
+  });
+
+  if (packages.length === 0) {
+    res.json({ message: "you are not subscribed to any package" });
+  } else {
+    // Extract all telegramChannelNames from the array of objects
+    const allTelegramChannelNames = packages.flatMap(
+      (item) => item.telegramChannelNames
+    );
+    if (allTelegramChannelNames.includes("*")) {
+      res.json({ channels: "*" });
+    } else {
+      // if(allTelegramChannelNames)
+      res.json({ channels: allTelegramChannelNames });
+    }
+  }
+});

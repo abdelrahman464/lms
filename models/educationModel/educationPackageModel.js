@@ -50,9 +50,9 @@ const educationPackageSchema = new mongoose.Schema({
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
-
         ref: "User",
       },
+      telgramId: String,
       start_date: {
         type: Date,
         required: true,
@@ -82,7 +82,6 @@ educationPackageSchema.post("init", (doc) => {
 educationPackageSchema.post("save", (doc) => {
   setImageURL(doc);
 });
-
 
 educationPackageSchema.pre(/^find/, function (next) {
   this.populate({ path: "courses", select: "title" });

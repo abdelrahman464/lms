@@ -18,12 +18,21 @@ const {
   getMyPackages,
   resizeImage,
   uploadPackageImage,
+  addTelgramIdToUserInPackage,
+  getMyChannels
 } = require("../../services/educationServices/packageServices");
 
 const router = express.Router();
 
 //get My packages
-router.get("/myPackages", authServices.protect, getMyPackages);
+router.get("/myPackages",getMyPackages);
+router.get("/myTelegramChannels/:telegramId",  getMyChannels);
+//add telegram id
+router.put(
+  "/addTelegramId/:id",
+  authServices.protect,
+  addTelgramIdToUserInPackage
+);
 
 router
   .route("/")
