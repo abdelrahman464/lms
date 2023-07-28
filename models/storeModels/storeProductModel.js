@@ -23,10 +23,10 @@ const storeProductSchema = new mongoose.Schema(
       trim: true,
       minlength: [20, "Too short Product description"],
     },
-    quantity: {
-      type: Number,
-      required: [true, "Product quantity is required"],
-    },
+    // quantity: {
+    //   type: Number,
+    //   required: [true, "Product quantity is required"],
+    // },
     sold: {
       type: Number,
       default: 0,
