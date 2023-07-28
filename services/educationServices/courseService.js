@@ -106,3 +106,8 @@ exports.checkCourseAuthority = (req, res, next) =>
     // res.json(package)
     next();
   });
+
+
+  // route ? lang=
+  // name_ar name_ch name_en     
+  // name._query as name  

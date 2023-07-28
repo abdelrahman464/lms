@@ -1,4 +1,6 @@
 const { check } = require("express-validator");
+const { validationResult } = require("express-validator");
+
 const validatorMiddleware = require("../../../middlewares/validatorMiddleware");
 const ApiError = require("../../apiError");
 const Course = require("../../../models/educationModel/educationCourseModel");
@@ -97,7 +99,8 @@ exports.checkAuthority2 = [
                       resolve();
                     } else {
                       // User does not have the necessary authority
-                      reject(new Error("Access denied"));
+                      // eslint-disable-next-line prefer-promise-reject-errors
+                      reject("you are not allowed to access this course");
                     }
                   })
                   .catch((error) => {
@@ -110,6 +113,13 @@ exports.checkAuthority2 = [
             });
         })
     ),
-  validatorMiddleware,
+    (req, res, next) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ msg: errors.array()[0].msg});
+      }
+      //if no error go to next handler middleware
+      next();
+    }
 ];
 
