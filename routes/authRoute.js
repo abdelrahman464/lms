@@ -18,6 +18,7 @@ const {
   verifyPassResetCode,
   resetPassword,
   googleOauth,
+  logout
 } = require("../services/authServices");
 
 // create a limiter for login requests
@@ -62,5 +63,7 @@ router.get(
   }),
   googleOauth
 );
+
+router.get("/logout", protect, logout);
 
 module.exports = router;

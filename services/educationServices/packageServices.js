@@ -223,7 +223,7 @@ exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
     "users.telgramId": telgramId,
   });
   if (existUser) {
-    res.send("User Already Exists");
+    res.status(400).json({status:"faild",msg:`User already exists`});
   } else {
     // Use findOneAndUpdate to update the telegram_id for the specific user
     const filter = { "users.user": id }; // Find the document that contains the user with the given ID in the users array
@@ -240,9 +240,10 @@ exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
     );
 
     if (updatedPackage) {
-      res.send(`Telegram ID updated for user with ID ${id}`);
+      res.status(200).json({status:"success",msg:`Telegram ID updated for user with ID ${id}`});
     } else {
-      res.send(`User with ID ${id} not found in the package`);
+      
+      res.status(400).json({status:"faild",msg:`User with ID ${id} not found in the package`});
     }
   }
 });
@@ -256,12 +257,13 @@ exports.getMyChannels = asyncHandler(async (req, res, next) => {
   const packages = await Package.find({
     "users.telgramId": telegramId,
   });
+  
 
   if (packages.length === 0) {
-    res.json({ message: "you are not subscribed to any package" });
+    res.json({status:"faild",message: "you are not subscribed to any package" });
   } else {
     // Extract all telegramChannelNames from the array of objects
-    const allTelegramChannelNames = packages.flatMap(
+    const allTelegramChannelNames =await packages.flatMap(
       (item) => item.telegramChannelNames
     );
     if (allTelegramChannelNames.includes("*")) {

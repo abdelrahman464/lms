@@ -26,6 +26,7 @@ const {
   deleteMyAccount,
   uploadProfileImage,
   resizeImage,
+ 
 } = require("../services/userService");
 
 const router = express.Router();
@@ -78,7 +79,6 @@ router
   )
   .put(
     authServices.protect,
-    authServices.allowedTo("admin"),
     uploadProfileImage,
     resizeImage,
     updateUserValidator,
@@ -90,5 +90,7 @@ router
     deleteUserValidator,
     deleteUser
   );
+
+
 
 module.exports = router;

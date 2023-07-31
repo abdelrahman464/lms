@@ -10,6 +10,8 @@ exports.getUserValidator = [
   //catch error
   validatorMiddleware,
 ];
+//----------------------------------------------------
+
 exports.createUserValidator = [
   check("name")
     .notEmpty()
@@ -54,16 +56,34 @@ exports.createUserValidator = [
 
   check("phone")
     .optional()
-    .isMobilePhone(["ar-EG", "ar-SA"])
+    .isMobilePhone()
     .withMessage("Invalid phone number only accepted Egy and SA Phone numbers"),
+  check("country")
+    .notEmpty()
+    .withMessage("country is required :)")
+    .isString()
+    .withMessage("string only allowed"),
 
   check("profileImg").optional(),
 
   check("role").optional(),
   validatorMiddleware,
 ];
+//----------------------------------------------------
+
 exports.updateUserValidator = [
-  check("id").isMongoId().withMessage("Invalid User id format"),
+  check("id")
+    .isMongoId()
+    .withMessage("Invalid User id format")
+    .custom((id, { req }) => {
+      // eslint-disable-next-line no-new
+
+      // eslint-disable-next-line eqeqeq
+      if (req.user.role === "admin" || req.user._id == id) {
+        return true;
+      }
+      throw new Error("you are not allowed to do this action");
+    }),
   body("name")
     .optional()
     .custom((val, { req }) => {
@@ -83,18 +103,25 @@ exports.updateUserValidator = [
     ),
   check("phone")
     .optional()
-    .isMobilePhone(["ar-EG", "ar-SA"])
+    .isMobilePhone()
     .withMessage("Invalid phone number only accepted Egy and SA Phone numbers"),
+  check("country")
+    .optional()
+    .isString()
+    .withMessage("string only allowed"),
 
   check("profileImg").optional(),
 
   check("role").optional(),
   validatorMiddleware,
 ];
+//----------------------------------------------------
 exports.deleteUserValidator = [
   check("id").isMongoId().withMessage("Invalid User id format"),
   validatorMiddleware,
 ];
+//----------------------------------------------------
+
 exports.changeUserPasswordValidator = [
   body("currentPassword")
     .notEmpty()
@@ -126,6 +153,8 @@ exports.changeUserPasswordValidator = [
     }),
   validatorMiddleware,
 ];
+//----------------------------------------------------
+
 exports.updateLoggedUserValidator = [
   body("name")
     .optional()
@@ -138,7 +167,7 @@ exports.updateLoggedUserValidator = [
     .isEmail()
     .withMessage("Invalid email address")
     .custom((val) =>
-      User.findOne({ email: val }).then((user) => {   
+      User.findOne({ email: val }).then((user) => {
         if (user) {
           return Promise.reject(new Error("E-mail already in user"));
         }
@@ -151,6 +180,8 @@ exports.updateLoggedUserValidator = [
 
   validatorMiddleware,
 ];
+//----------------------------------------------------
+
 exports.changeLoggedUserPasswordValidator = [
   body("currentPassword")
     .notEmpty()
