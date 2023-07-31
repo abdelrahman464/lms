@@ -79,6 +79,9 @@ exports.createLiveValidator=[
 
   validatorMiddleware
 ]
+
+
+
 exports.updateLiveValidator=[
   check("title").optional()
   .isString().withMessage("Strings only allowed")
