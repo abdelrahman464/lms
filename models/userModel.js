@@ -27,6 +27,7 @@ const userShcema = new mongoose.Schema(
       unique: true,
     },
     phone: String,
+    country:String,
     profileImg: String,
     password: {
       type: String,

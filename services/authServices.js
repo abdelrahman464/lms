@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const ActiveSession=require("../models/activeSessionModel")
 const ApiError = require("../utils/apiError");
 const sendEmail = require("../utils/sendEmail");
 const generateToken = require("../utils/generateToken");
@@ -17,6 +18,8 @@ exports.signup = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     active: false,
+    phone:req.body.phone,
+    country:req.body.country
   });
   //generate verification code
   const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -149,16 +152,25 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
 //@route POST /api/v1/auth/login
 //@access public
 exports.login = asyncHandler(async (req, res, next) => {
-  //1- check if password and emaail in the body
-  //2- check if user exist & check if password is correct
+  //1-Check if user can login  [only 2 devices]
+  const devices=await ActiveSession.find({email:req.body.email});
+  if(devices.length >=2){
+    res.status(400).json({status:"faild",msg:`you cannot login from more the 2 devices`})
+  }
+  else{ 
+  //2- check if password and emaail in the body
   const user = await User.findOne({ email: req.body.email });
+  //3- check if user exist & check if password is correct
   if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
     return next(new ApiError("incorrect password or email", 401));
   }
-  //3- generate token
+  //4- generate token
   const token = generateToken(user._id);
-  //3- send response to client side
+  //5- store active session
+  await ActiveSession.create({email:req.body.email,token:token});
+  //6- send response to client side
   res.status(200).json({ data: user, token });
+}
 });
 
 //@desc make sure user is logged in
@@ -174,8 +186,10 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (!token) {
     return next(new ApiError("you are not login,please login first", 401));
   }
+  let decoded;
   //2- verify token (no change happens,expired token)
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  try {
+  decoded = jwt.verify(token, process.env.JWT_SECRET_KEY); //paylod  //error 
 
   //3-check if user exists
   const currentUser = await User.findById(decoded.userId);
@@ -199,16 +213,35 @@ exports.protect = asyncHandler(async (req, res, next) => {
       );
     }
   }
-  //check if user email veryified
-  // if (currentUser.emailVerified === false) {
-  //   return next(new ApiError("please active your account", 401));
-  // }
-  //add user to request
-  //to use this in authorization
-  // check if user is already registered
+
   req.user = currentUser;
 
   next();
+}
+ catch (error) {
+  if (error instanceof jwt.TokenExpiredError) {
+    // The token has expired
+    console.log('Token expired');
+    // Now, you can delete the document from the ActiveSession model where token matches the expired token
+    const result = await ActiveSession.deleteOne({ token: token });
+    if (result.deletedCount === 1) {
+      console.log('Expired token deleted successfully');
+     }
+    else {
+      console.log('Token not found or not deleted');
+   }
+    res.status(400).json({status:`faild`,msg:`token expired`})
+
+  } else if (error instanceof jwt.JsonWebTokenError) {
+    // The token is invalid or malformed
+    console.log('Invalid token');
+    res.status(400).json({status:`faild`,msg:`invalid token`})
+  } else {
+    // Other errors
+    console.log('Error while verifying token:');
+    res.status(400).json({status:`faild`,msg:`'Error while verifying token: ${error.message}`});
+  }
+}
 });
 //@desc  Authorization (user permissions)
 // ....roles => retrun array for example ["admin","user"]
@@ -328,3 +361,41 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   const token = generateToken(user._id);
   res.status(200).json({ token });
 });
+
+
+
+
+
+exports.logout = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  if (!token) {
+    return res.status(400).json({ status: 'failed', msg: 'Token not provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    // Token is valid, proceed with logout
+    const result = await ActiveSession.deleteOne({ token: token });
+    if (result.deletedCount === 1) {
+      console.log('Expired token deleted successfully');
+    } else {
+      console.log('Token not found or not deleted');
+    }
+    res.status(200).json({ status: 'success', msg: 'Logged out successfully' });
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      // Token is already expired
+      console.log('Token expired');
+      res.status(400).json({ status: 'failed', msg: 'Token already expired' });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      // Invalid token
+      console.log('Invalid token');
+      res.status(400).json({ status: 'failed', msg: 'Invalid token' });
+    } else {
+      // Other errors
+      console.log('Error while verifying token:', error);
+      res.status(500).json({ status: 'failed', msg: `Error while verifying token: ${error.message}` });
+    }
+  }
+};
+

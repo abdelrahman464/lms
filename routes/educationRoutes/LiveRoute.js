@@ -12,7 +12,8 @@ const {
   followLive,
   SendEmailsToLiveFollwers,
   createFilterObj,
-  setCreatorIdToBody
+  setCreatorIdToBody,
+  searchByDate
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -27,6 +28,7 @@ const router = express.Router();
 //update delete admin instructorof course 
 //send emails to students 
 router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
+router.get('/searchByDate/:date',searchByDate);
 
 router
   .route("/") //middleware    

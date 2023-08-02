@@ -67,15 +67,11 @@ exports.createLiveValidator=[
         })
        })
   ),
-  check("day")
+  check("date")
   .notEmpty().withMessage("day is required")
-  .isInt({ min: 1, max: 31 }).withMessage("Enter a day between 1 and 31"),
-  check("month")
-  .notEmpty().withMessage("day is required")
-  .isInt({ min: 1, max: 12 }).withMessage("Enter a day between 1 and 12"),
+  ,
 
-
-  check("duration")
+   check("duration")
   .notEmpty().withMessage("duration is required")
   .isInt({ min: .5, max: 5 }).withMessage("Enter a duration with hours")
 
@@ -83,6 +79,9 @@ exports.createLiveValidator=[
 
   validatorMiddleware
 ]
+
+
+
 exports.updateLiveValidator=[
   check("title").optional()
   .isString().withMessage("Strings only allowed")
@@ -111,12 +110,8 @@ exports.updateLiveValidator=[
         })
        })
   ),
-  check("day")
-  .optional()
-  .isInt({ min: 1, max: 31 }).withMessage("Enter a day between 1 and 31"),
-  check("month")
-  .optional()
-  .isInt({ min: 1, max: 12 }).withMessage("Enter a day between 1 and 12"),
+  check("date")
+  .optional(),
 
 
   check("duration")

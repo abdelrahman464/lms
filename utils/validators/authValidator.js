@@ -43,6 +43,15 @@ exports.signupValidator = [
     }),
 
   check("passwordConfirm").notEmpty().withMessage("password required"),
+  check("phone")
+    .optional()
+    .isMobilePhone()
+    .withMessage("Invalid phone number only accepted Egy and SA Phone numbers"),
+  check("country")
+    .notEmpty()
+    .withMessage("country is required :)")
+    .isString()
+    .withMessage("string only allowed"),
 
   validatorMiddleware,
 ];

@@ -30,7 +30,6 @@ router.get("/myTelegramChannels/:telegramId",  getMyChannels);
 //add telegram id
 router.put(
   "/addTelegramId/:id",
-  authServices.protect,
   addTelgramIdToUserInPackage
 );
 

@@ -14,5 +14,8 @@ Mostafa edits
 19/7 july 23
 -package image  'done'
 
+
+
+
 -validation and rules on all routes
-    
+-landing page  video

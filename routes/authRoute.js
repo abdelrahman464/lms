@@ -1,7 +1,6 @@
 const express = require("express");
 // const rateLimit = require("express-rate-limit");
 
-
 const {
   signupValidator,
   loginValidator,
@@ -17,6 +16,7 @@ const {
   forgotPassword,
   verifyPassResetCode,
   resetPassword,
+  logout,
 } = require("../services/authServices");
 
 // create a limiter for login requests
@@ -52,5 +52,6 @@ router
   .post(verifyresetPasswordValidator, verifyPassResetCode);
 router.route("/resetPassword").put(resetPassword);
 
+router.get("/logout", protect, logout);
 
 module.exports = router;
