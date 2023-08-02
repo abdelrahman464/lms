@@ -10,7 +10,7 @@ const compression = require("compression");
 
 // const fileUpload = require('express-fileupload')
 
-const rateLimit = require("express-rate-limit");
+// const rateLimit = require("express-rate-limit");
 
 const dotenv = require("dotenv");
 
@@ -72,14 +72,14 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000,
-  message:
-    "Too many requsts created from this IP, please try again after an 15 minute interval",
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 1000,
+//   message:
+//     "Too many requsts created from this IP, please try again after an 15 minute interval",
+// });
 // Apply the rate limiting middleware to all requests
-app.use("/api", limiter);
+// app.use("/api", limiter);
 
 // Mount Routes
 mountRoutes(app);
