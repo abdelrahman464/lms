@@ -5,9 +5,17 @@ const educationLiveSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  date: {
+  day: {
     type: String,
-    required: [true, "date is required ?"],
+    required: [true, "day is required ?"],
+  },
+  month: {
+    type: String,
+    required: [true, "month is required ?"],
+  },
+  hour: {
+    type: String,
+    required: [true, "hour is required ?"],
   },
   duration: {
     type: Number,

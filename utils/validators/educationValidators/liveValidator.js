@@ -68,7 +68,9 @@ exports.createLiveValidator=[
        })
   ),
   check("date")
-  .notEmpty().withMessage("day is required")
+  .notEmpty().withMessage("day is required"),
+  check("hour")
+  .notEmpty().withMessage("hour is required")
   ,
 
    check("duration")

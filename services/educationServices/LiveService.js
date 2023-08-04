@@ -140,8 +140,10 @@ exports.myFollowedLives = asyncHandler(async (req, res) => {
 //---------------------------------------------------------------------------------//
 exports.searchByDate= asyncHandler(async(req,res)=>{
   const {date} = req.params;
+  const components = date.split(" ");
   const lives = await Live.find({
-    "date": date,
+    day:components[2],
+    month:components[1]
   });
   if(lives.length===0){
     res.status(400).json({status:'faild',msg:'there are no lives for that date'})
@@ -149,4 +151,11 @@ exports.searchByDate= asyncHandler(async(req,res)=>{
   else{
     res.status(400).json({status:'success',data:lives});
   }
+})
+//---------------------------------------------------------------------------------//
+exports.createLiveObj=asyncHandler(async(req,res,next)=>{
+  const {date} = req.body;
+  req.body.day= date.split(" ")[2]
+  req.body.month= date.split(" ")[1]
+  next()
 })

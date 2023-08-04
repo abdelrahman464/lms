@@ -13,7 +13,8 @@ const {
   SendEmailsToLiveFollwers,
   createFilterObj,
   setCreatorIdToBody,
-  searchByDate
+  searchByDate,
+  createLiveObj
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -36,6 +37,7 @@ router
     authServices.allowedTo("admin","instructor"),
     createLiveValidator,
     setCreatorIdToBody,
+    createLiveObj,
     createLive)
 
 router

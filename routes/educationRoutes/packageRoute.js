@@ -25,7 +25,7 @@ const {
 const router = express.Router();
 
 //get My packages
-router.get("/myPackages",getMyPackages);
+router.get("/myPackages",authServices.protect,getMyPackages);
 router.get("/myTelegramChannels/:telegramId",  getMyChannels);
 //add telegram id
 router.put(
