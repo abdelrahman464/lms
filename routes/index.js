@@ -15,7 +15,6 @@ const storeOrderRoute = require("./storeRoutes/OrderRoute");
 const analyticPostRoute = require("./analyticRoutes/postRoute");
 const analyticPostCommentRoute = require("./analyticRoutes/postCommentRoute");
 const analyticPostReactRoute = require("./analyticRoutes/postReactRoute");
-const analyticTelegramBotRoute = require("./analyticRoutes/telegramBotRoute");
 //education routes
 const educationPackageRoute = require("./educationRoutes/packageRoute");
 const educationWishlistRoute = require("./educationRoutes/wishlistRoute");
@@ -61,7 +60,6 @@ const mountRoutes = (app) => {
   app.use("/api/v1/analytic/posts", analyticPostRoute);
   app.use("/api/v1/analytic/postComments", analyticPostCommentRoute);
   app.use("/api/v1/analytic/postReacts", analyticPostReactRoute);
-  app.use("/api/v1/analytic/telegram", analyticTelegramBotRoute);
 
   //public routes
   app.use("/api/v1/landingPage", landingPageRoute);

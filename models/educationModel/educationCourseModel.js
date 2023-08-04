@@ -36,10 +36,6 @@ const educationCourseSchema = new mongoose.Schema(
     priceAfterDiscount: {
       type: Number,
     },
-    image: {
-      type: String,
-      required: [true, "Course image is required"],
-    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EducationCategory",
@@ -72,23 +68,6 @@ educationCourseSchema.pre(/^find/, function (next) {
   this.populate({ path: "instructor", select: "name" });
   this.populate({ path: "category", select: "title" });
   next();
-});
-const setImageURL = (doc) => {
-  //return image base url + iamge name
-  if (doc.image) {
-    const imageUrl = `${process.env.BASE_URL}/education/courses/${doc.image}`;
-    doc.image = imageUrl;
-  }
-};
-//after initializ the doc in db
-// check if the document contains image
-// it work with findOne,findAll,update
-educationCourseSchema.post("init", (doc) => {
-  setImageURL(doc);
-});
-// it work with create
-educationCourseSchema.post("save", (doc) => {
-  setImageURL(doc);
 });
 
 educationCourseSchema.pre("remove", async function (next) {

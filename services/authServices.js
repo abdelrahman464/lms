@@ -1,6 +1,4 @@
 const crypto = require("crypto");
-const passport = require("passport");
-const GoogleStategy = require("passport-google-oauth20");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -174,15 +172,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: user, token });
 }
 });
-//@desc login
-//@route POST /api/v1/auth/login
-//@access public
-exports.googleOauth = asyncHandler(async (req, res, next) => {
-  // eslint-disable-next-line prefer-destructuring
-  const user = req.user;
-  const token = generateToken(user._id);
-  res.json({ data: user, token });
-});
+
 //@desc make sure user is logged in
 exports.protect = asyncHandler(async (req, res, next) => {
   //1- check if token exists, if exist get it
@@ -372,56 +362,9 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({ token });
 });
 
-function generateNumber() {
-  const min = 10000000;
-  const max = 99999999;
-  const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-  return randomNum;
-}
 
-//@desc  Google Oauth this is passport setup
-passport.use(
-  new GoogleStategy(
-    {
-      //options
-      clientID: process.env.CLIENTID,
-      clientSecret: process.env.CLIENTSECRET,
-      callbackURL: "/api/v1/auth/google/redirect",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        //check if user exist
-        const user = await User.findOne({ googleId: profile.id });
 
-        if (user) {
-          // Pass the person object to the done function
-          return done(null, user);
-        }
-        if (!user) {
-          const cuurentUser = await User.findOne({
-            email: profile.emails[0].value,
-          });
-          if (cuurentUser) {
-            return done(new ApiError("E-mail already in use", 409), null);
-          }
-          if (!cuurentUser) {
-            // Create a new user if not found
-            const newUser = await User.create({
-              googleId: profile.id,
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              password: generateNumber(),
-            });
-            // Pass the person object to the done function
-            return done(null, newUser);
-          }
-        }
-      } catch (err) {
-        return done(new ApiError(err, 401), null);
-      }
-    }
-  )
-);
+
 
 exports.logout = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
@@ -455,3 +398,4 @@ exports.logout = async (req, res) => {
     }
   }
 };
+
