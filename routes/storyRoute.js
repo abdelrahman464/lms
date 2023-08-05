@@ -1,30 +1,58 @@
 const express = require("express");
 const authServices = require("../services/authServices");
-const{
-    createStory,
-    getAllStories,
-    getStory,
-    updateStory,
-    deleteStory
-   
-}=require("../services/storyService");
+const {
+  createStory,
+  getAllStories,
+  getStory,
+  updateStory,
+  deleteStory,
+  uploadStoryImage,
+  resizeImage,
+} = require("../services/storyService");
 
-
-const router=express.Router();
+const router = express.Router();
 
 // Create a new video
-router.post("/", createStory);
-// Get all videos 
-router.get("/", getAllStories);
+router.post(
+  "/",
+  authServices.protect,
+  authServices.allowedTo("admin","user","instructor"),
+  uploadStoryImage,
+  resizeImage,
+  createStory
+);
+// Get all videos
+router.get(
+  "/",
+  authServices.protect,
+  authServices.allowedTo("admin","user","instructor"),
+  getAllStories
+);
 
 // Get a specific lesson by ID
-router.get("/:id", getStory);
+router.get(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("admin","user","instructor"),
+  getStory
+);
 
 // Update a lesson by ID
-router.put("/:id", updateStory);
+router.put(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("admin","user","instructor"),
+  uploadStoryImage,
+  resizeImage,
+  updateStory
+);
 
 // Delete a lesson by ID
-router.delete("/:id", deleteStory);
-
+router.delete(
+  "/:id",
+  authServices.protect,
+  authServices.allowedTo("admin","user","instructor"),
+  deleteStory
+);
 
 module.exports = router;
