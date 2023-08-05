@@ -16,8 +16,7 @@ const educationOrderSchema = new mongoose.Schema(
     },
     paymentMethodType: {
       type: String,
-      enum: ["card"],
-      default: "card",
+     
     },
     isPaid: {
       type: Boolean,

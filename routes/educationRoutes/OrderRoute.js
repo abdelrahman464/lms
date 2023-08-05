@@ -5,22 +5,25 @@ const {
   findAllOrders,
   filterOrderForLoggedUser,
   checkoutSession,
+  checkoutSessionCoinBase,
 } = require("../../services/educationServices/OrderService");
 
 const router = express.Router();
 
 router.use(authServices.protect);
 
-router.get(
+router.put(
   "/checkout-session/:packageId",
-  authServices.allowedTo("user","instructor"),
+  authServices.protect,
+  authServices.allowedTo("user", "instructor"),
   checkoutSession
 );
+router.get("/coinbase/:packageId", checkoutSessionCoinBase);
 
 router
   .route("/")
   .get(
-    authServices.allowedTo("user", "admin","instructor"),
+    authServices.allowedTo("user", "admin", "instructor"),
     filterOrderForLoggedUser,
     findAllOrders
   );

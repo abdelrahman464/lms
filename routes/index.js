@@ -28,6 +28,7 @@ const educationLiveRoute = require("./educationRoutes/LiveRoute");
 
 //public routes
 const landingPageRoute = require("./landingPageRoute");
+const storyRoute = require("./storyRoute");
 const advertisementRoute = require("./advertisementRoute");
 
 const mountRoutes = (app) => {
@@ -63,6 +64,7 @@ const mountRoutes = (app) => {
 
   //public routes
   app.use("/api/v1/landingPage", landingPageRoute);
+  app.use("/api/v1/stories", storyRoute);
   app.use("/api/v1/advertisements", advertisementRoute);
 };
 module.exports = mountRoutes;

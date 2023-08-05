@@ -1,5 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
+const coinbase= require("coinbase-commerce-node");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
@@ -7,6 +9,7 @@ const Order = require("../../models/educationModel/educationOrderModel");
 const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
 const Coupon =require("../../models/educationModel/educationCouponModel")
+
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
@@ -51,7 +54,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 
       packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
    }
-  //----------------------------------------------------------------------
+  //------
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
   //3)create stripe checkout session
@@ -99,8 +102,9 @@ const createOrder = async (session) => {
     user: user._id,
     totalOrderPrice: orderPrice,
     isPaid: true,
+    paymentMethodType:"stripe",
     paidAt: Date.now(),
-    paymentMethodType: "card",
+   
   });
 
   if (!order) {
@@ -121,11 +125,13 @@ const createOrder = async (session) => {
 
   await package.save();
 };
+//-----------------------------------------------------------------------
+
 
 //@desc this webhook will run when the stripe payment success paied
 //@route POST education/webhook-checkout
 //@access protected/user
-exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
+exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
   const sig = req.headers["stripe-signature"];
 
   let event;
@@ -147,7 +153,6 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
         createOrder(event.data.object);
 
         break;
-      // ... handle other event types
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
@@ -155,22 +160,128 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ received: true });
 });
-/*-----------------------------------------------------------------------------*/
-// const addUserToPlan = async (package,userId) => {
-//   //1)set time boundries
-//   const startDate = new Date();
-//   const endDate = new Date(startDate);
-//   endDate.setDate(endDate.getDate() + package.expirationTime);
-//   // 2)Add the user object to the users array
-//   const newUser = {
-//     user: userId ,
-//     start_date: startDate,
-//     end_date: endDate,
-//   };
+//------------------------------------------------------------------------------
+exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
+  
+  const { packageId } = req.params;
+  //app settings
+  const taxPrice = 0;
 
-//   package.users.push(newUser);
-//   package.sold += 1;
+  //1) get cart depend on catrId
+  const package = await Package.findById(packageId);
+  if (!package) {
+    return next(new ApiError("There's no package", 404));
+  }
+  //2) get order price cart price  "check if copoun applied"
+  let packagePrice = package.priceAfterDiscount
+    ? package.priceAfterDiscount
+    : package.price;
 
-//   await package.save();
-//   // return package ? true : false;
-// };
+   //applying discount 
+   if(req.body.coupon){
+    const coupon = await Coupon.findOne({
+      title: req.body.coupon,
+      expire: { $gt: Date.now() },
+    });
+      if(!coupon){
+        return next(new ApiError("Coupon is Invalid or Expired "));
+      }
+
+      packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
+   }
+  
+  const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
+
+  //3)- create coin base session  
+   const {Client} = coinbase;
+   const {resources} = coinbase;
+   try{
+    Client.init(process.env.COINBASE_API_KEY);
+
+    const session= await resources.Charge.create({
+      name:"purchaseing package",
+      description:"have a nice payment",
+      local_price:{
+        amount:totalOrderPrice,
+        currency:"USD"
+      },
+      pricing_type:"fixed_price"
+      ,
+      metadata:{
+        user_id:req.user._id,
+        packageId:packageId
+      }
+
+    });
+    //4) send session to response
+    res.status(200).json({ status: "success", session });
+
+   }catch(error){
+
+    res.status(400).json({error:error})
+   }
+});
+//-----------------------------------------------------------------------------
+exports.webhookCoinBaseEducation = asyncHandler(async (req, res) => {
+  const {Webhook}= coinbase;
+ 
+  try {
+    const event = Webhook.verifyEventBody(
+      req.rawBody,
+      req.headers["x-cc-webhook-signature"],
+      process.env.COINBASE_WEBHOOK_SECRET
+    );
+    if(event.data.metadata.type === "education"){ 
+      if(event.type==="charge:confirmed"){
+         // eslint-disable-next-line no-use-before-define
+         createOrder2(event);
+        }
+  }
+  res.status(200).json({ received: true });
+
+  } catch (err) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+});
+//------------------------------------------
+const createOrder2 = async (event) => {
+  const {packageId} = event.data.metadata;
+  const orderPrice = event.data.pricing.local.amount;
+  //1)retrieve importsant objects
+  const package = await Package.findById(packageId);
+  const user = await User.findOne({ _id: event.data.metadata.userId });
+
+  if (!package) {
+    return new Error("Package Not Found");
+  }
+  if (!user) {
+    return new Error(" User Not Found");
+  }
+  //2)create order with default payment method cash
+  const order = await Order.create({
+    user: user._id,
+    totalOrderPrice: orderPrice,
+    isPaid: true,
+    paymentMethodType:"coinBase",
+    paidAt: Date.now(),
+  });
+
+  if (!order) {
+    return new Error("Couldn't Create Order");
+  }
+
+  const startDate = new Date();
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + package.expirationTime);
+  // 2)Add the user object to the users array
+  const newUser = {
+    user: user._id,
+    start_date: startDate,
+    end_date: endDate,
+  };
+
+  package.users.addToSet(newUser);
+
+  await package.save();
+};

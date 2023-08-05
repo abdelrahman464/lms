@@ -31,6 +31,7 @@ const {
 } = require("./services/storeServices/OrderService");
 const {
   webhookCheckoutEducation,
+  webhookCoinBaseEducation
 } = require("./services/educationServices/OrderService");
 
 //connect with database
@@ -59,10 +60,23 @@ app.post(
   express.raw({ type: "application/json" }),
   webhookCheckoutEducation
 );
+app.post(
+  "/education/webhookCoinBaseEducation",
+  express.raw({ type: "application/json" }),
+  webhookCoinBaseEducation
+);
 
 //middlewares
 //pasring the comming data to json
-app.use(express.json());
+app.use(express.json({
+  verify:(req,res,buf)=>{
+    const url = req.originalUrl;
+    if(url.startsWith("/webhook")){
+      req.rawBody=buf.toString();
+    }
+  }
+}));
+
 //serve static files inside 'uploads'
 app.use(express.static(path.join(__dirname, "uploads")));
 
