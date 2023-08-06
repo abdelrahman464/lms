@@ -208,6 +208,7 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
       pricing_type:"fixed_price"
       ,
       metadata:{
+        type:"education",
         user_id:req.user._id,
         packageId:packageId
       }

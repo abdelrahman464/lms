@@ -154,7 +154,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
 exports.login = asyncHandler(async (req, res, next) => {
   //1-Check if user can login  [only 2 devices]
   const devices=await ActiveSession.find({email:req.body.email});
-  if(devices.length >=2){
+  if(devices.length >=50){
     res.status(400).json({status:"faild",msg:`you cannot login from more the 2 devices`})
   }
   else{ 

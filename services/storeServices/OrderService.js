@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
+const coinbase= require("coinbase-commerce-node");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
@@ -131,4 +132,52 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
     }
   }
   res.status(200).json({ received: true });
+});
+//-------------------------------------------------------------------------------------------------
+exports.checkoutStoreCoinBase = asyncHandler(async (req, res, next) => {
+  
+  const { cartId } = req.params;
+  //app settings
+  const taxPrice = 0;
+
+  //1) get cart depend on catrId
+  const cart = await CartStore.findById(cartId);
+  if (!cart || cart.cartItems.length === 0) {
+    return next(new ApiError("There's No Cart", 404));
+  }
+  //2) get order price cart price  "check if copoun applied"
+  const cartPrice = cart.totalCartpriceAfterDiscount
+    ? cart.totalCartpriceAfterDiscount
+    : cart.totalCartprice;
+  const totalOrderPrice = Math.ceil(cartPrice + taxPrice);
+
+  //3)- create coin base session  
+   const {Client} = coinbase;
+   const {resources} = coinbase;
+   try{
+    Client.init(process.env.COINBASE_API_KEY);
+
+    const session= await resources.Charge.create({
+      name:"purchaseing order",
+      description:"have a nice payment",
+      local_price:{
+        amount:totalOrderPrice,
+        currency:"USD"
+      },
+      pricing_type:"fixed_price"
+      ,
+      metadata:{
+        type:"store",
+        user_id:req.user._id,
+        cartId:cartId
+      }
+
+    });
+    //4) send session to response
+    res.status(200).json({ status: "success", session });
+
+   }catch(error){
+
+    res.status(400).json({error:error})
+   }
 });

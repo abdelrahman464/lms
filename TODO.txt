@@ -19,3 +19,9 @@ Mostafa edits
 
 -validation and rules on all routes
 -landing page  video
+
+
+
+-what to edit in final project 
+1-rate limit 
+2-login from 2 devices
