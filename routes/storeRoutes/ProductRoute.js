@@ -17,6 +17,7 @@ const {
   uploadProductImages,
   resizeProductImages,
   convertToArray,
+  getFreeProduct,
 } = require("../../services/storeServices/productService");
 
 // nested routes
@@ -69,5 +70,11 @@ router
     deleteProductValidator,
     deleteProduct
   );
-
+router
+  .route("/getFree/:productId")
+  .post(
+    authServices.protect,
+    authServices.allowedTo("user", "instructor"),
+    getFreeProduct
+  );
 module.exports = router;

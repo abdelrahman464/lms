@@ -23,18 +23,12 @@ exports.createProductValidator = [
     .withMessage("Too short description")
     .isLength({ max: 2000 })
     .withMessage("Too long description"),
-  check("quantity")
-    .notEmpty()
-    .withMessage("Product quantity is required")
-    .isNumeric()
-    .withMessage("Product quantity must be a number"),
   check("sold")
     .optional()
     .isNumeric()
     .withMessage("Product quantity must be a number"),
   check("price")
-    .notEmpty()
-    .withMessage("Product price is required")
+    .optional()
     .isNumeric()
     .withMessage("Product price must be a number")
     .isLength({ max: 32 })
@@ -45,8 +39,10 @@ exports.createProductValidator = [
     .withMessage("Product priceAfterDiscount must be a number")
     .toFloat()
     .custom((value, { req }) => {
-      if (req.body.price <= value) {
-        throw new Error("priceAfterDiscount must be lower than price");
+      if (req.body.price) {
+        if (req.body.price <= value) {
+          throw new Error("priceAfterDiscount must be lower than price");
+        }
       }
       return true;
     }),
@@ -159,10 +155,6 @@ exports.updateProductValidator = [
     .withMessage("Too short description")
     .isLength({ max: 2000 })
     .withMessage("Too long description"),
-  check("quantity")
-    .optional()
-    .isNumeric()
-    .withMessage("Product quantity must be a number"),
   check("sold")
     .optional()
     .isNumeric()
@@ -179,8 +171,10 @@ exports.updateProductValidator = [
     .withMessage("Product priceAfterDiscount must be a number")
     .toFloat()
     .custom((value, { req }) => {
-      if (req.body.price <= value) {
-        throw new Error("priceAfterDiscount must be lower than price");
+      if (req.body.price) {
+        if (req.body.price <= value) {
+          throw new Error("priceAfterDiscount must be lower than price");
+        }
       }
       return true;
     }),
