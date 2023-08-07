@@ -116,7 +116,6 @@ exports.getProducts = asyncHandler(async (req, res) => {
   const apiFeatures = new ApiFeatures(Product.find(filter, "-pdf"), req.query)
     .paginate(documentsCounts)
     .filter()
-    .search(Product)
     .limitFields()
     .sort();
 

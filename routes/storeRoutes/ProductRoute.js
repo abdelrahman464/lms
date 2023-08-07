@@ -50,7 +50,6 @@ router
   .route("/:id")
   .get(
     authServices.protect,
-    authServices.allowedTo("user"),
     getProductValidator,
     createFilterObjMyProducts,
     getProduct
