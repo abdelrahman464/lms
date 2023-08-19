@@ -23,19 +23,19 @@ const storeProductSchema = new mongoose.Schema(
       trim: true,
       minlength: [20, "Too short Product description"],
     },
-    // quantity: {
-    //   type: Number,
-    //   required: [true, "Product quantity is required"],
-    // },
+    isFree: {
+      type: Boolean,
+      default: false,
+    },
     sold: {
       type: Number,
       default: 0,
     },
     price: {
       type: Number,
-      required: [true, "Product price is required"],
       trim: true,
       max: [200000, "Too long Product price"],
+      default: 1
     },
     priceAfterDiscount: {
       type: Number,

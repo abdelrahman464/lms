@@ -59,8 +59,6 @@ class ApiFeatures {
           { name: { $regex: this.queryStr.keyword, $options: "i" } },
           { email: { $regex: this.queryStr.keyword, $options: "i" } },
         ];
-      } else if (modelName === "TelegramBotMessage") {
-        query = { text: { $regex: this.queryStr.keyword, $options: "i" } };
       } else if (
         modelName === "AnalyticComment" ||
         modelName === "AnalyticPost"

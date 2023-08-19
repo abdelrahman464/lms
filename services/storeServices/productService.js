@@ -116,7 +116,6 @@ exports.getProducts = asyncHandler(async (req, res) => {
   const apiFeatures = new ApiFeatures(Product.find(filter, "-pdf"), req.query)
     .paginate(documentsCounts)
     .filter()
-    .search(Product)
     .limitFields()
     .sort();
 
@@ -160,3 +159,48 @@ exports.updateProduct = factory.updateOne(Product);
 //@route DELETE /api/v1/products/:id
 //@access private
 exports.deleteProduct = factory.deleteOne(Product);
+//@desc get free product
+//@route DELETE /api/v1/products/getFree/:productId
+//@access private
+exports.getFreeProduct = asyncHandler(async (req, res, next) => {
+  const { productId } = req.params;
+
+  const product = await Product.findById(productId);
+  if (!product) return next(new ApiError("Product Not Found", 404));
+  if (product.isFree === false) {
+    return next(new ApiError("Product Is Not Free", 400));
+  }
+  const userOrders = await Order.find({ user: req.user._id, isPaid: true });
+  const userProducts = [];
+
+  userOrders.forEach((item) => {
+    item.cartItems.forEach((cartItem) => {
+      userProducts.push(cartItem.product._id.toString());
+    });
+  });
+  if (userProducts.includes(productId.toString())) {
+    return next(new ApiError("You already have this product", 400));
+  }
+  const cartItems = [
+    {
+      product: productId,
+      quantity: 1,
+      price: 0,
+    },
+  ];
+  //3)create order with default payment method cash
+  const order = await Order.create({
+    user: req.user._id,
+    cartItems: cartItems,
+    totalOrderPrice: product.price,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethodType: "free",
+  });
+  //4) after creating order  decerement product quantity and increment product sold
+  if (order) {
+    product.sold += 1;
+    await product.save();
+  }
+  res.status(201).json({ status: "success" });
+});

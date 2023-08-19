@@ -34,7 +34,7 @@ const analyticPostSchema = new mongoose.Schema(
 // ^find => it mean if part of of teh word contains find
 analyticPostSchema.pre(/^find/, function (next) {
   // this => query
-  this.populate({ path: "user", select: "name" });
+  this.populate({ path: "user", select: "name profileImg" });
   this.populate({ path: "course", select: "title" });
   next();
 });

@@ -24,7 +24,7 @@ const analyticCommentSchema = new mongoose.Schema(
 // ^find => it mean if part of of teh word contains find
 analyticCommentSchema.pre(/^find/, function (next) {
   // this => query
-  this.populate({ path: "user", select: "name " });
+  this.populate({ path: "user", select: "name profileImg" });
   next();
 });
 
