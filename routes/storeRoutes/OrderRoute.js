@@ -5,6 +5,7 @@ const {
   findAllOrders,
   filterOrderForLoggedUser,
   checkoutSession,
+  checkoutStoreCoinBase
 } = require("../../services/storeServices/OrderService");
 
 const router = express.Router();
@@ -16,6 +17,8 @@ router.get(
   authServices.allowedTo("user", "instructor"),
   checkoutSession
 );
+router.get("/coinbase/:cartId", checkoutStoreCoinBase);
+
 
 router
   .route("/")

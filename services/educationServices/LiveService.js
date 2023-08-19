@@ -8,6 +8,7 @@ const sendEmail = require("../../utils/sendEmail");
 //---------------------------------------------------------------------------------------------------//
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
+  
   //1)-if user is admin
   // eslint-disable-next-line no-empty
   if (req.user.role === "admin") {
@@ -31,7 +32,7 @@ exports.createFilterObj = async (req, res, next) => {
     else if (package.allCourses === true) {
     } else {
       const coursesArray = package.courses.map((courseId) =>
-        courseId.toString()
+        courseId
       );
       filterObject.course = { $in: coursesArray };
     }

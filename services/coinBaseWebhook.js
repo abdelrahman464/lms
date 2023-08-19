@@ -19,6 +19,7 @@ exports.webhookCoinBase = asyncHandler(async (req, res) => {
         req.headers["x-cc-webhook-signature"],
         process.env.COINBASE_WEBHOOK_SECRET
       );
+      console.log(event.type)
       if(event.type==="charge:confirmed"){
         // eslint-disable-next-line no-use-before-define
         if(event.data.metadata.type === "education"){ 
@@ -43,7 +44,7 @@ exports.webhookCoinBase = asyncHandler(async (req, res) => {
   });
   //------------------------------------------------------------------------
   const createPackageOrder = async (event) => {
-    const {packageId} = event.data.metadata;
+    const {packageId}= event.data.metadata;
     const orderPrice = event.data.pricing.local.amount;
     //1)retrieve importsant objects
     const package = await Package.findById(packageId);

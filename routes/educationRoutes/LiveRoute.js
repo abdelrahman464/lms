@@ -14,7 +14,8 @@ const {
   createFilterObj,
   setCreatorIdToBody,
   searchByDate,
-  createLiveObj
+  createLiveObj,
+  myFollowedLives
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -30,6 +31,7 @@ const router = express.Router();
 //send emails to students 
 router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
 router.get('/searchByDate/:date',searchByDate);
+router.get('/myFollowedLives',authServices.protect,myFollowedLives);
 
 router
   .route("/") //middleware    
