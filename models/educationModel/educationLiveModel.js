@@ -49,7 +49,7 @@ const educationLiveSchema = new mongoose.Schema({
 // ^find => it mean if part of of teh word contains find
 educationLiveSchema.pre(/^find/, function (next) {
   // this => query
-  this.populate({ path: "creator", select: "name" });
+  this.populate({ path: "creator", select: "name profileImg" });
   this.populate({ path: "course", select: "title" });
   next();
 });

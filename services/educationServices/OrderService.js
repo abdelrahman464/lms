@@ -166,7 +166,6 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
   const { packageId } = req.params;
   //app settings
   const taxPrice = 0;
-
   //1) get cart depend on catrId
   const package = await Package.findById(packageId);
   if (!package) {
@@ -202,7 +201,7 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
       name:"purchaseing package",
       description:"have a nice payment",
       local_price:{
-        amount:totalOrderPrice,
+        amount: 10,
         currency:"USD"
       },
       pricing_type:"fixed_price"

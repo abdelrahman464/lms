@@ -15,7 +15,8 @@ const {
   setCreatorIdToBody,
   searchByDate,
   createLiveObj,
-  myFollowedLives
+  filterFollowedBydate,
+  myFollowedLives,
 } = require("../../services/educationServices/LiveService");
 // Validation
 const {
@@ -26,21 +27,28 @@ const {
 
 const router = express.Router();
 
-//create   admin  instructor of course 
-//update delete admin instructorof course 
-//send emails to students 
-router.get("/:courseId?", authServices.protect,createFilterObj, getAllLives)
-router.get('/searchByDate/:date',searchByDate);
-router.get('/myFollowedLives',authServices.protect,myFollowedLives);
+//create   admin  instructor of course
+//update delete admin instructorof course
+//send emails to students
+router.get(
+  "/myFollowedLives/:date?",
+  authServices.protect,
+  filterFollowedBydate,
+  myFollowedLives
+);
+router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
+router.get("/searchByDate/:date", searchByDate);
 
 router
-  .route("/") //middleware    
-  .post(authServices.protect,
-    authServices.allowedTo("admin","instructor"),
+  .route("/") //middleware
+  .post(
+    authServices.protect,
+    authServices.allowedTo("admin", "instructor"),
     createLiveValidator,
     setCreatorIdToBody,
     createLiveObj,
-    createLive)
+    createLive
+  );
 
 router
   .route("/sendEmailsToFollowers/:liveId")
@@ -53,15 +61,26 @@ router
 
 router
   .route("/:id")
-  .get(authServices.protect,checkLiveAuthority,getLivebyId)
-  .put(authServices.protect,  authServices.allowedTo("instructor","admin"), checkLiveAuthority,updateLiveValidator,updateLive)
-  .delete(authServices.protect, authServices.allowedTo("instructor","admin"), checkLiveAuthority ,deleteLive);
+  .get(authServices.protect, checkLiveAuthority, getLivebyId)
+  .put(
+    authServices.protect,
+    authServices.allowedTo("instructor", "admin"),
+    checkLiveAuthority,
+    updateLiveValidator,
+    updateLive
+  )
+  .delete(
+    authServices.protect,
+    authServices.allowedTo("instructor", "admin"),
+    checkLiveAuthority,
+    deleteLive
+  );
 
 //follow a specific live
 router.put(
   "/followLive/:courseId/:liveId",
   authServices.protect,
-  authServices.allowedTo("user","admin"),
+  authServices.allowedTo("user", "admin"),
   checkAuthority2,
   followLive
 );

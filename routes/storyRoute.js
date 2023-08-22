@@ -16,7 +16,7 @@ const router = express.Router();
 router.post(
   "/",
   authServices.protect,
-  authServices.allowedTo("admin","user","instructor"),
+  authServices.allowedTo("admin"),
   uploadStoryImage,
   resizeImage,
   createStory
@@ -24,16 +24,12 @@ router.post(
 // Get all videos
 router.get(
   "/",
-  authServices.protect,
-  authServices.allowedTo("admin","user","instructor"),
   getAllStories
 );
 
 // Get a specific lesson by ID
 router.get(
   "/:id",
-  authServices.protect,
-  authServices.allowedTo("admin","user","instructor"),
   getStory
 );
 
@@ -41,7 +37,7 @@ router.get(
 router.put(
   "/:id",
   authServices.protect,
-  authServices.allowedTo("admin","user","instructor"),
+  authServices.allowedTo("admin"),
   uploadStoryImage,
   resizeImage,
   updateStory
@@ -51,7 +47,7 @@ router.put(
 router.delete(
   "/:id",
   authServices.protect,
-  authServices.allowedTo("admin","user","instructor"),
+  authServices.allowedTo("admin"),
   deleteStory
 );
 

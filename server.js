@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const compression = require("compression");
 
+
 // const fileUpload = require('express-fileupload')
 
 // const rateLimit = require("express-rate-limit");
@@ -41,10 +42,12 @@ mongoose.set("strictQuery", true);
 const app = express();
 //enable other domains access your application
 app.use(cors());
-app.options("*", cors());
+app.options("*.wealthmakers-fx.com", cors());
+
 // app.use(fileUpload());
 
 app.use(passport.initialize());
+
 
 // compress all responses
 app.use(compression());

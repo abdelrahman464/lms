@@ -8,7 +8,7 @@ const sendEmail = require("../../utils/sendEmail");
 //---------------------------------------------------------------------------------------------------//
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
-  
+
   //1)-if user is admin
   // eslint-disable-next-line no-empty
   if (req.user.role === "admin") {
@@ -31,9 +31,7 @@ exports.createFilterObj = async (req, res, next) => {
     // eslint-disable-next-line no-empty
     else if (package.allCourses === true) {
     } else {
-      const coursesArray = package.courses.map((courseId) =>
-        courseId
-      );
+      const coursesArray = package.courses.map((courseId) => courseId);
       filterObject.course = { $in: coursesArray };
     }
   }
@@ -127,36 +125,62 @@ exports.SendEmailsToLiveFollwers = asyncHandler(async (req, res, next) => {
   res.status(200).json({ succes: "true" });
 });
 //---------------------------------------------------------------------------------//
+exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
+  let filterObject = {};
+  
+  const { date } = req.params;
+  if(!date){
+    filterObject={
+      "followers.user": req.user._id
+    }
+  }else{
+    const components = date.split(" ");
+    filterObject={
+      "followers.user": req.user._id,
+      "day": components[2],
+      "month": components[1],
+    }
+  }  
+
+  req.filterObj=filterObject;
+    next();
+  
+  
+});
+
+
+
+
+//---------------------------------------------------------------------------------//
 exports.myFollowedLives = asyncHandler(async (req, res) => {
-  const lives = await Live.find({
-    "followers.user": req.user._id,
-  });
+  const lives = await Live.find(req.filterObj);
 
   if (lives.length === 0) {
-    res.status(200).json({ message: "you didn't follow any live" });
+    res.status(200).json({status:'faild', msg: "you didn't follow any live" });
   } else {
-    res.status(200).json({ lives: lives });
+    res.status(200).json({status:'success', data: lives });
   }
 });
 //---------------------------------------------------------------------------------//
-exports.searchByDate= asyncHandler(async(req,res)=>{
-  const {date} = req.params;
+exports.searchByDate = asyncHandler(async (req, res) => {
+  const { date } = req.params;
   const components = date.split(" ");
   const lives = await Live.find({
-    day:components[2],
-    month:components[1]
+    day: components[2],
+    month: components[1],
   });
-  if(lives.length===0){
-    res.status(400).json({status:'faild',msg:'there are no lives for that date'})
+  if (lives.length === 0) {
+    res
+      .status(400)
+      .json({ status: "faild", msg: "there are no lives for that date" });
+  } else {
+    res.status(400).json({ status: "success", data: lives });
   }
-  else{
-    res.status(400).json({status:'success',data:lives});
-  }
-})
+});
 //---------------------------------------------------------------------------------//
-exports.createLiveObj=asyncHandler(async(req,res,next)=>{
-  const {date} = req.body;
-  req.body.day= date.split(" ")[2]
-  req.body.month= date.split(" ")[1]
-  next()
-})
+exports.createLiveObj = asyncHandler(async (req, res, next) => {
+  const { date } = req.body;
+  req.body.day = date.split(" ")[2];
+  req.body.month = date.split(" ")[1];
+  next();
+});
