@@ -72,8 +72,8 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       },
     ],
     mode: "payment",
-    success_url: `https://www.wealthmakers-fx.com`,
-    cancel_url: `https://sdcbm.com`,
+    success_url: `https://www.wealthmakers-fx.com/profile`,
+    cancel_url: `https://www.wealthmakers-fx.com`,
     customer_email: req.user.email,
 
     client_reference_id: req.params.packageId, // i will use to create order
