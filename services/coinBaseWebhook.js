@@ -11,6 +11,7 @@ const Product = require("../models/storeModels/storeProductModel");
 
 // hanlde both cart order and package order 
 exports.webhookCoinBase = asyncHandler(async (req, res) => {
+
     const {Webhook}= coinbase;
    
     try {
@@ -19,15 +20,15 @@ exports.webhookCoinBase = asyncHandler(async (req, res) => {
         req.headers["x-cc-webhook-signature"],
         process.env.COINBASE_WEBHOOK_SECRET
       );
-      console.log(event.type)
+     console.log(event.type)
       if(event.type==="charge:confirmed"){
         // eslint-disable-next-line no-use-before-define
         if(event.data.metadata.type === "education"){ 
             // eslint-disable-next-line no-use-before-define
-            createPackageOrder(event);
+            await createPackageOrder(event);
          } else if(event.data.metadata.type === "store"){
             // eslint-disable-next-line no-use-before-define
-            createCardOrder(event)
+            await createCardOrder(event)
         }
         else{
             console.log("error happened :)");
@@ -42,13 +43,14 @@ exports.webhookCoinBase = asyncHandler(async (req, res) => {
     }
   
   });
-  //------------------------------------------------------------------------
+  
+  //----------------------------------------------------------------------------
   const createPackageOrder = async (event) => {
     const {packageId}= event.data.metadata;
     const orderPrice = event.data.pricing.local.amount;
     //1)retrieve importsant objects
     const package = await Package.findById(packageId);
-    const user = await User.findOne({ _id: event.data.metadata.userId });
+    const user = await User.findOne({ _id: event.data.metadata.user_id });
   
     if (!package) {
       return new Error("Package Not Found");

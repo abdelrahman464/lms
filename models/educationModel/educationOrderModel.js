@@ -26,7 +26,8 @@ const educationOrderSchema = new mongoose.Schema(
   },
   { timestamp: true }
 );
-
-
-
+educationOrderSchema.pre(/^find/, function (next) {
+  this.populate({ path: "user", select: "name phone email " })
+  next();
+});
 module.exports = mongoose.model("EducationOrder", educationOrderSchema);

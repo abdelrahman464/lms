@@ -68,8 +68,8 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 // to be done when user purchase a package
 //old version
 exports.addUserToPlan = asyncHandler(async (req, res) => {
-  const { planId } = req.body; //params
-  const userId = req.user._id;
+  const { planId,userId } = req.body; 
+ 
   const plan = await Package.findById(planId);
 
   if (!plan) {
@@ -92,6 +92,8 @@ exports.addUserToPlan = asyncHandler(async (req, res) => {
 
   res.status(200).json({ status: "success", plan: plan });
 });
+
+
 // lessons courses
 //middleware to check user Authority to courses
 exports.checkAuthority = asyncHandler(async (req, res, next) => {

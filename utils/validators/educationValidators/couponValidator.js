@@ -9,9 +9,9 @@ exports.CouponIdValidator = [
   validatorMiddleware,
 ];
 exports.createCouponValidator = [
-  check("title")
+  check("name")
     .notEmpty()
-    .withMessage("Coupon required")
+    .withMessage("Coupon name required")
     .custom((val) =>
       Coupon.findOne({ name: val }).then((coupon) => {
         if (coupon) {
@@ -25,6 +25,6 @@ exports.createCouponValidator = [
 ];
 exports.updateCouponValidator = [
   check("id").isMongoId().withMessage("Invalid Coupon id format"),
-  body("title").optional(),
+  body("name").optional(),
   validatorMiddleware,
 ];

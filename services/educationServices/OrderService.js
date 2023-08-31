@@ -45,7 +45,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
    //gomaa edit ' discount value' ----------------------------------------
    if(req.body.coupon){
     const coupon = await Coupon.findOne({
-      title: req.body.coupon,
+      name: req.body.coupon,
       expire: { $gt: Date.now() },
     });
       if(!coupon){
@@ -179,7 +179,7 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
    //applying discount 
    if(req.body.coupon){
     const coupon = await Coupon.findOne({
-      title: req.body.coupon,
+      name: req.body.coupon,
       expire: { $gt: Date.now() },
     });
       if(!coupon){
@@ -201,7 +201,7 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
       name:"purchaseing package",
       description:"have a nice payment",
       local_price:{
-        amount: 10,
+        amount: totalOrderPrice,
         currency:"USD"
       },
       pricing_type:"fixed_price"

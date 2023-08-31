@@ -40,6 +40,26 @@ dbConnection();
 mongoose.set("strictQuery", true);
 //express app
 const app = express();
+//parsing json 
+// app.use(
+//   express.json({
+//     verify: (req, res, buf) => {
+//       const url = req.originalUrl;
+//       if (url.startsWith("/webhook")) {
+//         req.rawBody = buf.toString();
+//       }
+//     },
+//   })
+// );
+app.use(express.json({
+  verify: (req, res, buf) => {
+    if (buf && buf.length > 0) {
+      req.rawBody = buf.toString();
+    } else {
+      req.rawBody = ''; // Set a default value if buf doesn't exist
+    }
+  }
+}));
 //enable other domains access your application
 app.use(cors());
 app.options("*.wealthmakers-fx.com", cors());
@@ -54,6 +74,12 @@ app.use(compression());
 
 //checkout webhook
 app.post(
+  "/webhookCoinBase",
+  express.raw({ type: "application/json" }),
+  webhookCoinBase
+);
+
+app.post(
   "/store/webhook-checkout",
   express.raw({ type: "application/json" }),
   webhookCheckoutStore
@@ -63,24 +89,11 @@ app.post(
   express.raw({ type: "application/json" }),
   webhookCheckoutEducation
 );
-app.post(
-  "/webhookCoinBase",
-  express.raw({ type: "application/json" }),
-  webhookCoinBase
-);
+
 
 //middlewares
 //pasring the comming data to json
-app.use(
-  express.json({
-    verify: (req, res, buf) => {
-      const url = req.originalUrl;
-      if (url.startsWith("/webhook")) {
-        req.rawBody = buf.toString();
-      }
-    },
-  })
-);
+
 
 //serve static files inside 'uploads'
 app.use(express.static(path.join(__dirname, "uploads")));
