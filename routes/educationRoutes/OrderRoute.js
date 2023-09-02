@@ -15,10 +15,10 @@ router.use(authServices.protect);
 router.put(
   "/checkout-session/:packageId",
   authServices.protect,
-  authServices.allowedTo("user", "instructor"),
+  authServices.allowedTo("user", "instructor","admin"),
   checkoutSession
 );
-router.get("/coinbase/:packageId", checkoutSessionCoinBase);
+router.put("/coinbase/:packageId", checkoutSessionCoinBase);
 
 router
   .route("/")

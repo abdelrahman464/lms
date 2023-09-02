@@ -78,13 +78,29 @@ exports.checkAuthority2 = [
               { allCourses: true }
             ],
             // eslint-disable-next-line no-underscore-dangle
-            "users.user": req.user._id,
-            "users.end_date": { $gt: new Date() }, // renew  delete 
-          })
+            "users.user": req.user._id, 
+          },
+          {
+            "users.$": 1, // Select only the matched user object
+          }
+          )
             .then((package) => {
               if (package) {
-                // User has an active subscription for the course
-                resolve();
+                // check whether user subscribtion expired or not 
+                const user = package.users[0];
+                const bool =
+                  new Date(user.end_date).getTime() <= new Date().getTime();
+                  if (bool) {
+                    // User's start date is not valid, delete the user object from the users array
+                     Package.updateOne(
+                      { _id: package._id }, // Identify the document by its unique identifier
+                      { $pull: { users: { _id: user._id } } } // Specify the field and the element to remove
+                    ).then(()=>{
+                      reject("your subscription expired ");
+                    });
+                
+                  }
+                  resolve();
               } else {
                 // Check if the user has paid for the course or is the instructor
                 Course.findOne({

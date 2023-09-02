@@ -28,7 +28,10 @@ exports.findSpecificOrder = factory.getOne(Order);
 //@route GET /api/v1/orders/checkout-session/packageId
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
+  console.log(`manga`);
   const { packageId } = req.params;
+  let metadataObject={};
+  metadataObject.type="education";
   //app settings
   const taxPrice = 0;
 
@@ -51,6 +54,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       if(!coupon){
         return next(new ApiError("Coupon is Invalid or Expired "));
       }
+      metadataObject.coupon=req.body.coupon;
 
       packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
    }
@@ -77,7 +81,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     customer_email: req.user.email,
 
     client_reference_id: req.params.packageId, // i will use to create order
-    metadata: { type: "education" },
+    metadata: metadataObject,
   });
 
   //4) send session to response
@@ -90,22 +94,28 @@ const createOrder = async (session) => {
   //1)retrieve importsant objects
   const package = await Package.findById(packageId);
   const user = await User.findOne({ email: session.customer_email });
-
+  console.log(`start 1`);
   if (!package) {
     return new Error("Package Not Found");
   }
   if (!user) {
     return new Error(" User Not Found");
   }
+  console.log(`create order`)
+  
+  const coupon = session.metadata.coupon || 'no coupon used';
   //2)create order with default payment method cash
   const order = await Order.create({
     user: user._id,
     totalOrderPrice: orderPrice,
     isPaid: true,
     paymentMethodType:"stripe",
+    coupon:coupon,
     paidAt: Date.now(),
    
   });
+  
+  console.log(`createdd order`)
 
   if (!order) {
     return new Error("Couldn't Create Order");
@@ -122,7 +132,7 @@ const createOrder = async (session) => {
   };
 
   package.users.addToSet(newUser);
-
+  console.log(`done`);
   await package.save();
 };
 //-----------------------------------------------------------------------
@@ -137,20 +147,23 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
   let event;
 
   try {
+    console.log(`start verify`);
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_EDUCATION
     );
   } catch (err) {
+    console.log(err);
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
-
+  console.log(`start to compare`);
   if (event.data.object.metadata.type === "education") {
     switch (event.type) {
       case "checkout.session.completed":
-        createOrder(event.data.object);
+        console.log(`education :)`);
+        await createOrder(event.data.object);
 
         break;
       default:
@@ -171,6 +184,13 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
   if (!package) {
     return next(new ApiError("There's no package", 404));
   }
+  // eslint-disable-next-line prefer-const
+  let metadatainfo={ 
+     type:"education",
+     user_id:req.user._id,
+     packageId:packageId
+  }
+
   //2) get order price cart price  "check if copoun applied"
   let packagePrice = package.priceAfterDiscount
     ? package.priceAfterDiscount
@@ -185,7 +205,7 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
       if(!coupon){
         return next(new ApiError("Coupon is Invalid or Expired "));
       }
-
+      metadatainfo.coupon=req.body.coupon ;
       packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
    }
   
@@ -204,20 +224,14 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
         amount: totalOrderPrice,
         currency:"USD"
       },
-      pricing_type:"fixed_price"
-      ,
-      metadata:{
-        type:"education",
-        user_id:req.user._id,
-        packageId:packageId
-      }
-
+      pricing_type:"fixed_price",
+      metadata:metadatainfo
     });
     //4) send session to response
+    console.log(metadatainfo);
     res.status(200).json({ status: "success", session });
 
    }catch(error){
-
     res.status(400).json({error:error})
    }
 });

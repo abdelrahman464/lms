@@ -59,11 +59,13 @@ exports.webhookCoinBase = asyncHandler(async (req, res) => {
       return new Error(" User Not Found");
     }
     //2)create order with default payment method cash
+    const coupon = event.data.metadata.coupon || 'no coupon used';
     const order = await PackageOrder.create({
       user: user._id,
       totalOrderPrice: orderPrice,
       isPaid: true,
       paymentMethodType:"coinBase",
+      coupon:coupon,
       paidAt: Date.now(),
     });
   
@@ -100,6 +102,7 @@ const createCardOrder = async (event) => {
       totalOrderPrice: orderPrice,
       isPaid: true,
       paidAt: Date.now(),
+      coupon:cart.coupon,
       paymentMethodType: "coinBase",
     });
     //4) after creating order  decerement product quantity and increment product sold

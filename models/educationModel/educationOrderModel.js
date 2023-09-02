@@ -15,8 +15,10 @@ const educationOrderSchema = new mongoose.Schema(
       type: Number,
     },
     paymentMethodType: {
-      type: String,
-     
+      type: String, 
+    },
+    coupon: {
+      type: String, 
     },
     isPaid: {
       type: Boolean,

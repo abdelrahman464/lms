@@ -19,19 +19,17 @@ const {
   resizeImage,
   uploadPackageImage,
   addTelgramIdToUserInPackage,
-  getMyChannels
+  getMyChannels,
+  removeUserFromPlan
 } = require("../../services/educationServices/packageServices");
 
 const router = express.Router();
 
 //get My packages
-router.get("/myPackages",authServices.protect,getMyPackages);
-router.get("/myTelegramChannels/:telegramId",  getMyChannels);
+router.get("/myPackages", authServices.protect, getMyPackages);
+router.get("/myTelegramChannels/:telegramId", getMyChannels);
 //add telegram id
-router.put(
-  "/addTelegramId/:id",
-  addTelgramIdToUserInPackage
-);
+router.put("/addTelegramId/:id", addTelgramIdToUserInPackage);
 
 router
   .route("/")
@@ -70,5 +68,7 @@ router
 router
   .route("/addUserToPlan")
   .post(authServices.protect, authServices.allowedTo("admin"), addUserToPlan);
-
+router
+  .route("/removeUserFromPlan")
+  .post(authServices.protect, authServices.allowedTo("admin"), removeUserFromPlan);
 module.exports = router;

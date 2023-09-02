@@ -27,6 +27,9 @@ const storeOrderStoreSchema = new mongoose.Schema(
     paymentMethodType: {
       type: String,
     },
+    coupon: {
+      type: String,
+    },
     isPaid: {
       type: Boolean,
       default: false,

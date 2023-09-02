@@ -16,6 +16,7 @@ const storeCartStoreSchema = mongoose.Schema(
       },
     ],
     totalCartprice: Number,
+    coupon: String,
     totalCartpriceAfterDiscount: Number,
     user: {
       type: mongoose.Schema.ObjectId,

@@ -84,6 +84,7 @@ const createCardOrder = async (session) => {
     totalOrderPrice: orderPrice,
     isPaid: true,
     paidAt: Date.now(),
+    coupon:cart.coupon,
     paymentMethodType: "stripe",
   });
   //4) after creating order  decerement product quantity and increment product sold

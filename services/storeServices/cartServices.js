@@ -176,6 +176,7 @@ exports.applayCoupon = asyncHandler(async (req, res, next) => {
   ).toFixed(2);
 
   cart.totalCartpriceAfterDiscount = totalPriceAfterDiscount;
+  cart.coupon = req.body.coupon;
   await cart.save();
 
   res.status(200).json({

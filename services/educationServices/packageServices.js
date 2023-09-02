@@ -2,6 +2,7 @@ const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const asyncHandler = require("express-async-handler");
 const Package = require("../../models/educationModel/educationPackageModel");
+const User = require("../../models/userModel");
 const factory = require("../handllerFactory");
 const { checkCourseAuthority } = require("./courseService");
 
@@ -67,21 +68,42 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 
 // to be done when user purchase a package
 //old version
-exports.addUserToPlan = asyncHandler(async (req, res) => {
-  const { planId,userId } = req.body; 
- 
+exports.addCourseToPlan = asyncHandler(async (req, res) => {
+  const { planId, courseId } = req.body;
+
   const plan = await Package.findById(planId);
 
   if (!plan) {
     res.status(400).json({ status: `no package for that id: ${planId}` });
   }
+  // Add the courseId to the courses array
+  plan.courses.push(courseId);
 
+  await plan.save();
+
+  res.status(200).json({ status: "success" });
+});
+
+// to be done when user purchase a package
+//old version
+exports.addUserToPlan = asyncHandler(async (req, res) => {
+  const { planId,userEmail } = req.body; 
+  const plan = await Package.findById(planId);
+
+  if (!plan) {
+    res.status(400).json({ status:`faild`, msg:`no package for that id: ${planId}` });
+  }
+  const user = await User.findOne({ email: userEmail });
+  
+  if (!user) {
+    res.status(400).json({ status:`faild`, msg:`no user for that email: ${userEmail}` });
+  }
   const startDate = new Date();
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + plan.expirationTime);
   // Add the user object to the users array
   const newUser = {
-    user: userId,
+    user: user._id,
     start_date: startDate,
     end_date: endDate,
   };
@@ -90,9 +112,39 @@ exports.addUserToPlan = asyncHandler(async (req, res) => {
 
   await plan.save();
 
-  res.status(200).json({ status: "success", plan: plan });
+  res.status(200).json({ status: "success", data: `user has been added successfully` });
 });
-
+//-------------------------------------------------------------------------------------------------------------//
+exports.removeUserFromPlan = asyncHandler(async (req, res) => {
+  const { planId, userEmail } = req.body;
+  
+  try {
+    const plan = await Package.findById(planId);
+  
+    if (!plan) {
+      return res.status(400).json({ status: "failed", msg: `No package for that id: ${planId}` });
+    }
+  
+    const user = await User.findOne({ email: userEmail });
+  
+    if (!user) {
+      return res.status(400).json({ status: "failed", msg: `No user for that email: ${userEmail}` });
+    }
+    
+    // Find the index of the user in the users array and remove it
+    const userIndex = plan.users.findIndex(u => u.user.toString() === user._id.toString());
+    if (userIndex !== -1) {
+      plan.users.splice(userIndex, 1);
+      await plan.save();
+       res.status(200).json({ status: "success", data: `User has been removed from the package successfully` });
+    } else {
+       res.status(400).json({ status: "failed", msg: `User is not associated with this package` });
+    }
+  } catch (error) {
+    // eslint-disable-next-line prefer-template
+    return res.status(500).json({ status: "error", msg: "An error occurred while processing the request "+ error });
+  }
+});
 
 // lessons courses
 //middleware to check user Authority to courses
