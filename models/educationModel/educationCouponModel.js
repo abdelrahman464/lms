@@ -17,8 +17,17 @@ const educationCouponSchema = mongoose.Schema(
       type: Number,
       required: [true, "Coupon expire value required"],
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );
+educationCouponSchema.pre(/^find/, function (next) {
+  this.populate({ path: "creator", select: "name phone email " })
+  next();
+});
 
 module.exports = mongoose.model("EducationCoupon", educationCouponSchema);

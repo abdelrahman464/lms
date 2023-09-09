@@ -16,7 +16,7 @@ const {
 } = require("../../services/storeServices/cartServices");
 
 const router = express.Router();
-router.use(authServices.protect, authServices.allowedTo("user"));
+router.use(authServices.protect, authServices.allowedTo("user","admin"));
 
 router
   .route("/")

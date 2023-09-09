@@ -28,7 +28,7 @@ exports.findSpecificOrder = factory.getOne(Order);
 //@route GET /api/v1/orders/checkout-session/packageId
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
-  console.log(`manga`);
+  
   const { packageId } = req.params;
   let metadataObject={};
   metadataObject.type="education";
@@ -149,7 +149,7 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
   try {
     console.log(`start verify`);
     event = stripe.webhooks.constructEvent(
-      req.body,
+      req.rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_EDUCATION
     );

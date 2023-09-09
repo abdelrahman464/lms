@@ -61,8 +61,8 @@ app.use(express.json({
   }
 }));
 //enable other domains access your application
-app.use(cors());
-app.options("*.wealthmakers-fx.com", cors());
+// app.use(cors());
+// app.options("*", cors());
 
 // app.use(fileUpload());
 

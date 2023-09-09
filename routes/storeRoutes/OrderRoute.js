@@ -12,12 +12,12 @@ const router = express.Router();
 
 
 router.use(authServices.protect);
-router.get(
+router.put(
   "/checkout-session/:cartId",
-  authServices.allowedTo("user", "instructor"),
+  authServices.allowedTo("user", "instructor","admin"),
   checkoutSession
 );
-router.get("/coinbase/:cartId", checkoutStoreCoinBase);
+router.put("/coinbase/:cartId", checkoutStoreCoinBase);
 
 
 router

@@ -8,6 +8,10 @@ const sendEmail = require("../../utils/sendEmail");
 //---------------------------------------------------------------------------------------------------//
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
+  // Calculate the date 8 days ago
+  const eightDaysAgo = new Date();
+  eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+  
 
   //1)-if user is admin
   // eslint-disable-next-line no-empty
@@ -35,7 +39,9 @@ exports.createFilterObj = async (req, res, next) => {
       filterObject.course = { $in: coursesArray };
     }
   }
-
+    // Filter by date range (updated_at >= eightDaysAgo and updated_at <= current date)
+    filterObject.updatedAt = { $gte: eightDaysAgo };
+  
   req.filterObj = filterObject;
   // req.selectFields = "field1 field2"; // Add the desired fields to select
   next();

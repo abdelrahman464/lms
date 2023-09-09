@@ -78,6 +78,8 @@ const createCardOrder = async (session) => {
   const user = await User.findOne({ email: session.customer_email });
 
   //3)create order with default payment method cash
+  console.log("start to store order order")
+
   const order = await OrderStore.create({
     user: user._id,
     cartItems: cart.cartItems,
@@ -96,7 +98,7 @@ const createCardOrder = async (session) => {
       },
     }));
     await Product.bulkWrite(bulkOptions, {});
-
+    console.log("7mos")
     //5)clear cart depend on cartId
     await CartStore.findByIdAndDelete(cartId);
   }
@@ -111,11 +113,14 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   let event;
 
   try {
+    console.log("start to verify   order")
     event = stripe.webhooks.constructEvent(
-      req.body,
+      req.rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_STORE
     );
+    console.log("finished  order")
+
   } catch (err) {
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
@@ -124,7 +129,9 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   if (event.data.object.metadata.type === "store") {
     switch (event.type) {
       case "checkout.session.completed":
-        createCardOrder(event.data.object);
+        console.log("start to create order")
+
+        await createCardOrder(event.data.object);
 
         break;
       // ... handle other event types

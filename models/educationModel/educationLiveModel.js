@@ -43,8 +43,8 @@ const educationLiveSchema = new mongoose.Schema({
         type: String,
       },
     },
-  ],
-});
+  ]
+}, { timestamps: true });
 
 // ^find => it mean if part of of teh word contains find
 educationLiveSchema.pre(/^find/, function (next) {
