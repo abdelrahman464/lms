@@ -6,9 +6,9 @@ const Live = require("../../../models/educationModel/educationLiveModel");
 exports.checkLiveAuthority=[
     check("id")
     .notEmpty()
-    .withMessage("send courseId in param please")
+    .withMessage("send liveId in param please")
     .isMongoId()
-    .withMessage("Invalid courseId")
+    .withMessage("Invalid liveId")
     .custom((liveId,{req})=>
         new Promise((resolve, reject) => {
             if(req.user.role==="admin"){

@@ -6,6 +6,7 @@ const factory = require("../handllerFactory");
 const sendEmail = require("../../utils/sendEmail");
 
 //---------------------------------------------------------------------------------------------------//
+//@desc this filter lives based on time (8 days ago) and their privillage 
 exports.createFilterObj = async (req, res, next) => {
   let filterObject = {};
   // Calculate the date 8 days ago
@@ -16,6 +17,7 @@ exports.createFilterObj = async (req, res, next) => {
   //1)-if user is admin
   // eslint-disable-next-line no-empty
   if (req.user.role === "admin") {
+    return next();
   }
   //2)-if user is the instructor
   else if (req.user.role === "instructor") {
@@ -44,7 +46,7 @@ exports.createFilterObj = async (req, res, next) => {
   
   req.filterObj = filterObject;
   // req.selectFields = "field1 field2"; // Add the desired fields to select
-  next();
+  return next();
 };
 //---------------------------------------------------------------------------------------------------//
 exports.setCreatorIdToBody = (req, res, next) => {
@@ -100,8 +102,8 @@ exports.followLive = asyncHandler(async (req, res, next) => {
 });
 //<----------------------------------->//
 exports.SendEmailsToLiveFollwers = asyncHandler(async (req, res, next) => {
-  const { liveId } = req.params;
-  const live = await Live.findById(liveId);
+  const { id } = req.params;
+  const live = await Live.findById(id);
   if (!live) {
     return next(ApiError("live not found", 404));
   }
@@ -134,6 +136,9 @@ exports.SendEmailsToLiveFollwers = asyncHandler(async (req, res, next) => {
 exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
   let filterObject = {};
   
+  const eightDaysAgo = new Date();
+  eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+
   const { date } = req.params;
   if(!date){
     filterObject={
@@ -147,6 +152,7 @@ exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
       "month": components[1],
     }
   }  
+  filterObject.updatedAt = { $gte: eightDaysAgo };
 
   req.filterObj=filterObject;
     next();
@@ -186,7 +192,10 @@ exports.searchByDate = asyncHandler(async (req, res) => {
 //---------------------------------------------------------------------------------//
 exports.createLiveObj = asyncHandler(async (req, res, next) => {
   const { date } = req.body;
-  req.body.day = date.split(" ")[2];
-  req.body.month = date.split(" ")[1];
+  if(date){
+    req.body.day = date.split(" ")[2];
+    req.body.month = date.split(" ")[1];
+    next();
+  }
   next();
 });

@@ -30,13 +30,14 @@ const router = express.Router();
 //create   admin  instructor of course
 //update delete admin instructorof course
 //send emails to students
+router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
 router.get(
   "/myFollowedLives/:date?",
   authServices.protect,
   filterFollowedBydate,
   myFollowedLives
 );
-router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
+// router.get("/all/:courseId?", authServices.protect, authServices.allowedTo("admin"), getAllLives);
 router.get("/searchByDate/:date", searchByDate);
 
 router
@@ -51,7 +52,7 @@ router
   );
 
 router
-  .route("/sendEmailsToFollowers/:liveId")
+  .route("/sendEmailsToFollowers/:id")
   .post(
     authServices.protect,
     authServices.allowedTo("instructor", "admin"),
@@ -67,6 +68,7 @@ router
     authServices.allowedTo("instructor", "admin"),
     checkLiveAuthority,
     updateLiveValidator,
+    createLiveObj,
     updateLive
   )
   .delete(

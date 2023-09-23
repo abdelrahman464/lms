@@ -50,7 +50,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     const coupon = await Coupon.findOne({
       name: req.body.coupon,
       expire: { $gt: Date.now() },
-    });
+    }); 
       if(!coupon){
         return next(new ApiError("Coupon is Invalid or Expired "));
       }
