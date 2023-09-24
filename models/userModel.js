@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 
 const userShcema = new mongoose.Schema(
   {
+    invitor:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default:null
+    },
     name: {
       type: String,
       trim: true,
@@ -40,7 +45,7 @@ const userShcema = new mongoose.Schema(
     passwordResetVerified: Boolean,
     role: {
       type: String,
-      enum: ["user", "instructor", "admin"],
+      enum: ["user", "instructor", "admin","marketer"],
       default: "user",
     },
     active: {

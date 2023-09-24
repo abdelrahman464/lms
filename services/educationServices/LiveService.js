@@ -20,7 +20,7 @@ exports.createFilterObj = async (req, res, next) => {
     return next();
   }
   //2)-if user is the instructor
-  else if (req.user.role === "instructor") {
+  if (req.user.role === "instructor") {
     filterObject = {
       creator: req.user._id,
     };

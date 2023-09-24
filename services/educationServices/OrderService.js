@@ -10,6 +10,8 @@ const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
 const Coupon =require("../../models/educationModel/educationCouponModel")
 
+const{calculateProfits}=require('../marketing/marketingService')
+
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
@@ -164,7 +166,7 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
       case "checkout.session.completed":
         console.log(`education :)`);
         await createOrder(event.data.object);
-
+        await calculateProfits(event.data.object.customer_email,event.data.object.amount_total / 100)
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);

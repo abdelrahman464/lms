@@ -31,6 +31,9 @@ const landingPageRoute = require("./landingPageRoute");
 const storyRoute = require("./storyRoute");
 const advertisementRoute = require("./advertisementRoute");
 
+//new --> marketing route
+const marketingRoute=require('./marketing/merketingRoute')
+
 const mountRoutes = (app) => {
   // Mount Routes
   app.use("/api/v1/auth", authRoute);
@@ -66,5 +69,6 @@ const mountRoutes = (app) => {
   app.use("/api/v1/landingPage", landingPageRoute);
   app.use("/api/v1/stories", storyRoute);
   app.use("/api/v1/advertisements", advertisementRoute);
+  app.use("/api/v1/marketing", marketingRoute);
 };
 module.exports = mountRoutes;
