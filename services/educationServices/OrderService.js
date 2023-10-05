@@ -10,7 +10,7 @@ const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
 const Coupon =require("../../models/educationModel/educationCouponModel")
 
-const{calculateProfits}=require('../marketing/marketingService')
+// const{calculateProfits}=require('../marketing/marketingService')
 
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
