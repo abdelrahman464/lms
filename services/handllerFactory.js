@@ -15,10 +15,16 @@ exports.updateOne = (Model) =>
     res.status(200).json({ data: document });
   });
 
-exports.createOne = (Model) =>
+  exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
-    const document = await Model.create(req.body);
-    res.status(201).json({ data: document });
+    try {
+      const document = await Model.create(req.body);
+      res.status(201).json({ data: document });
+    } catch (error) {
+      // Handle the error and send an appropriate response
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   });
 
 exports.getOne = (Model, populationOt) =>

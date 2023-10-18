@@ -30,14 +30,14 @@ const router = express.Router();
 //create   admin  instructor of course
 //update delete admin instructorof course
 //send emails to students
-router.get("/:courseId?", authServices.protect, createFilterObj, getAllLives);
 router.get(
   "/myFollowedLives/:date?",
   authServices.protect,
   filterFollowedBydate,
   myFollowedLives
 );
-// router.get("/all/:courseId?", authServices.protect, authServices.allowedTo("admin"), getAllLives);
+router.get("/:courseId?", authServices.protect,authServices.allowedTo("admin"),createFilterObj, getAllLives);
+
 router.get("/searchByDate/:date", searchByDate);
 
 router

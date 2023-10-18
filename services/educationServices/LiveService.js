@@ -105,32 +105,28 @@ exports.SendEmailsToLiveFollwers = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const live = await Live.findById(id);
   if (!live) {
-    return next(ApiError("live not found", 404));
+    return next(ApiError("Live not found", 404));
   }
 
-  live.followers.forEach(async (follower) => {
-    try {
-      let emailMessage = "";
-      if (!req.body.info) {
-        emailMessage = `Hi ${follower.email} 
-                            \n The Life starts soon , be ready `;
-      } else {
-        emailMessage = `Hi ${follower.email} 
-                            \n The Life starts soon , be ready
-                            \n Here Is Some Information you might need 
-                            \n ${req.body.info}`;
-      }
+  try {
+    const emailPromises = live.followers.map(async (follower) => {
+      const emailMessage = req.body.info
+        ? `Hi ${follower.email}\n The Live starts soon, be ready\n Here Is Some Information you might need\n ${req.body.info}`
+        : `Hi ${follower.email}\n The Live starts soon, be ready`;
+
       await sendEmail({
         to: follower.email,
-        subject: `remmeber the live ${live.title}`,
+        subject: `Remember the live ${live.title}`,
         text: emailMessage,
       });
-    } catch (err) {
-      return next(new ApiError("there is a problem with sending Email", 500));
-    }
-  });
+    });
 
-  res.status(200).json({ succes: "true" });
+    await Promise.all(emailPromises); // Wait for all email sending operations to complete
+
+    return res.status(200).json({ success: true ,messgae:`email has been sent to all follwers of this live`});
+  } catch (err) {
+    return next(new ApiError(`There is a problem with sending emails ${err}`, 500));
+  }
 });
 //---------------------------------------------------------------------------------//
 exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
@@ -140,21 +136,24 @@ exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
   eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
 
   const { date } = req.params;
-  if(!date){
-    filterObject={
-      "followers.user": req.user._id
-    }
-  }else{
+  console.log("date: ",date)
+  if(date){
     const components = date.split(" ");
     filterObject={
+      day: components[2],
+      month: components[1],
       "followers.user": req.user._id,
-      "day": components[2],
-      "month": components[1],
+    }
+  }else{
+    filterObject={
+      "followers.user": req.user._id
     }
   }  
   filterObject.updatedAt = { $gte: eightDaysAgo };
 
-  req.filterObj=filterObject;
+  req.body.filterObj=filterObject;
+  console.log(req.body.filterObj)
+  console.log(filterObject)
     next();
   
   
@@ -165,8 +164,10 @@ exports.filterFollowedBydate = asyncHandler(async (req, res,next) => {
 
 //---------------------------------------------------------------------------------//
 exports.myFollowedLives = asyncHandler(async (req, res) => {
-  const lives = await Live.find(req.filterObj);
-
+ console.log("asdasd")
+ console.log(req.body.filterObj)
+  const lives = await Live.find(req.body.filterObj);
+  
   if (lives.length === 0) {
     res.status(200).json({status:'faild', msg: "you didn't follow any live" });
   } else {
@@ -195,6 +196,7 @@ exports.createLiveObj = asyncHandler(async (req, res, next) => {
   if(date){
     req.body.day = date.split(" ")[2];
     req.body.month = date.split(" ")[1];
+    console.log("dvdv");
     next();
   }
   next();
