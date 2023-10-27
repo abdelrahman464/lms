@@ -1,5 +1,10 @@
 const User = require("../../models/userModel");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
+const MarketingRequests = require("../../models/marketingModels/MarketingRequests");
+
+//when creating invoice check the date if same monthe   update invoice  if not create new one 
+
+
 //1
 //@desc invite friends to signup throught your code
 //@access public
@@ -12,32 +17,6 @@ exports.inviteOthers = async (req, res) => {
     return res.status(200).json({ link });
   } catch (error) {
     return res.status(200).json({ error });
-  }
-};
-//2
-//@desc change user role to marketer so his percentage will change form 25% to 35%
-//@access public
-exports.becomeMarketer = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(403).json({ status: "faild", msg: "User Not Found" });
-    }
-
-    // Update the user's role to "marketer"
-    user.role = "marketer";
-
-    // Save the updated user
-    await user.save();
-
-    return res
-      .status(200)
-      .json({ status: "success", msg: "User role updated to marketer" });
-  } catch (error) {
-    return res
-      .status(400)
-      .json({ status: "faild", msg: `Error updating user role:${error}` });
   }
 };
 
@@ -66,7 +45,7 @@ async function saveTransaction(marketerId, transaction) {
 
     // Update the marketer's balance by adding the transaction amount
     marketingLog.balance += parsedAmount;
-    marketingLog.balance.toFixed(3)
+    marketingLog.balance.toFixed(3);
     // Save the updated marketing log document
     await marketingLog.save();
 
@@ -87,56 +66,59 @@ exports.calculateProfits = async (
   amount = 100
 ) => {
   try {
-    let user = await User.findOne({ email: "abdogomaa6@gmail.com" });
+    let user = await User.findOne({ email: userEmail });
 
     if (!user.invitor) {
       console.log("no invitor");
     }
-    console.log("first one");
-    let invitor = await User.findOne({ _id: user.invitor.toString() });
+   
+    let invitor = await MarketingLog.findOne({marketer: user.invitor.toString() });
     //check if invitor exist
     if (!invitor) {
       return;
     }
-    let profit;
+   
 
-    if (invitor.role === "user") {
-      profit = (25 / 100) * 100;
+    if (invitor.role === "customer") {
+      //select user from MarketingLog
+      //update his total salesMoney
+      //increment his mySales
+      //update his profits (20% of his total salesMoney) 
+      //save the transaction in his direct_transactions
+      await updateCustomer(invitor,amount,user.email)
+    
+      //check his father if he is marketer
+      //if yes:
+        //save transaction to his father in transactions
+        //increment customerSales by 1 
+        //update his percentage of marketer   
+        //update his profits of marketer   
     } else {
-      profit = (35 / 100) * 100;
+      //select user from MarketingLog
+      //update his total salesMoney
+      //increment his mySales
+      //save transaction in direct_transactions
+      //update his percentage  
+      //calculate profits of him and save it , let's call it profitZ
+     
+      //check his father 
+        //if he is marketer give him 6% of profitZ 
+                  //if not , finish the function
+        //then get this father and          
+        //loop till his forth father 
+        //in each loop do that
+        //check his father , if not marketer finish the function  
+        //Give His Father a 3.5% of profitZ   
+      await updateMarketer(invitor,amount,user.email)
     }
-    const purchaserEmail = user.email;
-    for (let i = 1, g = 1; i <= 4; i += 1, g += 1) {
-      //save invitor transcation
-      const transaction = {
-        childEmail: purchaserEmail,
-        amount: profit,
-        generation: g,
-      };
-      console.log(`operation ${i}`);
-      // eslint-disable-next-line no-await-in-loop
-      await saveTransaction(invitor._id.toString(), transaction);
-      console.log(`operation ${i} finished`);
-      //TODO
-      //save transaction to marketLogs with mmarketerId
-      if (!invitor.invitor) {
-        console.log("tree has ended ");
-        break;
-      }
-      user = invitor;
-      invitor = "";
-      // eslint-disable-next-line no-await-in-loop
-      invitor = await User.findById(user.invitor.toString());
 
-      //TODO
-      profit = ((profit * 10) / 100).toFixed(2);
     }
   } catch (error) {
     console.log("error from calculateProfits: ", error);
   }
 };
 
-//-------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------------------------//
 exports.totalAmountPaid = async (req, res) => {
   try {
     // Find the marketing log document associated with the marketerId
@@ -163,29 +145,154 @@ exports.totalAmountPaid = async (req, res) => {
     return res.status(200).json({ msg: `error: ${error}` });
   }
 };
-exports.totalAmountUnPaid = async (req, res) => {
-  try {
-    // Find the marketing log document associated with the marketerId
-    const marketingLog = await MarketingLog.findOne({
-      marketer: req.user._id,
-      "transactions.paid": false,
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------//
+const updateMarketer = async (marketer, amountD,childEmail) => {
+  const calcPercentage = await calculatePercentage(marketer.mySales+1,marketer.customerSales); // i added 1 cause mySales not updated yet
+  const percentage = calcPercentage(); 
+  const totalSalesMoney = marketer.totalSalesMoney + amountD;
+  const mySales = marketer.mySales + 1;
+  const profits = (percentage / 100) * totalSalesMoney;
+
+  await MarketingLog.findOneAndUpdate(
+    { marketer: marketer._id },
+    {
+      $push: {
+        direct_transactions: {
+          childEmail: childEmail,
+          amount: amountD,
+          Paid: false,
+        },
+      },
+      $set: {
+        totalSalesMoney: totalSalesMoney,
+        mySales: mySales,
+        percentage: percentage,
+        profits: profits,
+      },
+    }
+  );
+  await updateInvitorData(marketer,totalSalesMoney);
+  
+};
+//-----------------------------------------------------------------------------------------------------------------------------------//
+const updateCustomer = async (customer, amountC, childEmail) => {
+  const percentage = 20;
+  const totalSalesMoney = customer.totalSalesMoney + amountC;
+  const mySales = customer.mySales + 1;
+  const profits = (percentage / 100) * totalSalesMoney;
+
+  await MarketingLog.findOneAndUpdate(
+    { marketer: customer.marketer },
+    {
+      $push: {
+        direct_transactions: {
+          childEmail: childEmail,
+          amount: amountC,
+          Paid: false,
+        },
+      },
+      $set: {
+        totalSalesMoney: totalSalesMoney,
+        mySales: mySales,
+        percentage: percentage,
+        profits: profits,
+      },
+    }
+  );
+
+  let invitor = await MarketingLog.findOne({ marketer: customer.invitor.toString() });
+  if (invitor && invitor.role === "marketer") {
+    const invitorCustomerSales = invitor.customerSales + 1;
+
+    const invitorPercentage = calculatePercentage(invitor.mySales,invitorCustomerSales); //i didn't pass invitor.customerSales cause it's not updated
+    const invitorProfits = (invitorPercentage / 100) * invitor.totalSalesMoney;
+
+    await MarketingLog.findOneAndUpdate(
+      { marketer: invitor.marketer },
+      {
+        $set: {
+          customerSales: invitorCustomerSales,
+          percentage: invitorPercentage,
+          profits: invitorProfits,
+        },
+      }
+    );
+    await updateInvitorData(invitor,invitor.totalSalesMoney);
+  }
+};
+//-----------------------------------------------------------------------------------------------------------------------------------//
+//@desc i will send a marketer to it and it will calculate the profits of his fathers :)
+const updateInvitorData = async (marketer, amountZ) => {
+  const user=await User.findById(marketer.marketer);
+  const childEmail=user.email;
+  
+  let invitor = marketer.invitor;
+  for (let i = 0; i < 4; i++) {
+    let percentage = i === 0 ? 6 / 100 : 3.5 / 100;
+    let existingTransaction = await MarketingLog.findOne({
+      marketer: invitor.marketer,
+      "transactions.childEmail": childEmail,
     });
 
-    if (!marketingLog) {
-      console.log("Marketing log not found for the specified marketer.");
-      return 0; // Return 0 if no marketing log is found
+    if (existingTransaction) {
+      await MarketingLog.findOneAndUpdate(
+        {
+          marketer: invitor.marketer,
+          "transactions.childEmail": childEmail,
+        },
+        {
+          $set: {
+            "transactions.$.amount": percentage * amountZ,
+          },
+        }
+      );
+    } else {
+      await MarketingLog.findOneAndUpdate(
+        { marketer: invitor.marketer },
+        {
+          $push: {
+            transactions: {
+              childEmail: childEmail,
+              amount: percentage * amountZ,
+              calculated: false,
+              generation: i + 1,
+            },
+          },
+        }
+      );
+    }
+    invitor = await MarketingLog.findOne({ marketer: invitor.invitor.toString() });
+    if (!invitor || invitor.role === "user") {
+      break;
+    }
+  }
+};
+//-------------------------------------------------------------------------------------------------------------------------------------//
+const calculatePercentage = async (mySales,customerSales) => {
+  try {
+    const totalSales=mySales+customerSales
+    let percentage;
+    if(totalSales>=1 && totalSales<=15 ){
+      percentage=35
+    }
+    else if(totalSales>=16 && totalSales<=30 ){
+      percentage=45
+    }
+    else if(totalSales>=31 && totalSales<=50 ){
+      percentage=50
+    }
+    else if(totalSales>=51){
+      percentage=60
+    }
+    else{
+      percentage=0
     }
 
-    // Calculate the total amount by summing up the amounts in the transactions array
-    const totalAmountPaid = marketingLog.transactions.reduce(
-      (total, transaction) => total + transaction.amount,
-      0
-    );
-
-    return res
-      .status(200)
-      .json({ msg: `Total amount unPaid to marketer: ${totalAmountPaid}` });
+    return percentage
+    
   } catch (error) {
-    return res.status(200).json({ msg: `error: ${error}` });
+    return error;
   }
 };
