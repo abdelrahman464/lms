@@ -5,6 +5,44 @@ const MarketingRequestsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  
+  fullName: {
+    type: String
+  },
+  country: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  birthDate: {
+    type: Date
+  },
+  currentWork: {
+    type: String
+  },
+  ansOfQuestion: {
+    type: String
+  },
+  facebook: {
+    type: String
+  },
+  instgram: {
+    type: String
+  },
+  tiktok: {
+    type: String
+  },
+  telegram: {
+    type: String
+  },
+  identity: { //image uploading 
+    type: String
+  },
+  paymentMethod: { //image uploading 
+    type: String,
+    Enum:['wise','crypto']
+  },
   status:{
     type:Boolean,
     default:false

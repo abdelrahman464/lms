@@ -41,10 +41,6 @@ const MarketingLogsSchema = new mongoose.Schema({
   transactions:[{
     childEmail:String,
     amount:Number,
-    calculated:{ //when we create final invoice this key will be true 
-      type:Boolean,
-      default:false
-    },
     generation:{
         type:Number,
         Enum:[1,2,3,4,5]
@@ -58,10 +54,6 @@ const MarketingLogsSchema = new mongoose.Schema({
   direct_transactions:[{
     childEmail:String,
     amount:Number,
-    Paid:{
-      type:Boolean,
-      default:false
-    },
     Date:{
         type:Date,
         default:Date.now()
@@ -69,10 +61,13 @@ const MarketingLogsSchema = new mongoose.Schema({
   }],
   //when we pay to marketer we save invoice here
   invoices:[{
-    amount:Number,
+    direct_profits:Number,
+    tree_profits:Number,
+    percentage:Number,
     desc:String,
     Date:{
         type:Date,
+        default:Date.now()
        }
   }],
 }, { timestamps: true });
