@@ -43,9 +43,10 @@ const MarketingRequestsSchema = new mongoose.Schema({
     type: String,
     Enum:['wise','crypto']
   },
-  status:{
-    type:Boolean,
-    default:false
+  status: {
+    type: String,
+    enum: ['accepted', 'rejected', 'pending'],
+    default: 'pending'
   }
   
 }, { timestamps: true });

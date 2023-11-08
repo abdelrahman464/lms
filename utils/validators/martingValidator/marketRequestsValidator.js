@@ -73,7 +73,7 @@ exports.createmarketingReqValidator = [
     .withMessage("paymentMethod is required")
     .isIn(["wise", "crypto"])
     .withMessage("invalid paymentMethod"),
-  check("status").isBoolean().withMessage("status should be a boolean value"),
+ 
 
   //catch error and return it as a response
   validatorMiddleware,

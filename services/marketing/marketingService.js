@@ -308,10 +308,10 @@ exports.getMarketLog = async(req,res) => {
 //@desc i will use this function when i pay to user
 //embeded function 
 
-exports.createInvoice = async(req,res) => {
+exports.createInvoice = async(marketerId) => {
 
   
-  const marketLog= await MarketingLog.findOne({marketer:"650f6a0311382966ec921feb"})
+  const marketLog= await MarketingLog.findOne({marketer:marketerId})
  
   if (!marketLog) {
     console.error('No marketing log found for the user');
@@ -321,18 +321,16 @@ exports.createInvoice = async(req,res) => {
   
   let totalTreeProfits = 0;
   for (const transaction of marketLog.transactions) {
-    if (!transaction.calculated) {
-      totalTreeProfits += transaction.amount;
-      
-    }
+     totalTreeProfits += transaction.amount;
   }
 
   marketLog.invoices.push({
-    direct_profits: marketLog.profits,
-    tree_profits: totalTreeProfits,
-    percentage:marketLog.percentage,
+    totalSalesMoney:marketLog.totalSalesMoney,
     mySales:marketLog.mySales,
     customerSales:marketLog.customerSales,
+    percentage:marketLog.percentage,
+    direct_profits: marketLog.profits,
+    tree_profits: totalTreeProfits,
     desc: `Invoice for ${currentDate.toLocaleString('default', { month: 'long' })}`,
     Date: currentDate,
   });
@@ -340,11 +338,13 @@ exports.createInvoice = async(req,res) => {
   // Reset the fields
   marketLog.direct_transactions = [];
   marketLog.transactions = [];
+  marketLog.totalSalesMoney=0;
+  marketLog.profits=0;
   marketLog.percentage=0;
   marketLog.mySale=0;
   marketLog.customerSales=0;
  // Save the changes
   await marketLog.save();
 
-  return res.json({"invoice":marketLog.invoices});
+  return true;
 };

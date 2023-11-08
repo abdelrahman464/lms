@@ -52,6 +52,10 @@ const userShcema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    sentRequest: {
+      type: Boolean,
+      default: false,
+    },
     about: String,
     //child references (1- manny )
     storeWishlist: [

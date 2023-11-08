@@ -51,6 +51,10 @@ const app = express();
 //     },
 //   })
 // );
+
+// Middleware for parsing URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.json({
   verify: (req, res, buf) => {
     if (buf && buf.length > 0) {

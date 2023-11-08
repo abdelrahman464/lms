@@ -1,12 +1,9 @@
 const mongoose = require("mongoose");
 
 const withdrawRequestsSchema = new mongoose.Schema({
-user: {
+marketer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  },
-amount: {
-    type: String
   },
 paymentMethod: { //image uploading 
     type: String,
@@ -15,10 +12,11 @@ paymentMethod: { //image uploading
 recieverAcc: { //image uploading 
     type: String,
 },
-status:{
-    type:Boolean,
-    default:false
-  }
+status: {
+  type: String,
+  enum: ['paid', 'rejected', 'pending'],
+  default: 'pending'
+}
   
 }, { timestamps: true });
 

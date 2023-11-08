@@ -61,15 +61,19 @@ const MarketingLogsSchema = new mongoose.Schema({
   }],
   //when we pay to marketer we save invoice here
   invoices:[{
+    totalSalesMoney:Number,
+    mySales:Number,
+    customerSales:Number,
+    percentage:Number,
     direct_profits:Number,
     tree_profits:Number,
-    percentage:Number,
     desc:String,
     Date:{
-        type:Date,
-        default:Date.now()
-       }
+      type:Date,
+      default:Date.now()
+    }
   }],
+
 }, { timestamps: true });
 
 const MarketingLog = mongoose.model("MarketingLogs", MarketingLogsSchema);
