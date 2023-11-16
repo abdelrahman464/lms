@@ -8,7 +8,6 @@ const morgan = require("morgan");
 const cors = require("cors");
 const compression = require("compression");
 
-
 // const fileUpload = require('express-fileupload')
 
 // const rateLimit = require("express-rate-limit");
@@ -40,7 +39,9 @@ dbConnection();
 mongoose.set("strictQuery", true);
 //express app
 const app = express();
-//parsing json 
+// Allow all origins
+app.use(cors());
+//parsing json
 // app.use(
 //   express.json({
 //     verify: (req, res, buf) => {
@@ -55,15 +56,17 @@ const app = express();
 // Middleware for parsing URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.json({
-  verify: (req, res, buf) => {
-    if (buf && buf.length > 0) {
-      req.rawBody = buf.toString();
-    } else {
-      req.rawBody = ''; // Set a default value if buf doesn't exist
-    }
-  }
-}));
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      if (buf && buf.length > 0) {
+        req.rawBody = buf.toString();
+      } else {
+        req.rawBody = ""; // Set a default value if buf doesn't exist
+      }
+    },
+  })
+);
 //enable other domains access your application
 // app.use(cors());
 // app.options("*", cors());
@@ -71,7 +74,6 @@ app.use(express.json({
 // app.use(fileUpload());
 
 app.use(passport.initialize());
-
 
 // compress all responses
 app.use(compression());
@@ -94,10 +96,8 @@ app.post(
   webhookCheckoutEducation
 );
 
-
 //middlewares
 //pasring the comming data to json
-
 
 //serve static files inside 'uploads'
 app.use(express.static(path.join(__dirname, "uploads")));
