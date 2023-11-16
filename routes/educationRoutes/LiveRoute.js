@@ -12,6 +12,7 @@ const {
   followLive,
   SendEmailsToLiveFollwers,
   createFilterObj,
+  searchBydateFilterObj,
   setCreatorIdToBody,
   searchByDate,
   createLiveObj,
@@ -38,7 +39,7 @@ router.get(
 );
 router.get("/:courseId?", authServices.protect,authServices.allowedTo("admin"),createFilterObj, getAllLives);
 
-router.get("/searchByDate/:date", searchByDate);
+router.get("/searchByDate/:date",authServices.protect,searchBydateFilterObj, searchByDate);
 
 router
   .route("/") //middleware

@@ -1,25 +1,33 @@
 const mongoose = require("mongoose");
 
-const withdrawRequestsSchema = new mongoose.Schema({
-marketer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+const withdrawRequestsSchema = new mongoose.Schema(
+  {
+    marketer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    month: {
+      type: String,
+    },
+    paymentMethod: {
+      type: String,
+      Enum: ["wise", "crypto"],
+    },
+    recieverAcc: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["paid", "rejected", "pending"],
+      default: "pending",
+    },
   },
-paymentMethod: { //image uploading 
-    type: String,
-    Enum:['wise','crypto']
-  },
-recieverAcc: { //image uploading 
-    type: String,
-},
-status: {
-  type: String,
-  enum: ['paid', 'rejected', 'pending'],
-  default: 'pending'
-}
-  
-}, { timestamps: true });
+  { timestamps: true }
+);
 
-const WithdrawRequests= mongoose.model("withdrawRequests", withdrawRequestsSchema);
+const WithdrawRequests = mongoose.model(
+  "withdrawRequests",
+  withdrawRequestsSchema
+);
 
 module.exports = WithdrawRequests;

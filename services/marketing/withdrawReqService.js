@@ -1,116 +1,124 @@
 const WithdrawRequest = require("../../models/marketingModels/WithdrawRequestsModel");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
-const{createInvoice}=require("./marketingService")
+const { createInvoice } = require("./marketingService");
 const factory = require("../handllerFactory");
-
-
-exports.canSendWithdrawRequest=async(req,res,next)=>{
-
-  const withdrawRequest = await WithdrawRequest.findOne({marketer:req.user._id});
-  // return res.json(withdrawRequest)
-  if(!withdrawRequest){
-    next()
-  }
-  else if(withdrawRequest.status==="pending"){
-    return res.status(400).json({status:"faild",msg:"your request is pending , wait till admin review your request "});
-  }
-  else if(withdrawRequest.status==="rejectd"){
-    return res.status(400).json({status:"faild",msg:"your request was rejected "})
-  }
-  else if(withdrawRequest.status==="paid"){
-    return res.status(400).json({status:"faild",msg:"your request was accepted and you was paid successfully"});
-  }
-next()
-
-}
-
-
-
-
-
-
-
 
 //---------------------------------------------------------------------------------------------------//
 // Create a new WithdrawRequest
+//@params "month" of the invoice
 exports.createWithdrawRequest = async (req, res) => {
-  const marketingLog = await MarketingLog.findOne({ marketer: req.user._id });
+  const marketingLog = await MarketingLog.findOne({
+    marketer: req.user._id,
+    "invoices._id": req.body.invoiceId,
+  });
+  // return res.json(marketingLog)
   if (!marketingLog) {
     return res
       .status(200)
       .json({ status: `faild`, msg: "you don't work as marketer" });
   }
-  // //calculate his profits
-  // let totalTreeProfits = 0;
-  // for (const transaction of marketingLog.transactions) {
-  //   if (!transaction.calculated) {
-  //     totalTreeProfits += transaction.amount;
-  //   }
-  // }
-  const totalProfits =await calculateTotalProfits(marketingLog);
-  //check if he has balance
-  if (totalProfits < 0) {
-    return res
-      .status(200)
-      .json({ status: `faild`, msg: "your balance not enough" });
-  }
+  // 4- Update the invoices in marketLog
+  marketingLog.invoices.forEach((invoice) => {
+    if (invoice._id.toString() === req.body.invoiceId) {
+      console.log(invoice);
+      //check if he requests this invoice before
+      if (invoice.status === "pending") {
+        return res.status(400).json({
+          status: `success`,
+          msg: "you have requests this invoice to be paid before ",
+        });
+      }
+      // else , update his fields
+      invoice.status = "pending";
+      invoice.recieverAcc = req.body.recieverAcc;
+      invoice.paymentMethod = req.body.paymentMethod;
+    }
+  });
+  await marketingLog.save();
 
-  //create the request 
-  req.body.marketer = req.user._id;
-  const withdrawRequest = await WithdrawRequest.create(req.body);
-
-  return res.status(200).json({ status: `success`, date: withdrawRequest });
+  return res.status(200).json({
+    status: `success`,
+    msg: "you have requests this invoice to be paid successfully ",
+  });
 };
 //---------------------------------------------------------------------------------//
 // Get all WithdrawRequest
-exports.getAllWithdrawRequests = factory.getALl(WithdrawRequest);
+exports.getAllRequestedInvoices = async (req, res) => {
+  const { status } = req.params;
+  console.log(status);
+  const requestedInvoices = await MarketingLog.find({
+    "invoices.status": "unpaid",
+  });
+  if (requestedInvoices.length == 0) {
+    return res
+      .status(404)
+      .json({ status: "faild", msg: "no invoices to be paid" });
+  } else {
+    return res.status(200).json({ status: "success", data: requestedInvoices });
+  }
+};
 //---------------------------------------------------------------------------------//
 // Get a specific WithdrawRequest by ID
-exports.getWithdrawRequestbyId = factory.getOne(WithdrawRequest);
-//---------------------------------------------------------------------------------//
-// Delete a WithdrawRequest  by ID
-exports.deleteWithdrawRequest = factory.deleteOne(WithdrawRequest);
-//---------------------------------------------------------------------------------//
-//@use : inside create invoice function
-exports.approveWithdrawRequest = async (userId) => {
-  await WithdrawRequest.findOneAndUpdate(
-    { user: userId },
-    { status: true },
-    true
-  );
-  //SEND EMAIL TO   MarketRequest.user Telling him he he been marketer
-
-  return true;
+exports.getWithdrawRequestbyId = async (req, res) => {
+  const requestedInvoices = await MarketingLog.findOne({
+    "invoices._id": req.body.invoiceId,
+  });
+  if (!requestedInvoices) {
+    return res.status(404).json({ status: "faild", msg: "no invoice found" });
+  } else {
+    return res.status(200).json({ status: "success", data: requestedInvoices });
+  }
 };
 //--------------------------------------------------------------------------------------------
+//@params 'month' of invoice  {body}
+//@params id of user of invoice  {params}
+exports.payToMarketer = async (req, res) => {
+  const { id } = req.params;
+  //1- selecting the marketer
+  const withdrawRequest = await WithdrawRequest.findOne({ _id: id });
+  //2- select his marketerLog
+  const marketLog = await MarketingLog.findOne({
+    marketer: withdrawRequest.marketer,
+    "invoices.month": withdrawRequest.month,
+    "invoices.paidAt": null,
+  });
 
-exports.payToMarketer=async(req,res)=>{
-  const{id}=req.params;
-  //1-selecting the marketer 
-  const withdrawRequest= await WithdrawRequest.findOne({_id:id});
+  //3-
+  // 4- Update the invoices in marketLog
+  marketLog.invoices.forEach((invoice) => {
+    if (invoice.month === withdrawRequest.month) {
+      invoice.paidAt = new Date();
+    }
+  });
 
-  //3-payment process 
+  await marketLog.save();
+  //when back
+  // test the payToMarketer
+  //continue
+  //check on senario of payment
+  //yousef
 
-  //4-creare an invoice 
-  await createInvoice(withdrawRequest.marketer);
-  withdrawRequest.status="paid";
-  await withdrawRequest.save()
+  //3-payment process
 
+  //4-creare an invoice
 
-  return res.status(200).json({msg:"successfull payment :)"})
-}
+  withdrawRequest.status = "paid";
+  await withdrawRequest.save();
+
+  return res.status(200).json({ msg: "successfull payment :)" });
+};
 
 //----------------------------                                           -----------------------------
 
-const calculateTotalProfits=async(marketLog)=>{
-  let totalTreeProfits = 0;
-  for (const transaction of marketLog.transactions) {
-    if (!transaction.calculated) {
-      totalTreeProfits += transaction.amount;
-      
-    }
-  }
-  const totalProfits = totalTreeProfits + marketLog.profits;
+// const calculateTotalProfits=async(marketLog)=>{
+//   let totalTreeProfits = 0;
+//   for (const transaction of marketLog.transactions) {
+//     if (!transaction.calculated) {
+//       totalTreeProfits += transaction.amount;
 
-  return totalProfits;
-}
+//     }
+//   }
+//   const totalProfits = totalTreeProfits + marketLog.profits;
+
+//   return totalProfits;
+// }

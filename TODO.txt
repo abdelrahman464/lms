@@ -33,4 +33,12 @@ Mostafa edits
     1-what's in request details
 TODO
 1-create an invoice by(date)  
-    if there is an invoice with same month number by date.now , uodate it      
+
+
+
+
+
+
+
+2-get user package with his id 
+3-add telegram channels to packages
