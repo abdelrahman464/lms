@@ -40,7 +40,7 @@ mongoose.set("strictQuery", true);
 //express app
 const app = express();
 // Allow all origins
-app.use(cors());
+app.use(cors({ origin: '*' }));
 //parsing json
 // app.use(
 //   express.json({
