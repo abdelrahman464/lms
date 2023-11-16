@@ -8,7 +8,6 @@ const MarketingLog = require("../../models/marketingModels/MarketingModel");
 //@access public
 exports.startMarketing = async (req, res) => {
   try {
-    
     await MarketingLog.create({
       marketer: req.user._id,
       invitor: req.user.invitor,
@@ -23,10 +22,10 @@ exports.startMarketing = async (req, res) => {
 };
 exports.inviteOthers = async (req, res) => {
   try {
-    const link = `${process.env.BASE_URL}/signup/${req.user._id}`;
     //check if user has marketlog
     if (!req.user.startMarketing) {
     }
+    const link = `${process.env.BASE_URL}/signup/${req.user._id}`;
     return res.status(200).json({ link });
   } catch (error) {
     return res.status(200).json({ error });
@@ -42,7 +41,7 @@ exports.calculateProfits = async (
   res
 ) => {
   try {
-    const userEmail = "abdogomaa4@gmail.com";
+    const userEmail = "abdogomaa5@gmail.com";
     const user = await User.findOne({ email: userEmail });
     const amount = 100;
     if (!user.invitor) {
@@ -312,6 +311,23 @@ exports.getMarketLog = async (req, res) => {
   }
   const totalProfits = totalTreeProfits + marketLog.profits;
 
+  return res
+    .status(200)
+    .json({ status: "success", marketLog, totalTreeProfits, totalProfits });
+};
+//-----------------------------------------------------------------------------------------------------------------------//
+exports.getMyMarketLog = async (req, res) => {
+  const marketLog = await MarketingLog.findOne({ marketer: req.user._id }); //req.user._id
+  if (!marketLog) {
+    return res.status(404).json({ status: "faild", msg: "not found" });
+  }
+  let totalTreeProfits = 0;
+  for (const transaction of marketLog.transactions) {
+    if (!transaction.calculated) {
+      totalTreeProfits += transaction.amount;
+    }
+  }
+  const totalProfits = totalTreeProfits + marketLog.profits;
   return res
     .status(200)
     .json({ status: "success", marketLog, totalTreeProfits, totalProfits });

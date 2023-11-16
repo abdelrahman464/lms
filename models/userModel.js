@@ -52,7 +52,7 @@ const userShcema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    sentRequest: {
+    startMarketing: {
       type: Boolean,
       default: false,
     },
