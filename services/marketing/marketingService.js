@@ -22,9 +22,6 @@ exports.startMarketing = async (req, res) => {
 };
 exports.inviteOthers = async (req, res) => {
   try {
-    //check if user has marketlog
-    if (!req.user.startMarketing) {
-    }
     const link = `${process.env.BASE_URL}/signup/${req.user._id}`;
     return res.status(200).json({ link });
   } catch (error) {
@@ -332,6 +329,7 @@ exports.getMyMarketLog = async (req, res) => {
     .status(200)
     .json({ status: "success", marketLog, totalTreeProfits, totalProfits });
 };
+//-----------------------------------------------------------------------------------------------------------------------//
 
 //@desc i will use this function when i pay to user
 //embeded function

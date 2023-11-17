@@ -6,7 +6,7 @@ const factory = require("../handllerFactory");
 //---------------------------------------------------------------------------------------------------//
 // Create a new WithdrawRequest
 //@params "month" of the invoice
-exports.createWithdrawRequest = async (req, res) => {
+exports.requestInvoice = async (req, res) => {
   const marketingLog = await MarketingLog.findOne({
     marketer: req.user._id,
     "invoices._id": req.body.invoiceId,
@@ -44,17 +44,52 @@ exports.createWithdrawRequest = async (req, res) => {
 //---------------------------------------------------------------------------------//
 // Get all WithdrawRequest
 exports.getAllRequestedInvoices = async (req, res) => {
-  const { status } = req.params;
-  console.log(status);
-  const requestedInvoices = await MarketingLog.find({
-    "invoices.status": "unpaid",
-  });
-  if (requestedInvoices.length == 0) {
+  try {
+    const status = req.params.status ? req.params.status : "pending";
+    console.log(status);
+
+    const requestedInvoices = await MarketingLog.find({
+      "invoices.status": status,
+    });
+
+    if (requestedInvoices.length === 0) {
+      return res
+        .status(404)
+        .json({ status: "failed", msg: "No invoices to be paid" });
+    } else {
+      // Filter only the invoices with the specified status
+      const pendingInvoices = requestedInvoices.map((log) => {
+        return {
+          _id: log._id,
+          role: log.role,
+          invitor: log.invitor,
+          marketer: log.marketer,
+          percentage: log.percentage,
+          totalSalesMoney: log.totalSalesMoney,
+          profits: log.profits,
+          mySales: log.mySales,
+          customerSales: log.customerSales,
+          transactions: log.transactions,
+          direct_transactions: log.direct_transactions,
+          invoices: log.invoices.filter((invoice) => invoice.status === status),
+          createdAt: log.createdAt,
+          updatedAt: log.updatedAt,
+          __v: log.__v,
+        };
+      });
+      return res
+        .status(200)
+        .json({
+          status: "success",
+          length: pendingInvoices.length,
+          data: pendingInvoices,
+        });
+    }
+  } catch (error) {
+    console.error("Error:", error);
     return res
-      .status(404)
-      .json({ status: "faild", msg: "no invoices to be paid" });
-  } else {
-    return res.status(200).json({ status: "success", data: requestedInvoices });
+      .status(500)
+      .json({ status: "error", error: "Internal Server Error" });
   }
 };
 //---------------------------------------------------------------------------------//
@@ -73,21 +108,16 @@ exports.getWithdrawRequestbyId = async (req, res) => {
 //@params 'month' of invoice  {body}
 //@params id of user of invoice  {params}
 exports.payToMarketer = async (req, res) => {
-  const { id } = req.params;
+  const { invoiceId } = req.params;
   //1- selecting the marketer
-  const withdrawRequest = await WithdrawRequest.findOne({ _id: id });
-  //2- select his marketerLog
-  const marketLog = await MarketingLog.findOne({
-    marketer: withdrawRequest.marketer,
-    "invoices.month": withdrawRequest.month,
-    "invoices.paidAt": null,
-  });
+  const marketLog = await MarketingLog.findOne({ "invoice._id": invoiceId });
 
-  //3-
   // 4- Update the invoices in marketLog
   marketLog.invoices.forEach((invoice) => {
-    if (invoice.month === withdrawRequest.month) {
+    if (invoice._id.toString() === invoiceId) {
+      console.log(invoice)
       invoice.paidAt = new Date();
+      invoice.status="paid"
     }
   });
 
@@ -101,10 +131,6 @@ exports.payToMarketer = async (req, res) => {
   //3-payment process
 
   //4-creare an invoice
-
-  withdrawRequest.status = "paid";
-  await withdrawRequest.save();
-
   return res.status(200).json({ msg: "successfull payment :)" });
 };
 

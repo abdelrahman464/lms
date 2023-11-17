@@ -102,6 +102,11 @@ const MarketingLogsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+MarketingLogsSchema.pre(/^find/, function (next) {
+  // this => query
+  this.populate({ path: "invitor", select: "name email profileImg" });
+  next();
+});
 
 const MarketingLog = mongoose.model("MarketingLogs", MarketingLogsSchema);
 
