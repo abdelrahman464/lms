@@ -47,7 +47,7 @@ router
     authServices.protect,
     authServices.allowedTo("admin", "instructor"),
     createLiveValidator,
-    setCreatorIdToBody,
+    // setCreatorIdToBody,
     createLiveObj,
     createLive
   );

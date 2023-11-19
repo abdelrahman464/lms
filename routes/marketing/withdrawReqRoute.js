@@ -12,6 +12,6 @@ router.route("/").post(authServices.protect, requestInvoice);
 router.route("/:status?").get(authServices.protect, getAllRequestedInvoices);
 
 router.route("/:id").get(getWithdrawRequestbyId);
-router.route("/payToMarketer/:id").put(payToMarketer);
+router.route("/payToMarketer/:invoiceId").put(payToMarketer);
 
 module.exports = router;

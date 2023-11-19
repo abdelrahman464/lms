@@ -38,20 +38,21 @@ exports.calculateProfits = async (
   res
 ) => {
   try {
-    const userEmail = "abdogomaa5@gmail.com";
+    const userEmail = "abdogomaa5@gmail.com"; //purchaser :)
     const user = await User.findOne({ email: userEmail });
     const amount = 100;
     if (!user.invitor) {
       console.log("no invitor");
     }
-
+    // return res.json(user)
     const invitor = await MarketingLog.findOne({
-      marketer: user.invitor.toString(),
+      marketer: user.invitor,
     });
     //check if invitor exist
     if (!invitor) {
       return;
     }
+    // return res.json(invitor)
 
     if (invitor.role === "customer") {
       //select user from MarketingLog
@@ -95,6 +96,7 @@ exports.calculateProfits = async (
 
 //--------------------------------------------------------------------------------------------------------------------------------------//
 const updateMarketer = async (marketer, amountD, childEmail) => {
+  console.log("we are in updateMarketer now");
   const percentage = await calculatePercentage(
     marketer.mySales + 1,
     marketer.customerSales
@@ -103,6 +105,7 @@ const updateMarketer = async (marketer, amountD, childEmail) => {
   const mySales = marketer.mySales + 1;
   const profits = (percentage / 100) * totalSalesMoney;
 
+  console.log("step 2");
   await MarketingLog.findOneAndUpdate(
     { marketer: marketer.marketer },
     {
@@ -120,6 +123,7 @@ const updateMarketer = async (marketer, amountD, childEmail) => {
       },
     }
   );
+  console.log("step 3");
   // await updateInvitorData(marketer,totalSalesMoney);
   await updateInvitorData(marketer, totalSalesMoney);
 };
@@ -210,15 +214,19 @@ const updateCustomer = async (customer, amountC, childEmail) => {
 //@desc i will send a marketer to it and it will calculate the profits of his fathers :)
 const updateInvitorData = async (marketer, amountZ) => {
   try {
+    console.log("WE ARE in update invitors now ");
     const user = await User.findById(marketer.marketer);
     const childEmail = user.email;
     let percentage = 6 / 100;
 
     //loop 5 times
+    console.log("START ITERATION ");
     for (let i = 1; i <= 5; i += 1) {
+      console.log("START ITERATION " + i);
       marketer = await MarketingLog.findOne({
-        marketer: marketer.invitor.toString(),
+        marketer: marketer.invitor,
       });
+      console.log("marketer number " + i + " " + marketer);
       if (!marketer || marketer.role === "customer") {
         console.log(i, ":his invitor is customer ");
         break;

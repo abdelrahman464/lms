@@ -19,11 +19,11 @@ exports.updateOne = (Model) =>
   asyncHandler(async (req, res) => {
     try {
       const document = await Model.create(req.body);
-      res.status(201).json({ data: document });
+      return res.status(201).json({ data: document });
     } catch (error) {
       // Handle the error and send an appropriate response
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 

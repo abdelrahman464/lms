@@ -51,7 +51,7 @@ exports.getAllRequestedInvoices = async (req, res) => {
     const requestedInvoices = await MarketingLog.find({
       "invoices.status": status,
     });
-
+    // return res.json(requestedInvoices);
     if (requestedInvoices.length === 0) {
       return res
         .status(404)
@@ -62,28 +62,15 @@ exports.getAllRequestedInvoices = async (req, res) => {
         return {
           _id: log._id,
           role: log.role,
-          invitor: log.invitor,
           marketer: log.marketer,
-          percentage: log.percentage,
-          totalSalesMoney: log.totalSalesMoney,
-          profits: log.profits,
-          mySales: log.mySales,
-          customerSales: log.customerSales,
-          transactions: log.transactions,
-          direct_transactions: log.direct_transactions,
           invoices: log.invoices.filter((invoice) => invoice.status === status),
-          createdAt: log.createdAt,
-          updatedAt: log.updatedAt,
-          __v: log.__v,
         };
       });
-      return res
-        .status(200)
-        .json({
-          status: "success",
-          length: pendingInvoices.length,
-          data: pendingInvoices,
-        });
+      return res.status(200).json({
+        status: "success",
+        length: pendingInvoices.length,
+        data: pendingInvoices,
+      });
     }
   } catch (error) {
     console.error("Error:", error);
@@ -105,19 +92,20 @@ exports.getWithdrawRequestbyId = async (req, res) => {
   }
 };
 //--------------------------------------------------------------------------------------------
-//@params 'month' of invoice  {body}
-//@params id of user of invoice  {params}
+//@params invoiceId {params}
 exports.payToMarketer = async (req, res) => {
   const { invoiceId } = req.params;
+  console.log("invoice id: " + invoiceId);
   //1- selecting the marketer
-  const marketLog = await MarketingLog.findOne({ "invoice._id": invoiceId });
-
+  const marketLog = await MarketingLog.findOne({"invoices._id":invoiceId});
+  // return res.json(marketLog);
   // 4- Update the invoices in marketLog
   marketLog.invoices.forEach((invoice) => {
-    if (invoice._id.toString() === invoiceId) {
-      console.log(invoice)
+    console.log(invoice);
+    if (invoice._id == invoiceId) {
+      console.log("here" + invoice);
       invoice.paidAt = new Date();
-      invoice.status="paid"
+      invoice.status = "paid";
     }
   });
 

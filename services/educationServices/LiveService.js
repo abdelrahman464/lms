@@ -91,7 +91,7 @@ exports.searchBydateFilterObj = async (req, res, next) => {
 //---------------------------------------------------------------------------------------------------//
 exports.setCreatorIdToBody = (req, res, next) => {
   req.body.creator = req.user._id;
-  next();
+  return next();
 };
 //---------------------------------------------------------------------------------------------------//
 // Create a new live
@@ -270,8 +270,7 @@ exports.createLiveObj = asyncHandler(async (req, res, next) => {
   if (date) {
     req.body.day = date.split(" ")[2];
     req.body.month = date.split(" ")[1];
-    console.log("dvdv");
-    next();
+    return next();
   }
-  next();
+  return next();
 });
