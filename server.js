@@ -40,17 +40,9 @@ mongoose.set("strictQuery", true);
 //express app
 const app = express();
 
-//parsing json
-// app.use(
-//   express.json({
-//     verify: (req, res, buf) => {
-//       const url = req.originalUrl;
-//       if (url.startsWith("/webhook")) {
-//         req.rawBody = buf.toString();
-//       }
-//     },
-//   })
-// );
+//enable other domains access your application
+app.use(cors());
+app.options("*", cors());
 
 // Middleware for parsing URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
@@ -68,9 +60,7 @@ app.use(
 );
 
 
-//enable other domains access your application
-app.use(cors());
-app.options("*", cors());
+
 
 // app.use(fileUpload());
 
