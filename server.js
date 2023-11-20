@@ -39,8 +39,7 @@ dbConnection();
 mongoose.set("strictQuery", true);
 //express app
 const app = express();
-// Allow all origins
-app.use(cors({ origin: '*' }));
+
 //parsing json
 // app.use(
 //   express.json({
@@ -67,9 +66,11 @@ app.use(
     },
   })
 );
+
+
 //enable other domains access your application
-// app.use(cors());
-// app.options("*", cors());
+app.use(cors());
+app.options("*", cors());
 
 // app.use(fileUpload());
 
