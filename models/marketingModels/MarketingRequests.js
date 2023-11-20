@@ -35,7 +35,7 @@ const MarketingRequestsSchema = new mongoose.Schema({
   },
   telegram: {
     type: String
-  },
+  },    
   identity: { //image uploading 
     type: String
   },

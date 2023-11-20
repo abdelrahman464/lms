@@ -105,6 +105,7 @@ const MarketingLogsSchema = new mongoose.Schema(
 MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
+  this.populate({ path: "marketer", select: "name email profileImg" });
   next();
 });
 
