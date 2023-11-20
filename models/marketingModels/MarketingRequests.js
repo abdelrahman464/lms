@@ -51,6 +51,12 @@ const MarketingRequestsSchema = new mongoose.Schema({
   
 }, { timestamps: true });
 
+MarketingRequestsSchema.pre(/^find/, function (next) {
+  // this => query
+  this.populate({ path: "user", select: "name email profileImg" });
+  next();
+});
+
 const MarketingRequests= mongoose.model("MarketingRequests", MarketingRequestsSchema);
 
 module.exports = MarketingRequests;
