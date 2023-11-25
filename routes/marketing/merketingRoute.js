@@ -7,6 +7,7 @@ const {
   getMyMarketLog,
   getMarketLog,
   createInvoiceForAllUsers,
+  getMyChildren,
 } = require("../../services/marketing/marketingService");
 
 const router = express.Router();
@@ -16,6 +17,6 @@ router.put("/createInvoiceForAllUsers", createInvoiceForAllUsers);
 router.put("/startMarketing", authServices.protect, startMarketing);
 router.get("/getMyMarketLog", authServices.protect, getMyMarketLog);
 router.get("/getMarketLog/:marketerId", getMarketLog);
-// router.get("/calculateTotalProfits", calculateTotalProfitsForLog);
-// router.put("/becomeMarketer", authServices.protect, becomeMarketer);
+router.get("/getMyChildren/:marketerId", authServices.protect, getMyChildren);
+
 module.exports = router;

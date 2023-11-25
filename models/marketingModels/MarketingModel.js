@@ -5,6 +5,10 @@ const mongoose = require("mongoose");
 //calculate his total
 const MarketingLogsSchema = new mongoose.Schema(
   {
+    hasSentRequest: {
+      type: Boolean,
+      default: false,
+    },
     role: {
       type: String,
       enum: ["customer", "marketer"],
@@ -17,17 +21,7 @@ const MarketingLogsSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    percentage: {
-      //mySales + customerSales => percentage
-      type: Number,
-      default: 0,
-    },
     totalSalesMoney: {
-      //total sales' money i have sold
-      type: Number,
-      default: 0,
-    },
-    profits: {
       //total sales' money i have sold
       type: Number,
       default: 0,
@@ -42,7 +36,37 @@ const MarketingLogsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    //what i get from my tree and which level?
+    percentage: {
+      //mySales + customerSales => percentage
+      type: Number,
+      default: 0,
+    },
+    profits: {
+      //this is profits i gained from mySales based on my percentage
+      type: Number,
+      default: 0,
+    },
+    customerSalesMoney: {
+      //this is total sales money from my customers
+      //@use  i will use in updateInvitors , their percentage will be calculated from   totalSalesMoney+customerSalesMoney
+      type: Number,
+      default: 0,
+    },
+    //profits i will gain from my customers   diff(my percentage  - 20 ) * child.totalSalesMoney
+    cutomerProfitsTransactions: [
+      {
+        customer: {
+           type: mongoose.Schema.Types.ObjectId,
+           ref: "User" 
+          },
+        amount: Number,
+        percentage: Number,
+        Date: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
     transactions: [
       {
         childEmail: String,
@@ -77,17 +101,18 @@ const MarketingLogsSchema = new mongoose.Schema(
         percentage: Number,
         direct_profits: Number,
         tree_profits: Number,
+        customers_profits: Number,
         desc: String,
         Date: {
           type: Date,
           default: Date.now(),
         },
-        status:{
-          type:String,
-          Enum:["unpaid","pending","paid"],
-          default:"unpaid"
+        status: {
+          type: String,
+          Enum: ["unpaid", "pending", "paid"],
+          default: "unpaid",
         },
-        //these two parameters 
+        //these two parameters
         paymentMethod: {
           type: String,
         },
@@ -106,6 +131,7 @@ MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
   this.populate({ path: "marketer", select: "name email profileImg" });
+  this.populate({ path: "cutomerProfitsTransactions.customer", select: "name email profileImg" });
   next();
 });
 

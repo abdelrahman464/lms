@@ -1,6 +1,5 @@
 const MarketingRequest = require("../../models/marketingModels/MarketingRequests");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
-const User = require("../../models/userModel");
 const factory = require("../handllerFactory");
 // const User = require("../../models/userModel");
 
@@ -9,8 +8,9 @@ exports.canSendMarketingRequest = async (req, res, next) => {
     user: req.user._id,
   });
   // return res.json(withdrawRequest)
-  if (!MarketingRequest) {
-    next();
+  console.log(marketingRequest)
+  if (!marketingRequest) {
+    return next();
   } else if (marketingRequest.status === "pending") {
     return res
       .status(400)
@@ -46,7 +46,7 @@ exports.createMarketingRequest = async (req, res) => {
   req.body.user = req.user._id;
   req.body.birthDate = formattedDate;
   const request = await MarketingRequest.create(req.body);
-  await User.findOneAndUpdate({ _id: req.user._id }, { sentRequest: true });
+  await MarketingLog.findOneAndUpdate({ marketer: req.user._id }, { hasSentRequest: true });
   return res.status(200).json({ date: request });
 };
 //---------------------------------------------------------------------------------//
