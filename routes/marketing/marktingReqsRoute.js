@@ -1,6 +1,8 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
 const {
+  uploadMarketingRequestIdetity,
+  handleMarketingReqsIdentities,
   canSendMarketingRequest,
   createMarketingRequest,
   getAllMarketingRequests,
@@ -16,9 +18,16 @@ const {
 const router = express.Router();
 router
   .route("/")
-  .post(authServices.protect, canSendMarketingRequest, createMarketingRequest)
+  .post(
+    authServices.protect,
+    canSendMarketingRequest,
+    uploadMarketingRequestIdetity,
+    handleMarketingReqsIdentities,
+    createMarketingRequest
+  )
   .get(authServices.protect, getAllMarketingRequests);
 
+  
 router
   .route("/:id")
   .get(getMarketingRequestbyId)

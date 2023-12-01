@@ -17,6 +17,9 @@ const {
   updateComment,
   createFilterObj,
   setUserIdToBody,
+  replyToComment,
+  editReplyComment,
+  deleteReplyComment
 } = require("../../services/analyticServices/commentOnPostServices");
 
 const router = express.Router({ mergeParams: true });
@@ -60,5 +63,9 @@ router
     deleteCommentValidator,
     deleteComment
   );
+
+router.route("/replyToComment/:commentId").put(authServices.protect,authServices.allowedTo("admin"),replyToComment);
+router.route("/editReplyComment/:replyId").put(authServices.protect,authServices.allowedTo("admin"),editReplyComment);
+router.route("/deleteReplyComment/:replyId").delete(authServices.protect,authServices.allowedTo("admin"),deleteReplyComment);
 
 module.exports = router;

@@ -43,16 +43,14 @@ exports.inviteOthers = async (req, res) => {
 //prerequests => add to users collection {balance , invitorId}
 exports.calculateProfits = async (
   //don't forget to send amount here and email
-  // email,
-  // amount
   req,
   res
 ) => {
   try {
-    const userEmail = "a7@gmail.com"; //purchaser :)
+    const userEmail = "a9@gmail.com"; //purchaser :)
     const amount = 100;
     const user = await User.findOne({ email: userEmail });
-    console.log(user.invitor);
+
     if (!user.invitor) {
       console.log("no valid invitor");
       return;
@@ -180,13 +178,25 @@ const updateCustomer = async (customer, amountC, childEmail) => {
     if (customer.invitor === null) {
       return;
     }
-    const invitor = await MarketingLog.findOne({
-      marketer: customer.invitor,
-    });
-    //4- !! Check if his Invitor Isn't Marketer
-    if (!invitor || invitor.role === "customer") {
-      return false;
-    }
+    let currentCustomer = customer;
+    let invitor;
+    let generation = 0;
+    //---------
+    do {
+      // eslint-disable-next-line no-await-in-loop
+      invitor = await MarketingLog.findOne({
+        marketer: currentCustomer.invitor,
+      });
+      // If invitor is not found, return false
+      if (!invitor) {
+        return false;
+      }
+      currentCustomer = invitor;
+      generation++;
+      // Continue looping until invitor is found and invitor.role is "marketer"
+    } while (invitor && invitor.role !== "marketer");
+    //-----
+
     // Continue
     const invitorCustomerSales = invitor.customerSales + 1;
     const finalCustomerSalesMoney = invitor.customerSalesMoney + amountC;
@@ -209,19 +219,6 @@ const updateCustomer = async (customer, amountC, childEmail) => {
     ).toFixed(2);
     console.log("invitorCustomerProfit=> " + invitorCustomerProfit);
 
-    // await MarketingLog.findOneAndUpdate(
-    //   { marketer: invitor.marketer },
-    //   {
-    //     $set: {
-    //       customerSales: invitorCustomerSales,
-    //       customerSalesMoney: finalCustomerSalesMoney, //update total customerSalesMoney
-    //       percentage: invitorPercentage,
-    //       profits: invitorProfits,
-    //     },
-    //     //push new object if not found , else update
-    //   }
-    // );
-    //here
     const existingTransaction = await MarketingLog.findOne({
       marketer: invitor.marketer,
       "cutomerProfitsTransactions.customer": customer.marketer,
@@ -261,6 +258,7 @@ const updateCustomer = async (customer, amountC, childEmail) => {
             cutomerProfitsTransactions: {
               customer: customer.marketer,
               amount: invitorCustomerProfit,
+              generation: generation,
               percentage: invitorCustomerPercentage,
             },
           },

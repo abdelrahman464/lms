@@ -1,7 +1,45 @@
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const asyncHandler = require("express-async-handler");
 const MarketingRequest = require("../../models/marketingModels/MarketingRequests");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
 const factory = require("../handllerFactory");
 // const User = require("../../models/userModel");
+
+const {
+  uploadMixOfImages,
+} = require("../../middlewares/uploadImageMiddleware");
+
+//----------------------------------------------------------------
+exports.uploadMarketingRequestIdetity = uploadMixOfImages([
+  {
+    name: "identity",
+    maxCount: 1,
+  },
+]);
+//----------------------------------------------------------------
+//image processing
+exports.handleMarketingReqsIdentities = asyncHandler(async (req, res, next) => {
+  // 3. PDF processing
+  if (req.files.identity) {
+    const pdfFile = req.files.identity[0];
+    const pdfFileName = `marketingReq-Identity-${uuidv4()}-${Date.now()}.pdf`;
+    // Save the PDF file
+    // await req.files.pdf[0].mv(`uploads/store/products/pdf/${pdfFileName}`);
+
+    const pdfPath = `uploads/marketing/identities/${pdfFileName}`;
+
+    // Save the PDF file using fs
+    fs.writeFileSync(pdfPath, pdfFile.buffer);
+    // Save PDF into our db
+    req.body.identity = pdfFileName;
+  }
+  next();
+});
+
+
+
+
 
 exports.canSendMarketingRequest = async (req, res, next) => {
   const marketingRequest = await MarketingRequest.findOne({

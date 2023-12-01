@@ -56,11 +56,12 @@ const MarketingLogsSchema = new mongoose.Schema(
     cutomerProfitsTransactions: [
       {
         customer: {
-           type: mongoose.Schema.Types.ObjectId,
-           ref: "User" 
-          },
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
         amount: Number,
         percentage: Number,
+        generation: Number,
         Date: {
           type: Date,
           default: Date.now(),
@@ -131,7 +132,10 @@ MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
   this.populate({ path: "marketer", select: "name email profileImg" });
-  this.populate({ path: "cutomerProfitsTransactions.customer", select: "name email profileImg" });
+  this.populate({
+    path: "cutomerProfitsTransactions.customer",
+    select: "name email profileImg",
+  });
   next();
 });
 
