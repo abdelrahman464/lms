@@ -30,6 +30,7 @@ const educationLiveRoute = require("./educationRoutes/LiveRoute");
 const landingPageRoute = require("./landingPageRoute");
 const storyRoute = require("./storyRoute");
 const advertisementRoute = require("./advertisementRoute");
+const systemReviewRoute = require("./systemReviewRoute");
 
 //new --> marketing route
 const marketingRoute=require('./marketing/merketingRoute')
@@ -71,6 +72,10 @@ const mountRoutes = (app) => {
   app.use("/api/v1/landingPage", landingPageRoute);
   app.use("/api/v1/stories", storyRoute);
   app.use("/api/v1/advertisements", advertisementRoute);
+  app.use("/api/v1/systemReviews", systemReviewRoute);
+
+
+
   app.use("/api/v1/marketing", marketingRoute);
   app.use("/api/v1/marketingReq", marketingReqRoute);
   app.use("/api/v1/withdrawReq", withdrawReqRoute);
