@@ -41,7 +41,6 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
       "users.end_date": { $gt: new Date() },
     });
 
-
     const coursePackageIds = userPackages.map((package) => package.courses);
 
     const coursesFromPackages = [];
@@ -60,9 +59,6 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
         {
           sharedTo: "course",
           course: { $in: coursesFromPackages },
-        },
-        {
-          sharedTo: "public",
         },
       ],
     };
@@ -87,8 +83,16 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
   req.filterObj = filterObject;
   next();
 };
+//-------------------------------------------------------------------------------------------------
 //filter to get public posts only
 exports.createFilterObjPublicPosts = async (req, res, next) => {
+  const filterObject = { sharedTo: "public" };
+  req.filterObj = filterObject;
+  next();
+};
+//-------------------------------------------------------------------------------------------------
+//filter to get home posts only
+exports.createFilterObjHomePosts = async (req, res, next) => {
   const filterObject = { sharedTo: "public" };
   req.filterObj = filterObject;
   next();
@@ -140,3 +144,8 @@ exports.getPost = factory.getOne(Post);
 //@route DELTE api/v1/posts:id
 //@access protected admin that create the post
 exports.deletePost = factory.deleteOne(Post);
+
+//@desc get home posts
+//@route GET api/v1/posts/home
+//@access protected user
+exports.getHomePosts = factory.getALl(Post);

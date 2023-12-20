@@ -1,6 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
-const coinbase= require("coinbase-commerce-node");
+const coinbase = require("coinbase-commerce-node");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
@@ -8,6 +8,7 @@ const OrderStore = require("../../models/storeModels/storeOrderModel");
 const CartStore = require("../../models/storeModels/storeCartModel");
 const User = require("../../models/userModel");
 const Product = require("../../models/storeModels/storeProductModel");
+const { calculateProfits } = require("../marketing/marketingService");
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
@@ -78,7 +79,7 @@ const createCardOrder = async (session) => {
   const user = await User.findOne({ email: session.customer_email });
 
   //3)create order with default payment method cash
-  console.log("start to store order order")
+  console.log("start to store order order");
 
   const order = await OrderStore.create({
     user: user._id,
@@ -86,7 +87,7 @@ const createCardOrder = async (session) => {
     totalOrderPrice: orderPrice,
     isPaid: true,
     paidAt: Date.now(),
-    coupon:cart.coupon,
+    coupon: cart.coupon,
     paymentMethodType: "stripe",
   });
   //4) after creating order  decerement product quantity and increment product sold
@@ -94,11 +95,11 @@ const createCardOrder = async (session) => {
     const bulkOptions = cart.cartItems.map((item) => ({
       updateOne: {
         filter: { _id: item.product },
-        update: { $inc: {  sold: +item.quantity } },
+        update: { $inc: { sold: +item.quantity } },
       },
     }));
     await Product.bulkWrite(bulkOptions, {});
-    console.log("7mos")
+    console.log("7mos");
     //5)clear cart depend on cartId
     await CartStore.findByIdAndDelete(cartId);
   }
@@ -113,14 +114,13 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   let event;
 
   try {
-    console.log("start to verify   order")
+    console.log("start to verify   order");
     event = stripe.webhooks.constructEvent(
       req.rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_STORE
     );
-    console.log("finished  order")
-
+    console.log("finished  order");
   } catch (err) {
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
@@ -129,9 +129,14 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
   if (event.data.object.metadata.type === "store") {
     switch (event.type) {
       case "checkout.session.completed":
-        console.log("start to create order")
+        console.log("start to create order");
 
         await createCardOrder(event.data.object);
+
+        await calculateProfits(
+          event.data.object.customer_email,
+          event.data.object.amount_total / 100
+        );
 
         break;
       // ... handle other event types
@@ -143,7 +148,6 @@ exports.webhookCheckoutStore = asyncHandler(async (req, res, next) => {
 });
 //-------------------------------------------------------------------------------------------------
 exports.checkoutStoreCoinBase = asyncHandler(async (req, res, next) => {
-  
   const { cartId } = req.params;
   //app settings
   const taxPrice = 0;
@@ -159,33 +163,30 @@ exports.checkoutStoreCoinBase = asyncHandler(async (req, res, next) => {
     : cart.totalCartprice;
   const totalOrderPrice = Math.ceil(cartPrice + taxPrice);
 
-  //3)- create coin base session  
-   const {Client} = coinbase;
-   const {resources} = coinbase;
-   try{
+  //3)- create coin base session
+  const { Client } = coinbase;
+  const { resources } = coinbase;
+  try {
     Client.init(process.env.COINBASE_API_KEY);
 
-    const session= await resources.Charge.create({
-      name:"purchaseing order",
-      description:"have a nice payment",
-      local_price:{
-        amount:totalOrderPrice,
-        currency:"USD"
+    const session = await resources.Charge.create({
+      name: "purchaseing order",
+      description: "have a nice payment",
+      local_price: {
+        amount: totalOrderPrice,
+        currency: "USD",
       },
-      pricing_type:"fixed_price"
-      ,
-      metadata:{
-        type:"store",
-        user_id:req.user._id,
-        cartId:cartId
-      }
-
+      pricing_type: "fixed_price",
+      metadata: {
+        type: "store",
+        user_id: req.user._id,
+        userEmail: req.user.email,
+        cartId: cartId,
+      },
     });
     //4) send session to response
     res.status(200).json({ status: "success", session });
-
-   }catch(error){
-
-    res.status(400).json({error:error})
-   }
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
 });

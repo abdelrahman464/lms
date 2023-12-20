@@ -9,7 +9,12 @@ const factory = require("../handllerFactory");
 const {
   uploadMixOfImages,
 } = require("../../middlewares/uploadImageMiddleware");
+const { all } = require("../../routes/marketing/marktingReqsRoute");
 
+exports.filterAcceptReq = asyncHandler(async (req, res, next) => {
+  req.body.status = "pending";
+  next();
+})
 //----------------------------------------------------------------
 exports.uploadMarketingRequestIdetity = uploadMixOfImages([
   {
@@ -33,40 +38,33 @@ exports.handleMarketingReqsIdentities = asyncHandler(async (req, res, next) => {
     fs.writeFileSync(pdfPath, pdfFile.buffer);
     // Save PDF into our db
     req.body.identity = pdfFileName;
+    console.log(req.body.identity);
   }
   next();
 });
-
-
-
-
-
+//--------------------------------------------------------------------------------------------
 exports.canSendMarketingRequest = async (req, res, next) => {
   const marketingRequest = await MarketingRequest.findOne({
     user: req.user._id,
   });
   // return res.json(withdrawRequest)
-  console.log(marketingRequest)
+  console.log(marketingRequest);
   if (!marketingRequest) {
     return next();
   } else if (marketingRequest.status === "pending") {
-    return res
-      .status(400)
-      .json({
-        status: "faild",
-        msg: "your request is pending , wait till admin review your request ",
-      });
+    return res.status(400).json({
+      status: "faild",
+      msg: "your request is pending , wait till admin review your request ",
+    });
   } else if (marketingRequest.status === "rejectd") {
     return res
       .status(400)
       .json({ status: "faild", msg: "your request was rejected " });
   } else if (marketingRequest.status === "paid") {
-    return res
-      .status(400)
-      .json({
-        status: "faild",
-        msg: "your request was accepted and you was paid successfully",
-      });
+    return res.status(400).json({
+      status: "faild",
+      msg: "your request was accepted and you was paid successfully",
+    });
   }
   next();
 };
@@ -84,12 +82,25 @@ exports.createMarketingRequest = async (req, res) => {
   req.body.user = req.user._id;
   req.body.birthDate = formattedDate;
   const request = await MarketingRequest.create(req.body);
-  await MarketingLog.findOneAndUpdate({ marketer: req.user._id }, { hasSentRequest: true });
+  await MarketingLog.findOneAndUpdate(
+    { marketer: req.user._id },
+    { hasSentRequest: true }
+  );
   return res.status(200).json({ date: request });
 };
 //---------------------------------------------------------------------------------//
 // Get all MarketingRequests
-exports.getAllMarketingRequests = factory.getALl(MarketingRequest);
+exports.getAllMarketingRequests = async (req, res) => {
+  let {status} = req.query;
+  if(!status){
+    status = "pending";
+  }
+  else if(status==="all")  {
+    status = null;
+  }
+  const marketingRequests = await MarketingRequest.find({status});
+  return res.status(200).json({ status: "success", data: marketingRequests });
+}
 //---------------------------------------------------------------------------------//
 // Get a specific MarketingRequests by ID
 exports.getMarketingRequestbyId = factory.getOne(MarketingRequest);

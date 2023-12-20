@@ -40,3 +40,5 @@ TODO
 Marketing final tasks 
 1- in accept or rejetc MarketingRequest     --> send Mail To User     &    set his 'hasSentRequest'  to false    to allow him to send request again 
 2- add multer middleware to upload photo in marketing request 
+
+2/12/2023   

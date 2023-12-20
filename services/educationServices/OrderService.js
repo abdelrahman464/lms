@@ -1,18 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
-const coinbase= require("coinbase-commerce-node");
+const coinbase = require("coinbase-commerce-node");
 const ApiError = require("../../utils/apiError");
 const factory = require("../handllerFactory");
 
 const Order = require("../../models/educationModel/educationOrderModel");
 const Package = require("../../models/educationModel/educationPackageModel");
 const User = require("../../models/userModel");
-const Coupon =require("../../models/educationModel/educationCouponModel")
-const {calculateProfits} =require("../marketing/marketingService")
+const Coupon = require("../../models/educationModel/educationCouponModel");
+const { calculateProfits } = require("../marketing/marketingService");
 
 // const{calculateProfits}=require('../marketing/marketingService')
-
 
 exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
@@ -31,10 +30,9 @@ exports.findSpecificOrder = factory.getOne(Order);
 //@route GET /api/v1/orders/checkout-session/packageId
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
-  
   const { packageId } = req.params;
-  let metadataObject={};
-  metadataObject.type="education";
+  let metadataObject = {};
+  metadataObject.type = "education";
   //app settings
   const taxPrice = 0;
 
@@ -48,19 +46,22 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
     ? package.priceAfterDiscount
     : package.price;
 
-   //gomaa edit ' discount value' ----------------------------------------
-   if(req.body.coupon){
+  //gomaa edit ' discount value' ----------------------------------------
+  if (req.body.coupon) {
     const coupon = await Coupon.findOne({
       name: req.body.coupon,
       expire: { $gt: Date.now() },
-    }); 
-      if(!coupon){
-        return next(new ApiError("Coupon is Invalid or Expired "));
-      }
-      metadataObject.coupon=req.body.coupon;
+    });
+    if (!coupon) {
+      return next(new ApiError("Coupon is Invalid or Expired "));
+    }
+    metadataObject.coupon = req.body.coupon;
 
-      packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
-   }
+    packagePrice = (
+      packagePrice -
+      (packagePrice * coupon.discount) / 100
+    ).toFixed(2);
+  }
   //------
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
@@ -104,21 +105,20 @@ const createOrder = async (session) => {
   if (!user) {
     return new Error(" User Not Found");
   }
-  console.log(`create order`)
-  
-  const coupon = session.metadata.coupon || 'no coupon used';
+  console.log(`create order`);
+
+  const coupon = session.metadata.coupon || "no coupon used";
   //2)create order with default payment method cash
   const order = await Order.create({
     user: user._id,
     totalOrderPrice: orderPrice,
     isPaid: true,
-    paymentMethodType:"stripe",
-    coupon:coupon,
+    paymentMethodType: "stripe",
+    coupon: coupon,
     paidAt: Date.now(),
-   
   });
-  
-  console.log(`createdd order`)
+
+  console.log(`createdd order`);
 
   if (!order) {
     return new Error("Couldn't Create Order");
@@ -139,7 +139,6 @@ const createOrder = async (session) => {
   await package.save();
 };
 //-----------------------------------------------------------------------
-
 
 //@desc this webhook will run when the stripe payment success paied
 //@route POST education/webhook-checkout
@@ -167,7 +166,11 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
       case "checkout.session.completed":
         console.log(`education :)`);
         await createOrder(event.data.object);
-        await calculateProfits(event.data.object.customer_email,event.data.object.amount_total / 100)
+        
+        await calculateProfits(
+          event.data.object.customer_email,
+          event.data.object.amount_total / 100
+        );
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
@@ -178,7 +181,6 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
 });
 //------------------------------------------------------------------------------
 exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
-  
   const { packageId } = req.params;
   //app settings
   const taxPrice = 0;
@@ -188,53 +190,56 @@ exports.checkoutSessionCoinBase = asyncHandler(async (req, res, next) => {
     return next(new ApiError("There's no package", 404));
   }
   // eslint-disable-next-line prefer-const
-  let metadatainfo={ 
-     type:"education",
-     user_id:req.user._id,
-     packageId:packageId
-  }
+  let metadatainfo = {
+    type: "education",
+    user_id: req.user._id,
+    userEmail: req.user.email,
+    packageId: packageId,
+  };
 
   //2) get order price cart price  "check if copoun applied"
   let packagePrice = package.priceAfterDiscount
     ? package.priceAfterDiscount
     : package.price;
 
-   //applying discount 
-   if(req.body.coupon){
+  //applying discount
+  if (req.body.coupon) {
     const coupon = await Coupon.findOne({
       name: req.body.coupon,
       expire: { $gt: Date.now() },
     });
-      if(!coupon){
-        return next(new ApiError("Coupon is Invalid or Expired "));
-      }
-      metadatainfo.coupon=req.body.coupon ;
-      packagePrice = ( packagePrice - (packagePrice * coupon.discount) / 100).toFixed(2);
-   }
-  
+    if (!coupon) {
+      return next(new ApiError("Coupon is Invalid or Expired "));
+    }
+    metadatainfo.coupon = req.body.coupon;
+    packagePrice = (
+      packagePrice -
+      (packagePrice * coupon.discount) / 100
+    ).toFixed(2);
+  }
+
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
-  //3)- create coin base session  
-   const {Client} = coinbase;
-   const {resources} = coinbase;
-   try{
+  //3)- create coin base session
+  const { Client } = coinbase;
+  const { resources } = coinbase;
+  try {
     Client.init(process.env.COINBASE_API_KEY);
 
-    const session= await resources.Charge.create({
-      name:"purchaseing package",
-      description:"have a nice payment",
-      local_price:{
+    const session = await resources.Charge.create({
+      name: "purchaseing package",
+      description: "have a nice payment",
+      local_price: {
         amount: totalOrderPrice,
-        currency:"USD"
+        currency: "USD",
       },
-      pricing_type:"fixed_price",
-      metadata:metadatainfo
+      pricing_type: "fixed_price",
+      metadata: metadatainfo,
     });
     //4) send session to response
     console.log(metadatainfo);
     res.status(200).json({ status: "success", session });
-
-   }catch(error){
-    res.status(400).json({error:error})
-   }
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
 });

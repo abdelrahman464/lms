@@ -11,6 +11,7 @@ const authServices = require("../../services/authServices");
 const {
   createPost,
   createFilterObjAllowedPosts,
+  createFilterObjHomePosts,
   getLoggedUserAllowedPosts,
   createFilterObjPublicPosts,
   getPublicPosts,
@@ -19,6 +20,7 @@ const {
   deletePost,
   uploadPostImage,
   resizeImage,
+  getHomePosts,
 } = require("../../services/analyticServices/postServices");
 
 const router = express.Router();
@@ -48,6 +50,13 @@ router.get(
   authServices.allowedTo("user", "instructor", "admin"),
   createFilterObjPublicPosts,
   getPublicPosts
+);
+router.get(
+  "/home",
+  authServices.protect,
+  authServices.allowedTo("user", "instructor", "admin"),
+  // createFilterObjHomePosts,
+  getHomePosts
 );
 router
   .route("/:id")

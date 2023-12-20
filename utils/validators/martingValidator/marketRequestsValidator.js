@@ -19,20 +19,20 @@ exports.createmarketingReqValidator = [
     .notEmpty()
     .withMessage("city required"),
 
-  check("birthDate")
-    .notEmpty()
-    .withMessage("birthDate is required")
-    .isDate()
-    .withMessage("invalid birthDate"),
+  // check("birthDate")
+  //   .notEmpty()
+  //   .withMessage("birthDate is required")
+  //   .isDate()
+  //   .withMessage("invalid birthDate"),
   check("currentWork")
-    .isLength({ min: 5, max: 150 })
+    .isLength({ min: 3, max: 150 })
     .withMessage("currentWork must be between 5 and 150 characters")
     .notEmpty()
     .withMessage("currentWork is required")
     .isString()
     .withMessage("invalid currentWork"),
   check("ansOfQuestion")
-    .isLength({ min: 50, max: 1000 })
+    .isLength({ min: 50, max: 3000 })
     .withMessage("ansOfQuestion must be between 50 and 1000 characters")
     .notEmpty()
     .withMessage("ansOfQuestion is required")
@@ -62,9 +62,10 @@ exports.createmarketingReqValidator = [
     if (!req.files) {
       throw new Error("Identity file is required");
     }
-    const file = req.files.identity;
-    if (!file.mimetype.startsWith("image") && !file.mimetype.includes("pdf")) {
-      throw new ApiError("Identity must be an image or PDF file");
+    const file = req.files.identity[0];
+    if (!file) throw new ApiError("Identity file is required");
+    if (!file || !file.mimetype || !file.mimetype.includes("pdf")) {
+      throw new ApiError("Identity must be a PDF file");
     }
     return true;
   }),
@@ -73,7 +74,6 @@ exports.createmarketingReqValidator = [
     .withMessage("paymentMethod is required")
     .isIn(["wise", "crypto"])
     .withMessage("invalid paymentMethod"),
- 
 
   //catch error and return it as a response
   validatorMiddleware,

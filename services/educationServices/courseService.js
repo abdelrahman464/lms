@@ -22,7 +22,7 @@ exports.createCourse = factory.createOne(Course);
 exports.getAllCourses = factory.getALl(Course);
 
 // Get a specific course by ID
-exports.getCourseById = factory.getOne(Course,"reviews");
+exports.getCourseById = factory.getOne(Course, "reviews");
 
 // Update a course by ID
 exports.updateCourse = factory.updateOne(Course);
@@ -83,4 +83,62 @@ exports.checkCourseAuthority = (req, res, next) =>
     next();
   });
 
+//-------------------------------------------------------------------
+exports.assignOrderNumbers = async (req, res) => {
+  try {
+    // Fetch all courses from the database
+    const courses = await Course.find();
+    // Assign sequential order numbers to courses
+    let orderNumber = 1;
+    for (const course of courses) {
+      course.orderNumber = orderNumber;
+      await course.save();
+      orderNumber++;
+    }
 
+    console.log("Order numbers assigned successfully.");
+    return res.status(200).json({ status: "success" });
+  } catch (error) {
+    console.error("Error assigning order numbers:", error);
+  }
+};
+//----------------------------------------------------------------
+exports.updateOrderNumber = async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const { newOrderNumber } = req.body;
+      // Fetch the course that is being updated
+      const updatedCourse = await Course.findById(courseId);
+  
+      // Skip if the course or the orderNumber didn't change
+      if (!updatedCourse) {
+        return res.status(404).json({ status: "faild", msg: "Course not found" });
+      }
+  
+      // Find the course with the new orderNumber
+      const existingCourse = await Course.findOne({
+        orderNumber: newOrderNumber,
+      });
+  
+      // If a course with the new orderNumber exists, update its orderNumber
+      if (existingCourse) {
+        existingCourse.orderNumber = updatedCourse.orderNumber;
+        await existingCourse.save();
+      }
+  
+      // Update the orderNumber of the course being updated
+      updatedCourse.orderNumber = newOrderNumber;
+      await updatedCourse.save();
+  
+      console.log("Order numbers updated successfully.");
+      return res
+        .status(200)
+        .json({ status: "success", msg: "Order numbers updated successfully" });
+    } catch (error) {
+      console.error("Error updating order numbers:", error);
+      return res
+        .status(500)
+        .json({ status: "faild", msg: `Internal server error ${error}` });
+    }
+  }; 
+  

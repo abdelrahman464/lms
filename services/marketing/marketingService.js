@@ -24,7 +24,7 @@ exports.startMarketing = async (req, res) => {
       message: `you has started marketing successfully`,
     });
   } catch (error) {
-    return res.status(200).json({ error });
+    return res.status(400).json({ error });
   }
 };
 
@@ -38,18 +38,61 @@ exports.inviteOthers = async (req, res) => {
   }
 };
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-//@desc calculate the profit for marketers
-//@params  userId(mongoId) amount(int)
-//prerequests => add to users collection {balance , invitorId}
-exports.calculateProfits = async (
+exports.calculateProfitsManual = async (
   //don't forget to send amount here and email
   req,
   res
 ) => {
   try {
-    const userEmail = "a9@gmail.com"; //purchaser :)
-    const amount = 100;
+    const { userEmail, amount } = req.body; //purchaser :)
     const user = await User.findOne({ email: userEmail });
+    if (!user || !amount) {
+      return res
+        .status(404)
+        .json({ status: "faild", msg: "data not complete" });
+    }
+
+    if (!user) {
+      return res.status(404).json({ status: "faild", msg: "user not found" });
+    }
+
+    if (!user.invitor) {
+      return res.status(404).json({ status: "faild", msg: "no valid invitor" });
+    }
+    // return res.json(user)
+    const invitor = await MarketingLog.findOne({
+      marketer: user.invitor,
+    });
+    //check if invitor exist
+    if (!invitor) {
+      return res
+        .status(404)
+        .json({ status: "faild", msg: "invitor not found" });
+    }
+    // return res.json(invitor)
+    let response;
+    if (invitor.role === "customer") {
+      response = await updateCustomer(invitor, amount, user.email);
+    } else {
+      response = await updateMarketer(invitor, amount, user.email);
+    }
+    return res.status(200).json({ msg: response });
+  } catch (error) {
+    console.log("error from calculateProfits: ", error);
+    return res.json({ msg: `error from calculateProfits:  ${error}` });
+  }
+};
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//@desc calculate the profit for marketers
+//@params  userId(mongoId) amount(int)
+//prerequests => add to users collection {balance , invitorId}
+exports.calculateProfits = async (
+  //don't forget to send amount here and email
+  email,
+  amount
+) => {
+  try {
+    const user = await User.findOne({ email: email });
 
     if (!user.invitor) {
       console.log("no valid invitor");
@@ -176,7 +219,7 @@ const updateCustomer = async (customer, amountC, childEmail) => {
     // !!!!!------------------ START UPDATE HIS FATHER  --------------!!!!!
     //3- Check If Customer Had an Invitor
     if (customer.invitor === null) {
-      return;
+      return "customer updated successfully \n but he doesn't have an invitor";
     }
     let currentCustomer = customer;
     let invitor;
@@ -189,7 +232,7 @@ const updateCustomer = async (customer, amountC, childEmail) => {
       });
       // If invitor is not found, return false
       if (!invitor) {
-        return false;
+        return "customer updated successfully \n but he doesn't have an invitor with Role Marketer";
       }
       currentCustomer = invitor;
       generation++;
@@ -269,7 +312,7 @@ const updateCustomer = async (customer, amountC, childEmail) => {
       "customer updated successfully \n his father also updated successfully"
     );
     if (invitor.invitor === null) {
-      return;
+      return "customer updated successfully \n his father also updated successfully \n but his father doesn't have an invitor";
     }
     return await updateInvitorData(
       invitor,
@@ -300,7 +343,9 @@ const updateInvitorData = async (marketer, amountZ) => {
       console.log("marketer number " + i);
       if (!marketer || marketer.role === "customer") {
         console.log(i, ":his invitor is customer ");
-        break;
+        return `customer updated successfully \n his father also updated successfully \n but his fathers were updated successfully till father num ${
+          i - 1
+        } \n father num ${i} his invitor is customer`;
       }
 
       let existingTransaction = await MarketingLog.findOne({
@@ -338,13 +383,13 @@ const updateInvitorData = async (marketer, amountZ) => {
       //check if he has a father :)
       if (marketer.invitor === null) {
         console.log(i, ":don't have invitor ");
-        return true;
+        return `customer updated successfully \n his father also updated successfully \n and his fathers were updated successfully till father num ${i} doesn't have an invitor`;
       }
 
       percentage = 3.5 / 100;
     }
 
-    return true;
+    return `customer updated successfully \n his father also updated successfully \n and all his fathers were updated successfully till father num 5`;
   } catch (error) {
     console.log("error:", error);
     return false; // Return false or an error message
@@ -473,14 +518,14 @@ const createInvoice = async (marketLog, forPreviousMonth = false) => {
 exports.createInvoiceForAllUsers = async (req, res) => {
   try {
     // Get all marketers
-    const marketLogs = await MarketingLog.findOne({
-      marketer: "65104293ccbcd1cb62e34ef7",
-    });
+    const marketLogs = await MarketingLog.find();
+
     // Iterate through each marketer
-    // for (const marketLog of marketLogs) {
-    // Call the createInvoice function for the user
-    await createInvoice(marketLogs, false); // Passing true to create invoice for the previous month
-    // }
+    for (const marketLog of marketLogs) {
+      // Call the createInvoice function for the user
+      await createInvoice(marketLog, true); // Passing true to create invoice for the previous month
+    }
+
     res.status(200).json({
       status: "success",
       msg: "Invoices created successfully for all users.",
@@ -488,9 +533,9 @@ exports.createInvoiceForAllUsers = async (req, res) => {
   } catch (error) {
     console.error("Error creating invoices:", error);
 
-    res.status(200).json({
-      status: "faild",
-      msg: `Error creating invoices:, ${error}`,
+    res.status(500).json({
+      status: "failed",
+      msg: `Error creating invoices: ${error}`,
     });
   }
 };

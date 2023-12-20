@@ -23,11 +23,11 @@ router
     canSendMarketingRequest,
     uploadMarketingRequestIdetity,
     handleMarketingReqsIdentities,
+    createmarketingReqValidator,
     createMarketingRequest
   )
   .get(authServices.protect, getAllMarketingRequests);
 
-  
 router
   .route("/:id")
   .get(getMarketingRequestbyId)

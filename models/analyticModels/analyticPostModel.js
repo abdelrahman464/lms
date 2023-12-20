@@ -54,6 +54,10 @@ const setImageURL = (doc) => {
     doc.image = imageUrl;
   }
 };
+
+
+
+
 //after initializ the doc in db
 // check if the document contains image
 // it work with findOne,findAll,update

@@ -87,16 +87,27 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 // to be done when user purchase a package
 //old version
 exports.addUserToPlan = asyncHandler(async (req, res) => {
-  const { planId,userEmail } = req.body; 
+  //this email the onlt one who is allowed to do this
+  if (req.user.email != "nasr7337@gmail.com") {
+    return res
+      .status(400)
+      .json({ status: "failed", msg: "You are not allowed to do this" });
+  }
+
+  const { planId, userEmail } = req.body;
   const plan = await Package.findById(planId);
 
   if (!plan) {
-    res.status(400).json({ status:`faild`, msg:`no package for that id: ${planId}` });
+    res
+      .status(400)
+      .json({ status: `faild`, msg: `no package for that id: ${planId}` });
   }
   const user = await User.findOne({ email: userEmail });
-  
+
   if (!user) {
-    res.status(400).json({ status:`faild`, msg:`no user for that email: ${userEmail}` });
+    res
+      .status(400)
+      .json({ status: `faild`, msg: `no user for that email: ${userEmail}` });
   }
   const startDate = new Date();
   const endDate = new Date(startDate);
@@ -112,37 +123,62 @@ exports.addUserToPlan = asyncHandler(async (req, res) => {
 
   await plan.save();
 
-  res.status(200).json({ status: "success", data: `user has been added successfully` });
+  res
+    .status(200)
+    .json({ status: "success", data: `user has been added successfully` });
 });
 //-------------------------------------------------------------------------------------------------------------//
 exports.removeUserFromPlan = asyncHandler(async (req, res) => {
+  //this email the onlt one who is allowed to do this
+  if (req.user.email != "nasr7337@gmail.com") {
+    return res
+      .status(400)
+      .json({ status: `faild`, msg: `you are not allowed to do this ` });
+  }
+
   const { planId, userEmail } = req.body;
-  
+
   try {
     const plan = await Package.findById(planId);
-  
+
     if (!plan) {
-      return res.status(400).json({ status: "failed", msg: `No package for that id: ${planId}` });
+      return res
+        .status(400)
+        .json({ status: "failed", msg: `No package for that id: ${planId}` });
     }
-  
+
     const user = await User.findOne({ email: userEmail });
-  
+
     if (!user) {
-      return res.status(400).json({ status: "failed", msg: `No user for that email: ${userEmail}` });
+      return res.status(400).json({
+        status: "failed",
+        msg: `No user for that email: ${userEmail}`,
+      });
     }
-    
+
     // Find the index of the user in the users array and remove it
-    const userIndex = plan.users.findIndex(u => u.user.toString() === user._id.toString());
+    const userIndex = plan.users.findIndex(
+      (u) => u.user.toString() === user._id.toString()
+    );
     if (userIndex !== -1) {
       plan.users.splice(userIndex, 1);
       await plan.save();
-       res.status(200).json({ status: "success", data: `User has been removed from the package successfully` });
+      res.status(200).json({
+        status: "success",
+        data: `User has been removed from the package successfully`,
+      });
     } else {
-       res.status(400).json({ status: "failed", msg: `User is not associated with this package` });
+      res.status(400).json({
+        status: "failed",
+        msg: `User is not associated with this package`,
+      });
     }
   } catch (error) {
     // eslint-disable-next-line prefer-template
-    return res.status(500).json({ status: "error", msg: "An error occurred while processing the request "+ error });
+    return res.status(500).json({
+      status: "error",
+      msg: "An error occurred while processing the request " + error,
+    });
   }
 });
 
@@ -192,6 +228,10 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
 exports.getMyPackages = asyncHandler(async (req, res) => {
   const packages = await Package.find({
     "users.user": req.user._id,
+  }, {
+    users: {
+      $elemMatch: { user: req.user._id }
+    }
   });
 
   if (packages.length === 0) {
@@ -277,7 +317,7 @@ exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
     "users.telgramId": telgramId,
   });
   if (existUser) {
-    res.status(400).json({status:"faild",msg:`User already exists`});
+    res.status(400).json({ status: "faild", msg: `User already exists` });
   } else {
     // Use findOneAndUpdate to update the telegram_id for the specific user
     const filter = { "users.user": id }; // Find the document that contains the user with the given ID in the users array
@@ -294,10 +334,15 @@ exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
     );
 
     if (updatedPackage) {
-      res.status(200).json({status:"success",msg:`Telegram ID updated for user with ID ${id}`});
+      res.status(200).json({
+        status: "success",
+        msg: `Telegram ID updated for user with ID ${id}`,
+      });
     } else {
-      
-      res.status(400).json({status:"faild",msg:`User with ID ${id} not found in the package`});
+      res.status(400).json({
+        status: "faild",
+        msg: `User with ID ${id} not found in the package`,
+      });
     }
   }
 });
@@ -311,13 +356,15 @@ exports.getMyChannels = asyncHandler(async (req, res, next) => {
   const packages = await Package.find({
     "users.telgramId": telegramId,
   });
-  
 
   if (packages.length === 0) {
-    res.json({status:"faild",message: "you are not subscribed to any package" });
+    res.json({
+      status: "faild",
+      message: "you are not subscribed to any package",
+    });
   } else {
     // Extract all telegramChannelNames from the array of objects
-    const allTelegramChannelNames =await packages.flatMap(
+    const allTelegramChannelNames = await packages.flatMap(
       (item) => item.telegramChannelNames
     );
     if (allTelegramChannelNames.includes("*")) {
@@ -328,3 +375,33 @@ exports.getMyChannels = asyncHandler(async (req, res, next) => {
     }
   }
 });
+
+//-------------------------------------------------------------------------------------------------------------------------
+
+exports.reduceUsersEndDateBy2970Days=async(req,res)=> {
+  try {
+    const{packageId}=req.params;
+    // Find the education package by packageId
+    const educationPackage = await Package.findById(packageId);
+
+    if (!educationPackage) {
+      throw new Error('Education package not found');
+    }
+    let userEndDate;
+    // Iterate through users and update their end_date
+    // eslint-disable-next-line no-restricted-syntax
+    for (const user of educationPackage.users) {
+      userEndDate = new Date(user.end_date);
+      userEndDate.setDate(userEndDate.getDate() - 2970);
+      user.end_date = userEndDate;
+    }
+
+    // Save the updated education package
+    await educationPackage.save();
+
+    return res.status(200).json({ success: true, message: 'Users end_date reduced by 2970 days' });
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+

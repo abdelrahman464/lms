@@ -4,10 +4,9 @@ const {
   checkCourseIdParamValidator,
   createCourseValidator,
   updateCourseValidator,
-  getRelatedCoursesValidator
+  getRelatedCoursesValidator,
 } = require("../../utils/validators/educationValidators/courseValidator");
 const {
-  
   createCourse,
   setinstructorIdToBody,
   getAllCourses,
@@ -17,6 +16,8 @@ const {
   updateCourse,
   relatedCourses,
   addUserToCourse,
+  assignOrderNumbers,
+  updateOrderNumber,
 } = require("../../services/educationServices/courseService");
 const authServices = require("../../services/authServices");
 // nested routes
@@ -26,12 +27,22 @@ const router = express.Router({ mergeParams: true });
 
 router.use("/:courseId/reviews", reviewsRoute);
 
+// testing 
+router.get("/assignOrderNumbers", assignOrderNumbers);
+
+//changing order number for the course
+router.put(
+  "/updateOrderNumber/:courseId",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  updateOrderNumber
+);
+
 // Create a new course
 router.post(
   "/",
   authServices.protect,
   authServices.allowedTo("instructor", "admin"),
-
   setinstructorIdToBody,
   createCourseValidator,
   createCourse
@@ -55,7 +66,12 @@ router.get(
   getCourseById
 );
 //Get course with CategoryId  gomaa
-router.get("/relatedCourses/:catId", authServices.protect,getRelatedCoursesValidator,relatedCourses);
+router.get(
+  "/relatedCourses/:catId",
+  authServices.protect,
+  getRelatedCoursesValidator,
+  relatedCourses
+);
 // add user to course list   gomaa
 router.post("/addUserToCourse", authServices.protect, addUserToCourse);
 
@@ -64,7 +80,7 @@ router.put(
   "/:id",
   authServices.protect,
   authServices.allowedTo("instructor", "admin"),
-  
+
   updateCourseValidator,
   updateCourse
 );

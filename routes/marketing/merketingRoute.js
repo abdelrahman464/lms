@@ -2,7 +2,7 @@ const express = require("express");
 const authServices = require("../../services/authServices");
 const {
   inviteOthers,
-  calculateProfits,
+  calculateProfitsManual,
   startMarketing,
   getMyMarketLog,
   getMarketLog,
@@ -11,12 +11,22 @@ const {
 } = require("../../services/marketing/marketingService");
 
 const router = express.Router();
-router.get("/inviteOthers", authServices.protect, inviteOthers);
-router.get("/calculateProfits", calculateProfits);
-router.put("/createInvoiceForAllUsers", createInvoiceForAllUsers);
+// router.get("/inviteOthers", authServices.protect, inviteOthers); //not used in production
+router.put(
+  "/calculateProfitsManual",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  calculateProfitsManual
+);
+router.put(
+  "/createInvoiceForAllUsers",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  createInvoiceForAllUsers
+);
 router.put("/startMarketing", authServices.protect, startMarketing);
 router.get("/getMyMarketLog", authServices.protect, getMyMarketLog);
-router.get("/getMarketLog/:marketerId", getMarketLog);
+router.get("/getMarketLog/:marketerId", authServices.protect, getMarketLog);
 router.get("/getMyChildren/:marketerId", authServices.protect, getMyChildren);
 
 module.exports = router;

@@ -49,6 +49,9 @@ const educationCourseSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    orderNumber: {
+      type: Number,
+    },
   },
   {
     timeseries: true,
@@ -57,6 +60,24 @@ const educationCourseSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+//@use: auto assigment for orderNumber when new Course is added
+educationCourseSchema.pre("save", async function (next) {
+  try {
+    if (!this.orderNumber) {
+      // If the course doesn't have an orderNumber, assign one based on the existing number of courses
+      const existingCoursesCount = await this.constructor.countDocuments();
+
+      // Assign the orderNumber as the next number in the sequence
+      this.orderNumber = existingCoursesCount + 1;
+    }
+
+    // Continue with the save operation
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 // virtual field =>reviews
 educationCourseSchema.virtual("reviews", {
   ref: "EducationReview",
