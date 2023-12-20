@@ -29,7 +29,6 @@ const userShcema = new mongoose.Schema(
     emailVerified: Boolean,
     googleId: {
       type: String,
-      unique: true,
     },
     phone: String,
     country:String,
