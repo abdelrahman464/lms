@@ -8,6 +8,7 @@ const {
   getMarketLog,
   createInvoiceForAllUsers,
   getMyChildren,
+  updateBroker,
 } = require("../../services/marketing/marketingService");
 
 const router = express.Router();
@@ -28,5 +29,11 @@ router.put("/startMarketing", authServices.protect, startMarketing);
 router.get("/getMyMarketLog", authServices.protect, getMyMarketLog);
 router.get("/getMarketLog/:marketerId", authServices.protect, getMarketLog);
 router.get("/getMyChildren/:marketerId", authServices.protect, getMyChildren);
+router.put(
+  "/updateBroker",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  updateBroker
+);
 
 module.exports = router;
