@@ -113,7 +113,7 @@ exports.getMarketingRequestbyId = factory.getOne(MarketingRequest);
 exports.deleteMarketingRequest = factory.deleteOne(MarketingRequest);
 //---------------------------------------------------------------------------------//
 // Update a MarketingRequests by ID
-exports = async (req, res, next) => {
+exports.acceptMarketingRequest = async (req, res, next) => {
   const { id } = req.params;
 
   //get user marketLog and update his role
