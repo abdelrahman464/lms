@@ -121,7 +121,9 @@ exports.acceptMarketingRequest = async (req, res, next) => {
     { _id: id },
     { status: "accepted" }
   );
-
+  if (!MarketRequest) {
+    return next(new ApiError(`Reuest Not Found`, 404));
+  }
   await MarketingLog.findOneAndUpdate(
     { marketer: MarketRequest.user },
     { role: "marketer" }
@@ -156,6 +158,9 @@ exports.rejectMarketingRequest = async (req, res, next) => {
     { _id: id },
     { status: "reject" }
   );
+  if (!MarketRequest) {
+    return next(new ApiError(`Reuest Not Found`, 404));
+  }
   //SEND EMAIL TO   MarketRequest.user Telling him he he been marketer
   const userInRequset = await User.findById(MarketRequest.user);
   try {
