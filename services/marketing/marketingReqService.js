@@ -4,17 +4,19 @@ const asyncHandler = require("express-async-handler");
 const MarketingRequest = require("../../models/marketingModels/MarketingRequests");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
 const factory = require("../handllerFactory");
-// const User = require("../../models/userModel");
+const sendEmail = require("../../utils/sendEmail");
+const ApiError = require("../../utils/apiError");
+const User = require("../../models/userModel");
 
 const {
   uploadMixOfImages,
 } = require("../../middlewares/uploadImageMiddleware");
-const { all } = require("../../routes/marketing/marktingReqsRoute");
+// const { all } = require("../../routes/marketing/marktingReqsRoute");
 
 exports.filterAcceptReq = asyncHandler(async (req, res, next) => {
   req.body.status = "pending";
   next();
-})
+});
 //----------------------------------------------------------------
 exports.uploadMarketingRequestIdetity = uploadMixOfImages([
   {
@@ -51,16 +53,19 @@ exports.canSendMarketingRequest = async (req, res, next) => {
   console.log(marketingRequest);
   if (!marketingRequest) {
     return next();
-  } else if (marketingRequest.status === "pending") {
+  }
+  if (marketingRequest.status === "pending") {
     return res.status(400).json({
       status: "faild",
       msg: "your request is pending , wait till admin review your request ",
     });
-  } else if (marketingRequest.status === "rejectd") {
+  }
+  if (marketingRequest.status === "rejectd") {
     return res
       .status(400)
       .json({ status: "faild", msg: "your request was rejected " });
-  } else if (marketingRequest.status === "paid") {
+  }
+  if (marketingRequest.status === "paid") {
     return res.status(400).json({
       status: "faild",
       msg: "your request was accepted and you was paid successfully",
@@ -91,16 +96,15 @@ exports.createMarketingRequest = async (req, res) => {
 //---------------------------------------------------------------------------------//
 // Get all MarketingRequests
 exports.getAllMarketingRequests = async (req, res) => {
-  let {status} = req.query;
-  if(!status){
+  let { status } = req.query;
+  if (!status) {
     status = "pending";
-  }
-  else if(status==="all")  {
+  } else if (status === "all") {
     status = null;
   }
-  const marketingRequests = await MarketingRequest.find({status});
+  const marketingRequests = await MarketingRequest.find({ status });
   return res.status(200).json({ status: "success", data: marketingRequests });
-}
+};
 //---------------------------------------------------------------------------------//
 // Get a specific MarketingRequests by ID
 exports.getMarketingRequestbyId = factory.getOne(MarketingRequest);
@@ -109,7 +113,7 @@ exports.getMarketingRequestbyId = factory.getOne(MarketingRequest);
 exports.deleteMarketingRequest = factory.deleteOne(MarketingRequest);
 //---------------------------------------------------------------------------------//
 // Update a MarketingRequests by ID
-exports.acceptMarketingRequest = async (req, res) => {
+exports.acceptMarketingRequest = async (req, res, next) => {
   const { id } = req.params;
 
   //get user marketLog and update his role
@@ -117,18 +121,36 @@ exports.acceptMarketingRequest = async (req, res) => {
     { _id: id },
     { status: "accepted" }
   );
-  // eslint-disable-next-line no-use-before-define
+  if (!MarketRequest) {
+    return next(new ApiError(`Reuest Not Found`, 404));
+  }
   await MarketingLog.findOneAndUpdate(
     { marketer: MarketRequest.user },
     { role: "marketer" }
   );
   //SEND EMAIL TO   MarketRequest.user Telling him he he been marketer
+  const userInRequset = await User.findById(MarketRequest.user);
+  try {
+    const emailMessage = `Hi ${userInRequset.name}, 
+                          \n your request to be a marketer has been accepted by the admin
+                          \n please login to your account to see your new role
+                          \n the new-normal Team`;
 
+    await sendEmail({
+      to: userInRequset.email,
+      subject: "Your Request To Be A Marketer Has Been Accepted",
+      text: emailMessage,
+    });
+  } catch (err) {
+    return next(
+      new ApiError("there is a problem with sending Email to the user ", 500)
+    );
+  }
   return res.status(200).json({ status: "status updated successfully" });
 };
 //---------------------------------------------------------------------------------//
 // reject a MarketingRequests by ID
-exports.rejectMarketingRequest = async (req, res) => {
+exports.rejectMarketingRequest = async (req, res, next) => {
   const { id } = req.params;
 
   //get user marketLog and update his role
@@ -136,8 +158,27 @@ exports.rejectMarketingRequest = async (req, res) => {
     { _id: id },
     { status: "reject" }
   );
-
+  if (!MarketRequest) {
+    return next(new ApiError(`Reuest Not Found`, 404));
+  }
   //SEND EMAIL TO   MarketRequest.user Telling him he he been marketer
+  const userInRequset = await User.findById(MarketRequest.user);
+  try {
+    const emailMessage = `Hi ${userInRequset.name}, 
+                          \n your request to be a marketer has been rejected by the admin
+                          \n please try again later
+                          \n the New-Normal Team`;
+
+    await sendEmail({
+      to: userInRequset.email,
+      subject: "Your Request To Be A Marketer Has Been Rejected",
+      text: emailMessage,
+    });
+  } catch (err) {
+    return next(
+      new ApiError("there is a problem with sending Email to the user ", 500)
+    );
+  }
 
   return res.status(200).json({ status: "status was rejected successfully" });
 };
