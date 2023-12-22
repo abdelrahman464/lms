@@ -33,6 +33,11 @@ const educationCourseSchema = new mongoose.Schema(
       trim: true,
       max: [200000, "Too long Course price"],
     },
+    renewPrice: {
+      type: Number,
+      trim: true,
+      max: [200000, "Too long Course renew price"],
+    },
     priceAfterDiscount: {
       type: Number,
     },
@@ -51,6 +56,11 @@ const educationCourseSchema = new mongoose.Schema(
     },
     orderNumber: {
       type: Number,
+    },
+    expirationTime: {
+      //0  //30   //  //expirtaioInDays
+      type: Number,
+      required: [true, "expirationTime required"],
     },
   },
   {

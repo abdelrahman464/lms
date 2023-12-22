@@ -39,6 +39,15 @@ exports.convertToArray = async (req, res, next) => {
   }
   next();
 };
+//filter packages with type:package
+exports.createFilterObj = (req, res, next) => {
+  let filterObject = {};
+  filterObject = req.params.type
+    ? { type: req.params.type }
+    : { type: "package" };
+  req.filterObj = filterObject;
+  next();
+};
 // Create a new package
 exports.createPackage = factory.createOne(Package);
 // Get all packages
@@ -226,13 +235,16 @@ exports.checkAuthority = asyncHandler(async (req, res, next) => {
 
 //-------------------------------------------------------------------------
 exports.getMyPackages = asyncHandler(async (req, res) => {
-  const packages = await Package.find({
-    "users.user": req.user._id,
-  }, {
-    users: {
-      $elemMatch: { user: req.user._id }
+  const packages = await Package.find(
+    {
+      "users.user": req.user._id,
+    },
+    {
+      users: {
+        $elemMatch: { user: req.user._id },
+      },
     }
-  });
+  );
 
   if (packages.length === 0) {
     res.json({ message: "you are not subscribed to any package" });
@@ -378,14 +390,14 @@ exports.getMyChannels = asyncHandler(async (req, res, next) => {
 
 //-------------------------------------------------------------------------------------------------------------------------
 
-exports.reduceUsersEndDateBy2970Days=async(req,res)=> {
+exports.reduceUsersEndDateBy2970Days = async (req, res) => {
   try {
-    const{packageId}=req.params;
+    const { packageId } = req.params;
     // Find the education package by packageId
     const educationPackage = await Package.findById(packageId);
 
     if (!educationPackage) {
-      throw new Error('Education package not found');
+      throw new Error("Education package not found");
     }
     let userEndDate;
     // Iterate through users and update their end_date
@@ -399,9 +411,10 @@ exports.reduceUsersEndDateBy2970Days=async(req,res)=> {
     // Save the updated education package
     await educationPackage.save();
 
-    return res.status(200).json({ success: true, message: 'Users end_date reduced by 2970 days' });
+    return res
+      .status(200)
+      .json({ success: true, message: "Users end_date reduced by 2970 days" });
   } catch (error) {
     return { success: false, error: error.message };
   }
-}
-
+};

@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Course = require("../../models/educationModel/educationCourseModel");
+const Package = require("../../models/educationModel/educationPackageModel");
 const factory = require("../handllerFactory");
 
 // middleware to add instructorId to body
@@ -16,7 +17,39 @@ exports.createFilterObj = (req, res, next) => {
   next();
 };
 // Create a new course
-exports.createCourse = factory.createOne(Course);
+exports.createCourse = asyncHandler(async (req, res) => {
+  const {
+    title,
+    category,
+    price,
+    courses,
+    expirationTime,
+    renewPrice,
+    description,
+  } = req.body;
+  //create cours
+  const course = await Course.create({
+    title,
+    description,
+    category,
+    price,
+    courses,
+    expirationTime,
+    renewPrice,
+  });
+  if (!course) return res.status(400).json({ msg: "something went wrong" });
+  //case in newnormal to create package after create course to handle course subscrption unsing package
+  await Package.create({
+    title,
+    description,
+    price,
+    courses: [course._id],
+    expirationTime,
+    type: "course",
+    renewPrice,
+  });
+  return res.status(201).json({ data: " successfully " });
+});
 
 // Get all courses
 exports.getAllCourses = factory.getALl(Course);
@@ -104,41 +137,40 @@ exports.assignOrderNumbers = async (req, res) => {
 };
 //----------------------------------------------------------------
 exports.updateOrderNumber = async (req, res) => {
-    try {
-      const { courseId } = req.params;
-      const { newOrderNumber } = req.body;
-      // Fetch the course that is being updated
-      const updatedCourse = await Course.findById(courseId);
-  
-      // Skip if the course or the orderNumber didn't change
-      if (!updatedCourse) {
-        return res.status(404).json({ status: "faild", msg: "Course not found" });
-      }
-  
-      // Find the course with the new orderNumber
-      const existingCourse = await Course.findOne({
-        orderNumber: newOrderNumber,
-      });
-  
-      // If a course with the new orderNumber exists, update its orderNumber
-      if (existingCourse) {
-        existingCourse.orderNumber = updatedCourse.orderNumber;
-        await existingCourse.save();
-      }
-  
-      // Update the orderNumber of the course being updated
-      updatedCourse.orderNumber = newOrderNumber;
-      await updatedCourse.save();
-  
-      console.log("Order numbers updated successfully.");
-      return res
-        .status(200)
-        .json({ status: "success", msg: "Order numbers updated successfully" });
-    } catch (error) {
-      console.error("Error updating order numbers:", error);
-      return res
-        .status(500)
-        .json({ status: "faild", msg: `Internal server error ${error}` });
+  try {
+    const { courseId } = req.params;
+    const { newOrderNumber } = req.body;
+    // Fetch the course that is being updated
+    const updatedCourse = await Course.findById(courseId);
+
+    // Skip if the course or the orderNumber didn't change
+    if (!updatedCourse) {
+      return res.status(404).json({ status: "faild", msg: "Course not found" });
     }
-  }; 
-  
+
+    // Find the course with the new orderNumber
+    const existingCourse = await Course.findOne({
+      orderNumber: newOrderNumber,
+    });
+
+    // If a course with the new orderNumber exists, update its orderNumber
+    if (existingCourse) {
+      existingCourse.orderNumber = updatedCourse.orderNumber;
+      await existingCourse.save();
+    }
+
+    // Update the orderNumber of the course being updated
+    updatedCourse.orderNumber = newOrderNumber;
+    await updatedCourse.save();
+
+    console.log("Order numbers updated successfully.");
+    return res
+      .status(200)
+      .json({ status: "success", msg: "Order numbers updated successfully" });
+  } catch (error) {
+    console.error("Error updating order numbers:", error);
+    return res
+      .status(500)
+      .json({ status: "faild", msg: `Internal server error ${error}` });
+  }
+};

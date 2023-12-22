@@ -41,6 +41,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   if (!package) {
     return next(new ApiError("There's no package", 404));
   }
+ 
   //2) get order price cart price  "check if copoun applied"
   let packagePrice = package.priceAfterDiscount
     ? package.priceAfterDiscount

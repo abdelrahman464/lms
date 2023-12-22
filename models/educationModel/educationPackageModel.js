@@ -63,6 +63,16 @@ const educationPackageSchema = new mongoose.Schema({
       },
     },
   ],
+  type: {
+    type: String,
+    enum: ["course", "package"],
+    default: "package",
+  },
+  renewPrice: {
+    type: Number,
+    trim: true,
+    max: [200000, "Too long Package renew price"],
+  },
 });
 
 const setImageURL = (doc) => {
