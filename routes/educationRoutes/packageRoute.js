@@ -31,6 +31,7 @@ router.get("/myPackages", authServices.protect, getMyPackages);
 router.get("/myTelegramChannels/:telegramId", getMyChannels);
 //add telegram id
 router.put("/addTelegramId/:id", addTelgramIdToUserInPackage);
+router.post("/addCourseToPlan",authServices.protect, authServices.allowedTo("admin"), addCourseToPlan);
 
 router
   .route("/:type?")
@@ -61,10 +62,6 @@ router
     convertToArray,
     deletePackage
   );
-
-router
-  .route("/addCourseToPlan")
-  .post(authServices.protect, authServices.allowedTo("admin"), addCourseToPlan);
 
 router
   .route("/addUserToPlan")
