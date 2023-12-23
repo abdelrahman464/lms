@@ -12,6 +12,7 @@ const {
   createBrocker,
   updateBrocker,
   deleteBrocker,
+  getSuitableBrocker,
 } = require("../../services/marketing/brockerService");
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router
     createBrockerValidator,
     createBrocker
   );
+router.route("/suitable").get(authServices.protect, getSuitableBrocker);
 router
   .route("/:id")
   .get(BrockerIdCheckerValidator, getBrocker)

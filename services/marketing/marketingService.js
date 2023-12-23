@@ -18,7 +18,7 @@ exports.startMarketing = async (req, res) => {
       invitor: req.user.invitor,
       role: "customer",
     });
-    await User.findOneAndUpdate({ _id: req.user._id }, { sentRequest: true });
+    await User.findOneAndUpdate({ _id: req.user._id }, { startMarketing: true });
     return res.status(200).json({
       msg: "success",
       message: `you has started marketing successfully`,

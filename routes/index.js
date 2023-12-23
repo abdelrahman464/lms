@@ -36,6 +36,7 @@ const systemReviewRoute = require("./systemReviewRoute");
 const marketingRoute=require('./marketing/merketingRoute')
 const marketingReqRoute=require('./marketing/marktingReqsRoute')
 const withdrawReqRoute=require('./marketing/withdrawReqRoute')
+const brokerRoute=require('./marketing/borckerRoute')
 
 const mountRoutes = (app) => {
   // Mount Routes
@@ -79,5 +80,6 @@ const mountRoutes = (app) => {
   app.use("/api/v1/marketing", marketingRoute);
   app.use("/api/v1/marketingReq", marketingReqRoute);
   app.use("/api/v1/withdrawReq", withdrawReqRoute);
+  app.use("/api/v1/broker", brokerRoute);
 };
 module.exports = mountRoutes;
