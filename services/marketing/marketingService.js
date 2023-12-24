@@ -18,7 +18,10 @@ exports.startMarketing = async (req, res) => {
       invitor: req.user.invitor,
       role: "customer",
     });
-    await User.findOneAndUpdate({ _id: req.user._id }, { startMarketing: true });
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { startMarketing: true }
+    );
     return res.status(200).json({
       msg: "success",
       message: `you has started marketing successfully`,
@@ -255,6 +258,15 @@ exports.getMarketLog = async (req, res) => {
   return res.status(200).json({ status: "success", marketLog });
 };
 //-----------------------------------------------------------------------------------------------------------------------//
+//@desc get market log for specific marketer
+//@access internal app => authSercice 'signUp'
+exports.getMarketLog2 = async (marketerId) => {
+  console.log(marketerId)
+  const marketLog = await MarketingLog.findOne({ marketer: marketerId }); //req.user._id
+ 
+  return marketLog;
+};
+//-----------------------------------------------------------------------------------------------------------------------//
 exports.getMyMarketLog = async (req, res) => {
   const marketLog = await MarketingLog.findOne({ marketer: req.user._id }); //req.user._id
   if (!marketLog) {
@@ -347,11 +359,25 @@ exports.createInvoiceForAllUsers = async (req, res) => {
   }
 };
 //-----------------------------------------------------------------------------------------------//
-exports.getMyChildren = async (req, res) => {
+exports.getMarketerChildren = async (req, res) => {
   const { marketerId } = req.params;
-  console.log(marketerId);
-  const children = await User.find({ invitor: marketerId }).select(
-    "name email profileImg startMarketing"
+
+  const children = await User.find({ invitor: marketerId })
+    .populate("mediator", "name email profileImg")
+    .select("name email profileImg");
+
+  if (children.length === 0) {
+    return res.status(404).json({ status: "faild", msg: "no data found" });
+  }
+
+  return res.status(200).json({ status: "success", data: children });
+};
+//-----------------------------------------------------------------------------------------------//
+exports.getCustomerChildren = async (req, res) => {
+  const { marketerId } = req.params;
+
+  const children = await User.find({ mediator: marketerId }).select(
+    "name email profileImg "
   );
 
   if (children.length === 0) {

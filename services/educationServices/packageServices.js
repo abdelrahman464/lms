@@ -253,72 +253,6 @@ exports.getMyPackages = asyncHandler(async (req, res) => {
   }
 });
 
-// exports.checkCourseAuthority=asyncHandler(async(req,res,next)=>{
-//   try {
-//   const userId=req.user.id;
-//   const planId = req.user.plan;
-//   const courseId=req.params.courseId;
-
-//  const package = await Package.findOne({
-//       courses: { $in: [courseId] },
-//       'users.user': userId,
-//       'users.end_date': {  $lt: new Date() }
-//     });
-//     if (!package) {
-//       return res.status(403).json({ error: 'Access denied' });
-//     }
-
-//     next();
-//   }catch (error) {
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-
-// })
-
-// const checkCourseAuthority2 = async (req, res, next) => {
-//   const userId = req.user.id;
-//   const { courseId } = req.params;
-
-// const course = await Course.findOne(
-//     {
-//       _id: courseId,
-//       "users.user": userId,
-//     },
-//     {
-//       "users.$": 1, // Select only the matched user object
-//     }
-//   );
-
-//   if (!course) {
-//     //check whether has access on courses
-//     res.json({ msg: "not allowed" });
-//   }
-//   // res.json(package)
-//   next();
-// };
-
-// exports.checkCourseAuthority = () =>
-//   asyncHandler(async (req, res, next) => {
-//     const userId = req.user.id;
-//     const { courseId } = req.params;
-
-//     const course = await Course.findOne(
-//       {
-//         _id: courseId,
-//         "users.user": userId,
-//       },
-//       {
-//         "users.$": 1, // Select only the matched user object
-//       }
-//     );
-
-//     if (!course) {
-//       //check whether has access on courses
-//       res.json({ msg: "not allowed" });
-//     }
-//     // res.json(package)
-//     next();
-//   });
 //<,--------------------------------.>
 exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
   const { id } = req.params; // Replace this with the ID of the user you want to update
@@ -358,9 +292,7 @@ exports.addTelgramIdToUserInPackage = asyncHandler(async (req, res, next) => {
     }
   }
 });
-//<,--------------------------------.>
-//<,--------------------------------.>
-//<,--------------------------------.>
+
 //<,--------------------------------.>
 exports.getMyChannels = asyncHandler(async (req, res, next) => {
   const { telegramId } = req.params;

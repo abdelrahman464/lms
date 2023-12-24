@@ -8,6 +8,11 @@ const userShcema = new mongoose.Schema(
       ref: "User",
       default:null
     },
+      mediator:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default:null
+      },
     name: {
       type: String,
       trim: true,

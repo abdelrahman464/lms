@@ -7,9 +7,14 @@ const {
   getMyMarketLog,
   getMarketLog,
   createInvoiceForAllUsers,
-  getMyChildren,
+  getMarketerChildren,
+  getCustomerChildren,
   updateBroker,
 } = require("../../services/marketing/marketingService");
+
+const {
+  validateMarketerAuthority,
+} = require("../../middlewares/marketingMiddleware");
 
 const router = express.Router();
 // router.get("/inviteOthers", authServices.protect, inviteOthers); //not used in production
@@ -28,7 +33,20 @@ router.put(
 router.put("/startMarketing", authServices.protect, startMarketing);
 router.get("/getMyMarketLog", authServices.protect, getMyMarketLog);
 router.get("/getMarketLog/:marketerId", authServices.protect, getMarketLog);
-router.get("/getMyChildren/:marketerId", authServices.protect, getMyChildren);
+
+router.get(
+  "/getMarketerChildren/:marketerId",
+  authServices.protect,
+  validateMarketerAuthority,
+  getMarketerChildren
+);
+router.get(
+  "/getCustomerChildren/:marketerId",
+  authServices.protect,
+  validateMarketerAuthority,
+  getCustomerChildren
+);
+
 router.put(
   "/updateBroker",
   authServices.protect,
