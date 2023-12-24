@@ -7,6 +7,7 @@ const factory = require("../handllerFactory");
 
 const Order = require("../../models/educationModel/educationOrderModel");
 const Package = require("../../models/educationModel/educationPackageModel");
+const Course = require("../../models/educationModel/educationCourseModel");
 const User = require("../../models/userModel");
 const Coupon = require("../../models/educationModel/educationCouponModel");
 const { calculateProfits } = require("../marketing/marketingService");
@@ -31,17 +32,29 @@ exports.findSpecificOrder = factory.getOne(Order);
 //@access protected/user
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
   const { packageId } = req.params;
+  const productType = req.body.type;
+
+
+  
+  let package = {};
+  if (productType === "course") {
+    package = await Package.findOne({ courses: { $in: [packageId] } });
+    if (!package) {
+      return next(new ApiError("There's no package", 404));
+    }
+  }
+  if (productType === "package") {
+    package = await Package.findById(packageId);
+    if (!package) {
+      return next(new ApiError("There's no package", 404));
+    }
+  }
+
   let metadataObject = {};
   metadataObject.type = "education";
   //app settings
   const taxPrice = 0;
 
-  //1) get cart depend on catrId
-  const package = await Package.findById(packageId);
-  if (!package) {
-    return next(new ApiError("There's no package", 404));
-  }
- 
   //2) get order price cart price  "check if copoun applied"
   let packagePrice = package.priceAfterDiscount
     ? package.priceAfterDiscount
@@ -167,7 +180,7 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
       case "checkout.session.completed":
         console.log(`education :)`);
         await createOrder(event.data.object);
-        
+
         await calculateProfits(
           event.data.object.customer_email,
           event.data.object.amount_total / 100
