@@ -33,10 +33,12 @@ const advertisementRoute = require("./advertisementRoute");
 const systemReviewRoute = require("./systemReviewRoute");
 
 //new --> marketing route
-const marketingRoute=require('./marketing/merketingRoute')
-const marketingReqRoute=require('./marketing/marktingReqsRoute')
-const withdrawReqRoute=require('./marketing/withdrawReqRoute')
-const brokerRoute=require('./marketing/borckerRoute')
+const marketingRoute = require("./marketing/merketingRoute");
+const marketingReqRoute = require("./marketing/marktingReqsRoute");
+const withdrawReqRoute = require("./marketing/withdrawReqRoute");
+const brokerRoute = require("./marketing/borckerRoute");
+
+const telegramChannelsRoute = require("./telegramChannelsRoute");
 
 const mountRoutes = (app) => {
   // Mount Routes
@@ -75,11 +77,11 @@ const mountRoutes = (app) => {
   app.use("/api/v1/advertisements", advertisementRoute);
   app.use("/api/v1/systemReviews", systemReviewRoute);
 
-
-
   app.use("/api/v1/marketing", marketingRoute);
   app.use("/api/v1/marketingReq", marketingReqRoute);
   app.use("/api/v1/withdrawReq", withdrawReqRoute);
   app.use("/api/v1/broker", brokerRoute);
+
+  app.use("/api/v1/telegramChannel", telegramChannelsRoute);
 };
 module.exports = mountRoutes;
