@@ -26,7 +26,7 @@ const {
   deleteMyAccount,
   uploadProfileImage,
   resizeImage,
- 
+  updateUserTelegram,
 } = require("../services/userService");
 
 const router = express.Router();
@@ -91,6 +91,6 @@ router
     deleteUser
   );
 
-
+router.post("/updateUserTelegram/:userId", updateUserTelegram);
 
 module.exports = router;

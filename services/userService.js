@@ -62,7 +62,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
       role: req.body.role,
       about: req.body.about,
       profileImg: req.body.profileImg,
-      country:req.body.country
+      country: req.body.country,
     },
     {
       new: true,
@@ -136,7 +136,7 @@ exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
       phone: req.body.phone,
       about: req.body.about,
       profileImg: req.body.profileImg,
-      country:req.body.country
+      country: req.body.country,
     },
     {
       new: true,
@@ -164,4 +164,23 @@ exports.activeateLoggedUser = asyncHandler(async (req, res, next) => {
 exports.deleteMyAccount = asyncHandler(async (req, res, next) => {
   await User.findByIdAndDelete(req.user._id);
   res.status(204).send();
+});
+
+exports.updateUserTelegram = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndUpdate(
+    req.params.userId,
+    {
+      $set: {
+        "telegram.telegramId": req.body.telegramId,
+        "telegram.telegramUserName": req.body.telegramUserName,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({
+    status: "success",
+    msg: "telegram Id and userName updated successfully",
+  });
 });
