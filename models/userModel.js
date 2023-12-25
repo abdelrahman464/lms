@@ -3,16 +3,16 @@ const mongoose = require("mongoose");
 
 const userShcema = new mongoose.Schema(
   {
-    invitor:{
+    invitor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default:null
+      default: null,
     },
-      mediator:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default:null
-      },
+    mediator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     name: {
       type: String,
       trim: true,
@@ -28,6 +28,14 @@ const userShcema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    telegram: {
+      telegramId: {
+        type: String,
+      },
+      telegramUserName: {
+        type: String,
+      },
+    },
     emailVerifiedAt: Date,
     emailVerifyCode: String,
     emailVerifyExpires: Date,
@@ -36,7 +44,7 @@ const userShcema = new mongoose.Schema(
       type: String,
     },
     phone: String,
-    country:String,
+    country: String,
     profileImg: String,
     password: {
       type: String,
@@ -49,7 +57,7 @@ const userShcema = new mongoose.Schema(
     passwordResetVerified: Boolean,
     role: {
       type: String,
-      enum: ["user", "instructor", "admin","marketer"],
+      enum: ["user", "instructor", "admin", "marketer"],
       default: "user",
     },
     active: {

@@ -48,8 +48,13 @@ const MarketingLogsSchema = new mongoose.Schema(
     },
     transactionsGT500: [
       {
-        childEmail: String,
+        child: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
         amount: Number,
+        package: String,
+        packageType: String,
         Date: {
           type: Date,
           default: Date.now(),
@@ -58,8 +63,13 @@ const MarketingLogsSchema = new mongoose.Schema(
     ],
     transactionsLT500: [
       {
-        childEmail: String,
+        child: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
         amount: Number,
+        package: String,
+        packageType: String,
         Date: {
           type: Date,
           default: Date.now(),
@@ -106,6 +116,8 @@ MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
   this.populate({ path: "marketer", select: "name email profileImg" });
+  this.populate({ path: "transactionsGT500.child", select: "name email profileImg" });
+  this.populate({ path: "transactionsLT500.child", select: "name email profileImg" });
   next();
 });
 

@@ -34,11 +34,13 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   const { packageId } = req.params;
   const productType = req.body.type;
 
-
-  
   let package = {};
+  //detect whether it's package or course
   if (productType === "course") {
-    package = await Package.findOne({ courses: { $in: [packageId] } });
+    package = await Package.findOne({
+      courses: { $in: [packageId] },
+      type: "course",
+    });
     if (!package) {
       return next(new ApiError("There's no package", 404));
     }
@@ -54,11 +56,25 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   metadataObject.type = "education";
   //app settings
   const taxPrice = 0;
+  let packagePrice = null;
+  //when i get package , check if  is user scribe and if his end_date is valid return you are subscribed ,else if exist and end_date is expired  use
+  // Check if the package has an expired end_date
+  const UserSubscribtion = package.users.find((user) =>
+    user.user.equals(req.user._id)
+  );
 
-  //2) get order price cart price  "check if copoun applied"
-  let packagePrice = package.priceAfterDiscount
-    ? package.priceAfterDiscount
-    : package.price;
+  if (UserSubscribtion) {
+    if (UserSubscribtion.end_date > Date.now()) {
+      return next(
+        new ApiError(`You are already subscribed to this ${package.type} `)
+      );
+    }
+    packagePrice = package.renewPrice;
+  } else {
+    packagePrice = package.priceAfterDiscount
+      ? package.priceAfterDiscount
+      : package.price;
+  }
 
   //gomaa edit ' discount value' ----------------------------------------
   if (req.body.coupon) {
@@ -76,7 +92,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       (packagePrice * coupon.discount) / 100
     ).toFixed(2);
   }
-  //------
+  //-----------------------------------------------------------------------
   const totalOrderPrice = Math.ceil(packagePrice + taxPrice);
 
   //3)create stripe checkout session
@@ -103,7 +119,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   });
 
   //4) send session to response
-  res.status(200).json({ status: "success", session });
+  return res.status(200).json({ status: "success", session });
 });
 //*-------------------------------------------------------------------------------------- */
 const createOrder = async (session) => {
@@ -149,8 +165,8 @@ const createOrder = async (session) => {
   };
 
   package.users.addToSet(newUser);
-  console.log(`done`);
   await package.save();
+  return package;
 };
 //-----------------------------------------------------------------------
 
@@ -179,11 +195,13 @@ exports.webhookCheckoutEducation = asyncHandler(async (req, res) => {
     switch (event.type) {
       case "checkout.session.completed":
         console.log(`education :)`);
-        await createOrder(event.data.object);
+       
+        const package = await createOrder(event.data.object);
 
         await calculateProfits(
           event.data.object.customer_email,
-          event.data.object.amount_total / 100
+          event.data.object.amount_total / 100,
+          package
         );
         break;
       default:

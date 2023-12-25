@@ -1,5 +1,6 @@
 const User = require("../../models/userModel");
 const MarketingLog = require("../../models/marketingModels/MarketingModel");
+const Package = require("../../models/educationModel/educationPackageModel");
 
 //when creating invoice check the date if same monthe   update invoice  if not create new one
 
@@ -98,7 +99,7 @@ exports.calculateProfitsManual = async (
   res
 ) => {
   try {
-    const { userEmail, amount } = req.body; //purchaser :)
+    const { userEmail, amount, packageId } = req.body; //purchaser :)
     const user = await User.findOne({ email: userEmail });
     if (!user || !amount) {
       return res
@@ -113,13 +114,23 @@ exports.calculateProfitsManual = async (
     if (!user.invitor) {
       return res.status(404).json({ status: "faild", msg: "no valid invitor" });
     }
-
+    const package = await Package.findOne({ _id: packageId });
     let response;
     if (amount > 500) {
       // eslint-disable-next-line no-use-before-define
-      response = await updateMarketerGT500(user.invitor, amount, user.email);
+      response = await updateMarketerGT500(
+        user.invitor,
+        amount,
+        user._id,
+        package
+      );
     } else {
-      response = await updateMarketerLT500(user.invitor, amount, user.email);
+      response = await updateMarketerLT500(
+        user.invitor,
+        amount,
+        user._id,
+        package
+      );
     }
     console.log(response);
     return res.status(200).json({ msg: response });
@@ -135,7 +146,8 @@ exports.calculateProfitsManual = async (
 exports.calculateProfits = async (
   //don't forget to send amount here and email
   email,
-  amount
+  amount,
+  package
 ) => {
   try {
     const user = await User.findOne({ email: email });
@@ -149,9 +161,19 @@ exports.calculateProfits = async (
 
     if (amount > 500) {
       // eslint-disable-next-line no-use-before-define
-      response = await updateMarketerGT500(user.invitor, amount, user.email);
+      response = await updateMarketerGT500(
+        user.invitor,
+        amount,
+        user.email,
+        package
+      );
     } else {
-      response = await updateMarketerLT500(user.invitor, amount, user.email);
+      response = await updateMarketerLT500(
+        user.invitor,
+        amount,
+        user.email,
+        package
+      );
       console.log(response);
       return response;
     }
@@ -164,7 +186,7 @@ exports.calculateProfits = async (
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------//
-const updateMarketerGT500 = async (marketerId, amountD, childEmail) => {
+const updateMarketerGT500 = async (marketerId, amountD, childId, package) => {
   console.log("we are in updateMarketerGT500 now");
   const marketerMarketLog = await MarketingLog.findOne({
     marketer: marketerId,
@@ -191,8 +213,10 @@ const updateMarketerGT500 = async (marketerId, amountD, childEmail) => {
     {
       $push: {
         transactionsGT500: {
-          childEmail: childEmail,
+          child: childId,
           amount: amountD,
+          package: package.title,
+          packageType: package.type,
         },
       },
       $set: {
@@ -206,7 +230,7 @@ const updateMarketerGT500 = async (marketerId, amountD, childEmail) => {
   return "updated successfully";
 };
 //--------------------------------------------------------------------------------------------------------------------------------------//
-const updateMarketerLT500 = async (marketerId, amountD, childEmail) => {
+const updateMarketerLT500 = async (marketerId, amountD, childId, package) => {
   console.log("we are in updateMarketerLT500 now");
   const marketerMarketLog = await MarketingLog.findOne({
     marketer: marketerId,
@@ -232,8 +256,10 @@ const updateMarketerLT500 = async (marketerId, amountD, childEmail) => {
     {
       $push: {
         transactionsLT500: {
-          childEmail: childEmail,
+          child: childId,
           amount: amountD,
+          package: package.title,
+          packageType: package.type,
         },
       },
       $set: {
@@ -261,9 +287,9 @@ exports.getMarketLog = async (req, res) => {
 //@desc get market log for specific marketer
 //@access internal app => authSercice 'signUp'
 exports.getMarketLog2 = async (marketerId) => {
-  console.log(marketerId)
+  console.log(marketerId);
   const marketLog = await MarketingLog.findOne({ marketer: marketerId }); //req.user._id
- 
+
   return marketLog;
 };
 //-----------------------------------------------------------------------------------------------------------------------//
