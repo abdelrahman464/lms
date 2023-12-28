@@ -31,7 +31,12 @@ router.get("/myPackages", authServices.protect, getMyPackages);
 router.get("/myTelegramChannels/:telegramId", getMyChannels);
 //add telegram id
 router.put("/addTelegramId/:id", addTelgramIdToUserInPackage);
-router.post("/addCourseToPlan",authServices.protect, authServices.allowedTo("admin"), addCourseToPlan);
+router.post(
+  "/addCourseToPlan",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  addCourseToPlan
+);
 
 router
   .route("/:type?")
@@ -43,10 +48,9 @@ router
     createPackageValidator,
     createPackage
   );
-
+router.get("/findOne/:id", getPackageById);
 router
   .route("/:id")
-  .get(getPackageById)
   .put(
     authServices.protect,
     authServices.allowedTo("admin"),

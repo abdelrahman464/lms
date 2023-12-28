@@ -54,6 +54,7 @@ exports.createPackage = factory.createOne(Package);
 exports.getAllPackages = factory.getALl(Package);
 // Get a specific package by ID
 exports.getPackageById = factory.getOne(Package, "courses");
+
 // Update a package by ID
 exports.updatePackage = factory.updateOne(Package);
 // Delete a package by ID
