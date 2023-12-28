@@ -27,7 +27,7 @@ const router = express.Router({ mergeParams: true });
 
 router.use("/:courseId/reviews", reviewsRoute);
 
-// testing 
+// testing
 router.get("/assignOrderNumbers", assignOrderNumbers);
 
 //changing order number for the course
@@ -49,13 +49,7 @@ router.post(
 );
 
 // Get all courses
-router.get(
-  "/",
-  authServices.protect,
-  authServices.allowedTo("instructor", "admin", "user"),
-  createFilterObj,
-  getAllCourses
-);
+router.get("/", createFilterObj, getAllCourses);
 
 // Get a specific course by ID
 router.get(
