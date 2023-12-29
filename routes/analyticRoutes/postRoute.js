@@ -53,8 +53,6 @@ router.get(
 );
 router.get(
   "/home",
-  authServices.protect,
-  authServices.allowedTo("user", "instructor", "admin"),
   // createFilterObjHomePosts,
   getHomePosts
 );
