@@ -59,8 +59,6 @@ router.get(
 router
   .route("/:id")
   .get(
-    authServices.protect,
-    authServices.allowedTo("user", "instructor", "admin"),
     getPostValidator,
     getPost
   )
