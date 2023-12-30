@@ -15,7 +15,7 @@ const analyticPostSchema = new mongoose.Schema(
     },
     sharedTo: {
       type: String,
-      enum: ["public", "weeklyWithdraw"],
+      enum: ["public","analytic","weeklyWithdraw"],
       default: "public",
     },
     image: String,

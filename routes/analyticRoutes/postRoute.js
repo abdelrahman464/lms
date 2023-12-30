@@ -26,7 +26,7 @@ router.use("/:postId/postReacts", postReactRoute);
 
 router
   .route("/")
-  .get(authServices.protect, createFilterObjPosts, getPosts)
+  .get( createFilterObjPosts, getPosts)
   .post(
     authServices.protect,
     authServices.allowedTo("instructor", "admin"),
