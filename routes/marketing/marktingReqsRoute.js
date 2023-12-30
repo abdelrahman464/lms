@@ -1,8 +1,8 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
 const {
-  uploadMarketingRequestIdetity,
-  handleMarketingReqsIdentities,
+  uploadMarketingRequestPdfs,
+  handleMarketingReqsPdfs,
   canSendMarketingRequest,
   createMarketingRequest,
   getAllMarketingRequests,
@@ -21,8 +21,8 @@ router
   .post(
     authServices.protect,
     canSendMarketingRequest,
-    uploadMarketingRequestIdetity,
-    handleMarketingReqsIdentities,
+    uploadMarketingRequestPdfs,
+    handleMarketingReqsPdfs,
     createmarketingReqValidator,
     createMarketingRequest
   )

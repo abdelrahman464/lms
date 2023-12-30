@@ -42,3 +42,19 @@ Marketing final tasks
 2- add multer middleware to upload photo in marketing request 
 
 2/12/2023   
+
+
+
+#DONE (:D){
+    {{URL}}/api/v1/analytic/posts                             GET              public posts 
+    {{URL}}/api/v1/analytic/posts?sharedTo=weeklyWithdraw     GET              weeklyWithdraw posts 
+    {{URL}}/api/v1/analytic/posts                             POST             body =>>> { content, image, sharedTo="weeklyWithdraw","public" }
+
+    # populate marketing Model   in {transactionsGT500.child   ,transactionsLT500.child } in entity {telegram}
+    # upload pdf file in send reqeust to be an marketer
+}  
+  30/12/2023   
+
+
+
+

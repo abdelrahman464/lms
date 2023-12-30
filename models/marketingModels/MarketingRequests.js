@@ -37,8 +37,12 @@ const MarketingRequestsSchema = new mongoose.Schema(
     telegram: {
       type: String,
     },
+    cv: {
+      //pdf uploading
+      type: [String],
+    },
     identity: {
-      //image uploading
+      //pdf uploading
       type: [String],
     },
     paymentMethod: {
@@ -69,6 +73,14 @@ const setImageURL = (doc) => {
       pdfListWithUrl.push(pdfUrl);
     });
     doc.identity = pdfListWithUrl;
+  }
+  if (doc.cv) {
+    const pdfListWithUrl = [];
+    doc.cv.forEach((cv) => {
+      const pdfUrl = `${process.env.BASE_URL}/marketing/cv/${cv}`;
+      pdfListWithUrl.push(pdfUrl);
+    });
+    doc.cv = pdfListWithUrl;
   }
 };
 //after initializ the doc in db

@@ -13,18 +13,10 @@ const analyticPostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     sharedTo: {
       type: String,
-      enum: ["public", "course"],
+      enum: ["public", "weeklyWithdraw"],
       default: "public",
-    },
-    course: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "EducationCourse",
     },
     image: String,
   },
@@ -35,7 +27,6 @@ const analyticPostSchema = new mongoose.Schema(
 analyticPostSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "user", select: "name profileImg" });
-  this.populate({ path: "course", select: "title" });
   next();
 });
 

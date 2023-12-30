@@ -17,7 +17,6 @@
         required: true,
       },
       image: String,
-
       repiles: [
         {
           user: {

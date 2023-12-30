@@ -69,6 +69,17 @@ exports.createmarketingReqValidator = [
     }
     return true;
   }),
+  check("cv").custom((value, { req }) => {
+    if (!req.files) {
+      throw new Error("Identity file is required");
+    }
+    const file = req.files.cv[0];
+    if (!file) throw new ApiError("cv file is required");
+    if (!file || !file.mimetype || !file.mimetype.includes("pdf")) {
+      throw new ApiError("cv must be a PDF file");
+    }
+    return true;
+  }),
   check("paymentMethod")
     .notEmpty()
     .withMessage("paymentMethod is required")

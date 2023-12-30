@@ -116,8 +116,8 @@ MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
   this.populate({ path: "marketer", select: "name email profileImg" });
-  this.populate({ path: "transactionsGT500.child", select: "name email profileImg" });
-  this.populate({ path: "transactionsLT500.child", select: "name email profileImg" });
+  this.populate({ path: "transactionsGT500.child", select: "name email profileImg telegram" });
+  this.populate({ path: "transactionsLT500.child", select: "name email profileImg telegram" });
   next();
 });
 

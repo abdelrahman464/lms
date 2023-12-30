@@ -18,29 +18,38 @@ exports.filterAcceptReq = asyncHandler(async (req, res, next) => {
   next();
 });
 //----------------------------------------------------------------
-exports.uploadMarketingRequestIdetity = uploadMixOfImages([
+exports.uploadMarketingRequestPdfs = uploadMixOfImages([
   {
     name: "identity",
+    maxCount: 1,
+  },
+  {
+    name: "cv",
     maxCount: 1,
   },
 ]);
 //----------------------------------------------------------------
 //image processing
-exports.handleMarketingReqsIdentities = asyncHandler(async (req, res, next) => {
-  // 3. PDF processing
+exports.handleMarketingReqsPdfs = asyncHandler(async (req, res, next) => {
+  //  identity
   if (req.files.identity) {
     const pdfFile = req.files.identity[0];
     const pdfFileName = `marketingReq-Identity-${uuidv4()}-${Date.now()}.pdf`;
-    // Save the PDF file
-    // await req.files.pdf[0].mv(`uploads/store/products/pdf/${pdfFileName}`);
-
     const pdfPath = `uploads/marketing/identities/${pdfFileName}`;
-
     // Save the PDF file using fs
     fs.writeFileSync(pdfPath, pdfFile.buffer);
     // Save PDF into our db
     req.body.identity = pdfFileName;
-    console.log(req.body.identity);
+  }
+  //cv
+  if (req.files.cv) {
+    const pdfFile = req.files.cv[0];
+    const pdfFileName = `marketingReq-cv-${uuidv4()}-${Date.now()}.pdf`;
+    const pdfPath = `uploads/marketing/cv/${pdfFileName}`;
+    // Save the PDF file using fs
+    fs.writeFileSync(pdfPath, pdfFile.buffer);
+    // Save PDF into our db
+    req.body.cv = pdfFileName;
   }
   next();
 });
@@ -50,7 +59,7 @@ exports.canSendMarketingRequest = async (req, res, next) => {
     user: req.user._id,
   });
   // return res.json(withdrawRequest)
-  console.log(marketingRequest);
+
   if (!marketingRequest) {
     return next();
   }

@@ -1,7 +1,7 @@
 const express = require("express");
 const authServices = require("../../services/authServices");
 const {
-  inviteOthers,
+  //inviteOthers,
   calculateProfitsManual,
   startMarketing,
   getMyMarketLog,
