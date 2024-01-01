@@ -14,16 +14,16 @@ const {
 exports.uploadPackageImage = uploadSingleImage("image");
 //image processing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
-  const filename = `package-${uuidv4()}-${Date.now()}.jpeg`;
+  const filename = `package-${uuidv4()}-${Date.now()}.webp`; // Change the file extension to webp
 
   if (req.file) {
     await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat("jpeg")
-      .jpeg({ quality: 95 })
+      // .resize(600, 600)
+      .toFormat("webp") // Change the format to webp
+      .webp({ quality: 95 }) // Adjust quality if needed
       .toFile(`uploads/education/packages/${filename}`);
 
-    //save image into our db
+    // Save the image filename into our db
     req.body.image = filename;
   }
 
@@ -98,11 +98,6 @@ exports.addCourseToPlan = asyncHandler(async (req, res) => {
 //old version
 exports.addUserToPlan = asyncHandler(async (req, res) => {
   //this email the onlt one who is allowed to do this
-  if (req.user.email != "nasr7337@gmail.com") {
-    return res
-      .status(400)
-      .json({ status: "failed", msg: "You are not allowed to do this" });
-  }
 
   const { planId, userEmail } = req.body;
   const plan = await Package.findById(planId);
@@ -140,11 +135,6 @@ exports.addUserToPlan = asyncHandler(async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------//
 exports.removeUserFromPlan = asyncHandler(async (req, res) => {
   //this email the onlt one who is allowed to do this
-  if (req.user.email != "nasr7337@gmail.com") {
-    return res
-      .status(400)
-      .json({ status: `faild`, msg: `you are not allowed to do this ` });
-  }
 
   const { planId, userEmail } = req.body;
 
@@ -187,7 +177,7 @@ exports.removeUserFromPlan = asyncHandler(async (req, res) => {
     // eslint-disable-next-line prefer-template
     return res.status(500).json({
       status: "error",
-      msg: "An error occurred while processing the request " + error,
+      msg: `An error occurred while processing the request ${error}`,
     });
   }
 });

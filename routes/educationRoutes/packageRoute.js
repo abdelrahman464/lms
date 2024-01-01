@@ -42,6 +42,8 @@ router
   .route("/:type?")
   .get(createFilterObj, getAllPackages)
   .post(
+    authServices.protect,
+    authServices.allowedTo("admin"),
     uploadPackageImage,
     resizeImage,
     convertToArray,
