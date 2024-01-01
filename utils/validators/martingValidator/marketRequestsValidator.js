@@ -38,11 +38,6 @@ exports.createmarketingReqValidator = [
     .withMessage("ansOfQuestion is required")
     .isString()
     .withMessage("invalid ansOfQuestion"),
-  check("facebook")
-    .notEmpty()
-    .withMessage("facebook URL is required")
-    .isURL()
-    .withMessage("invalid facebook URL"),
   check("instgram")
     .notEmpty()
     .withMessage("instagram URL is required")
@@ -54,8 +49,7 @@ exports.createmarketingReqValidator = [
     .isURL()
     .withMessage("invalid tiktok URL"),
   check("telegram")
-    .notEmpty()
-    .withMessage("telegram URL is required")
+    .optional()
     .isURL()
     .withMessage("invalid telegram URL"),
   check("identity").custom((value, { req }) => {
