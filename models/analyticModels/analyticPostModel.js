@@ -19,8 +19,8 @@ const analyticPostSchema = new mongoose.Schema(
     },
     sharedTo: {
       type: String,
-      enum: ["public", "course"],
-      default: "public",
+      enum: ["Home_Post", "course"],
+      default: "Home_Post",
     },
     course: {
       type: mongoose.Schema.Types.ObjectId,

@@ -13,8 +13,6 @@ const {
   createFilterObjAllowedPosts,
   createFilterObjHomePosts,
   getLoggedUserAllowedPosts,
-  createFilterObjPublicPosts,
-  getPublicPosts,
   getPost,
   updatePost,
   deletePost,
@@ -45,17 +43,10 @@ router
     createPost
   );
 router.get(
-  "/public",
-  authServices.protect,
-  authServices.allowedTo("user", "instructor", "admin"),
-  createFilterObjPublicPosts,
-  getPublicPosts
-);
-router.get(
   "/home",
   authServices.protect,
   authServices.allowedTo("user", "instructor", "admin"),
-  // createFilterObjHomePosts,
+  createFilterObjHomePosts,
   getHomePosts
 );
 router

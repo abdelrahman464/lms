@@ -74,9 +74,6 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
           sharedTo: "course",
           course: { $in: courseIds },
         },
-        {
-          sharedTo: "public",
-        },
       ],
     };
   }
@@ -84,16 +81,9 @@ exports.createFilterObjAllowedPosts = async (req, res, next) => {
   next();
 };
 //-------------------------------------------------------------------------------------------------
-//filter to get public posts only
-exports.createFilterObjPublicPosts = async (req, res, next) => {
-  const filterObject = { sharedTo: "public" };
-  req.filterObj = filterObject;
-  next();
-};
-//-------------------------------------------------------------------------------------------------
 //filter to get home posts only
 exports.createFilterObjHomePosts = async (req, res, next) => {
-  const filterObject = { sharedTo: "public" };
+  const filterObject = { sharedTo: "Home_Post" };
   req.filterObj = filterObject;
   next();
 };
@@ -133,9 +123,9 @@ exports.updatePost = factory.updateOne(Post);
 //@access protected user,admin
 exports.getLoggedUserAllowedPosts = factory.getALl(Post);
 //@desc get all posts post
-//@route GET api/v1/posts
+//@route GET api/v1/posts/home
 //@access protected user,admin
-exports.getPublicPosts = factory.getALl(Post);
+exports.getHomePosts = factory.getALl(Post);
 //@desc get post
 //@route GET api/v1/posts/:id
 //@access protected user
@@ -144,8 +134,3 @@ exports.getPost = factory.getOne(Post);
 //@route DELTE api/v1/posts:id
 //@access protected admin that create the post
 exports.deletePost = factory.deleteOne(Post);
-
-//@desc get home posts
-//@route GET api/v1/posts/home
-//@access protected user
-exports.getHomePosts = factory.getALl(Post);
