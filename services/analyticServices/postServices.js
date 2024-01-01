@@ -28,11 +28,11 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 });
 //filter to get public posts only
 exports.createFilterObjPosts = async (req, res, next) => {
-  let filterObject = { sharedTo: "public" };
+  let filterObject = null;
   if (req.params.sharedTo) {
     filterObject = { sharedTo: req.params.sharedTo };
+    req.filterObj = filterObject;
   }
-  req.filterObj = filterObject;
   next();
 };
 //-------------------------------------------------------------------------------------------------
