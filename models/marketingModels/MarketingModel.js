@@ -22,6 +22,11 @@ const MarketingLogsSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
+    bonous: {
+      type: Number,
+      default: 0,
+    },
     totalSalesMoneyGT500: {
       type: Number,
       default: 0,
@@ -79,6 +84,7 @@ const MarketingLogsSchema = new mongoose.Schema(
     //when we pay to marketer we save invoice here
     invoices: [
       {
+        bonous: Number,
         totalSalesMoneyGT500: Number,
         totalSalesMoneyLT500: Number,
         mySalesGT500: Number,
@@ -116,8 +122,14 @@ MarketingLogsSchema.pre(/^find/, function (next) {
   // this => query
   this.populate({ path: "invitor", select: "name email profileImg" });
   this.populate({ path: "marketer", select: "name email profileImg" });
-  this.populate({ path: "transactionsGT500.child", select: "name email profileImg telegram" });
-  this.populate({ path: "transactionsLT500.child", select: "name email profileImg telegram" });
+  this.populate({
+    path: "transactionsGT500.child",
+    select: "name email profileImg telegram",
+  });
+  this.populate({
+    path: "transactionsLT500.child",
+    select: "name email profileImg telegram",
+  });
   next();
 });
 

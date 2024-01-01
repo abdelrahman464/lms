@@ -25,9 +25,6 @@ const MarketingRequestsSchema = new mongoose.Schema(
     ansOfQuestion: {
       type: String,
     },
-    facebook: {
-      type: String,
-    },
     instgram: {
       type: String,
     },

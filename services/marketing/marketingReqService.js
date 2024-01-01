@@ -135,7 +135,7 @@ exports.acceptMarketingRequest = async (req, res, next) => {
   }
   await MarketingLog.findOneAndUpdate(
     { marketer: MarketRequest.user },
-    { role: "marketer" }
+    { role: "marketer", bonous: 13.5 }
   );
   //SEND EMAIL TO   MarketRequest.user Telling him he he been marketer
   const userInRequset = await User.findById(MarketRequest.user);

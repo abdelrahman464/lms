@@ -313,12 +313,12 @@ const createInvoice = async (marketLog, forPreviousMonth = false) => {
     ? new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
     : currentDate;
 
-  //check if user has money to be clculated
+  //check if user has money to be calculated
   if (marketLog.profitsGT500 <= 0 && marketLog.profitsLT500 <= 0) {
     return;
   }
 
-  marketLog.invoices.push({
+  const invoice = {
     totalSalesMoneyGT500: marketLog.totalSalesMoneyGT500,
     totalSalesMoneyLT500: marketLog.totalSalesMoneyLT500,
 
@@ -335,7 +335,15 @@ const createInvoice = async (marketLog, forPreviousMonth = false) => {
       month: "long",
     })}`,
     Date: invoiceDate,
-  });
+  };
+
+  // Add bonus if not equal to 0
+  if (marketLog.bonous !== 0) {
+    invoice.bonous = marketLog.bonous;
+    marketLog.bonous = 0;
+  }
+
+  marketLog.invoices.push(invoice);
 
   // Reset the fields
   marketLog.totalSalesMoneyGT500 = 0;
@@ -412,51 +420,3 @@ exports.getCustomerChildren = async (req, res) => {
 
   return res.status(200).json({ status: "success", data: children });
 };
-//-----------------------------------------------------------------------------------------------//
-const updateChildrenBrokers = async (marketerId, broker) => {
-  // Find all marketLogs with the same invitor
-  const marketLogs = await MarketingLog.find({ invitor: marketerId });
-
-  // Update the broker field for each marketLog
-  for (const marketLog of marketLogs) {
-    marketLog.broker = broker;
-    await marketLog.save();
-    // Recursively update the children brokers
-    await updateChildrenBrokers(marketLog.marketer, broker);
-  }
-};
-//-----------------------------------------------------------------------------------------------//
-exports.updateBroker = async (req, res) => {
-  try {
-    const { marketLogId, broker } = req.body;
-
-    // 1- Get the marketLog with id from params
-    const marketLog = await MarketingLog.findById(marketLogId);
-
-    if (!marketLog) {
-      return res
-        .status(404)
-        .json({ status: "failed", msg: "Market log not found" });
-    }
-
-    // 2- Update the broker field
-    marketLog.broker = broker;
-
-    // 3- Update all marketlogs with the same invitor and their children and their children children and so on
-    await updateChildrenBrokers(marketLog.marketer, broker);
-
-    // Save the updated marketLog
-    await marketLog.save();
-
-    return res
-      .status(200)
-      .json({ status: "success", msg: "Broker updated successfully" });
-  } catch (error) {
-    console.error("Error updating broker:", error);
-
-    return res
-      .status(500)
-      .json({ status: "failed", msg: `Error updating broker: ${error}` });
-  }
-};
-//-----------------------------------------------------------------------------//

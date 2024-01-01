@@ -9,7 +9,7 @@ const {
   createInvoiceForAllUsers,
   getMarketerChildren,
   getCustomerChildren,
-  updateBroker,
+
 } = require("../../services/marketing/marketingService");
 
 const {
@@ -47,11 +47,6 @@ router.get(
   getCustomerChildren
 );
 
-router.put(
-  "/updateBroker",
-  authServices.protect,
-  authServices.allowedTo("admin"),
-  updateBroker
-);
+
 
 module.exports = router;

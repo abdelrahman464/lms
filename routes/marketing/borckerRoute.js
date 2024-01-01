@@ -19,7 +19,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(authServices.protect, getAllBrockers)
+  .get(authServices.protect, authServices.allowedTo("admin"), getAllBrockers)
   .post(
     authServices.protect,
     authServices.allowedTo("admin"),
