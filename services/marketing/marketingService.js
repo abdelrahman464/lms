@@ -159,7 +159,7 @@ const updateMarketer = async (marketer, amountD, childEmail) => {
     marketer.mySales + 1,
     marketer.customerSales
   ); // i added 1 cause mySales not updated yet
-  const totalSalesMoney = marketer.totalSalesMoney + amountD;
+  const totalSalesMoney = marketer.totalSalesMoney + parseFloat(amountD);
   const mySales = marketer.mySales + 1;
   const profits = (percentage / 100) * totalSalesMoney;
 
@@ -194,7 +194,7 @@ const updateCustomer = async (customer, amountC, childEmail) => {
     console.log("we are in updateCustomers");
     //1-calculating new values
     const percentage = 20;
-    const totalSalesMoney = customer.totalSalesMoney + amountC;
+    const totalSalesMoney = customer.totalSalesMoney + parseFloat(amountC);
     const mySales = customer.mySales + 1;
     const profits = Number((percentage / 100) * totalSalesMoney);
 
@@ -552,4 +552,39 @@ exports.getMyChildren = async (req, res) => {
   }
 
   return res.status(200).json({ status: "success", data: children });
+};
+//--------------
+exports.recalculateProfits = async (req, res) => {
+  try {
+    // Fetch all MarketingLogs
+    const marketingLogs = await MarketingLog.find();
+    // Iterate through each log
+    for (const log of marketingLogs) {
+      // Check if direct_transactions is empty
+      if (log.direct_transactions.length === 0) {
+        continue; // Skip to the next log
+      }
+
+      // Calculate total sales money from direct_transactions
+      const totalSalesMoney = log.direct_transactions.reduce(
+        (total, transaction) => total + transaction.amount,
+        0
+      );
+
+      // Update totalSalesMoney
+      log.totalSalesMoney = totalSalesMoney;
+
+      // Recalculate profits based on percentage
+      log.profits = (log.percentage / 100) * totalSalesMoney;
+
+      // Save the updated log
+      await log.save();
+    }
+
+    console.log("Profits recalculated successfully.");
+    return res.status(200).json({ msg: "Profits recalculated successfully." });
+  } catch (error) {
+    console.error("Error recalculating profits:", error.message);
+    return res.status(200).json({ msg: error.message });
+  }
 };
