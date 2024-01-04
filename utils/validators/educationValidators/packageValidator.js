@@ -22,12 +22,6 @@ exports.createPackageValidator = [
     .isNumeric()
     .withMessage(" price must be a number"),
 
-  check("expirationTime")
-    .notEmpty()
-    .withMessage("expirationTime is required")
-    .isNumeric()
-    .withMessage("expirationTime must be a number"),
-
   check("image").optional(),
 
   check("courses")

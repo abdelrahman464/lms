@@ -43,7 +43,11 @@ exports.createCourseValidator = [
       }
       return true;
     }),
-  
+  check("expirationTime")
+    .notEmpty()
+    .withMessage("expirationTime is required")
+    .isNumeric()
+    .withMessage("expirationTime must be a number"),
 
   check("category")
     .notEmpty()
@@ -169,16 +173,17 @@ exports.checkCourseIdParamValidator = [
   validatorMiddleware,
 ];
 
-exports.getRelatedCoursesValidator=[
+exports.getRelatedCoursesValidator = [
   check("catId")
-  .isMongoId().withMessage("invalid mongo id ")
-  
-  .custom((courseId) =>
+    .isMongoId()
+    .withMessage("invalid mongo id ")
+
+    .custom((courseId) =>
       Category.findById(courseId).then((category) => {
         if (!category) {
           return Promise.reject(new ApiError(`category Not Found`, 404));
         }
-      }))
-  ,
+      })
+    ),
   validatorMiddleware,
 ];
