@@ -156,7 +156,7 @@ const createOrder = async (session) => {
 
   const startDate = new Date();
   const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + package.expirationTime);
+  endDate.setDate(endDate.getDate() + (package.expirationTime || 0));
   // 2)Add the user object to the users array
   const newUser = {
     user: user._id,

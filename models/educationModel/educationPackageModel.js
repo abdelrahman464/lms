@@ -25,7 +25,6 @@ const educationPackageSchema = new mongoose.Schema({
     max: [200000, "Too long Package priceAfterDiscount"],
   },
   expirationTime: {
-    //0  //30   //  //expirtaioInDays
     type: Number,
   },
   image: String,
