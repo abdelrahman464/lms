@@ -5,6 +5,7 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const factory = require("./handllerFactory");
 const User = require("../models/userModel");
+const MarketingLog = require("../models/marketingModels/MarketingModel");
 const generateToken = require("../utils/generateToken");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 
@@ -181,5 +182,21 @@ exports.updateUserTelegram = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     msg: "telegram Id and userName updated successfully",
+  });
+});
+//--------------------------------------------------------------------------------------------
+exports.getMarketers = asyncHandler(async (req, res, next) => {
+  // Get all marketers
+  const marketers = await MarketingLog.find({ role: "marketer" });
+
+  // Extract marketer ids
+  const marketerIds = marketers.map((marketer) => marketer.marketer);
+
+  // Get users with the extracted ids
+  const users = await User.find({ _id: { $in: marketerIds } }).select("name email telegram");
+
+  return res.status(200).json({
+    status: "success",
+    data: users,
   });
 });

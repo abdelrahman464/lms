@@ -40,6 +40,8 @@ const brokerRoute = require("./marketing/borckerRoute");
 
 const telegramChannelsRoute = require("./telegramChannelsRoute");
 
+const questionRoute = require("./questionRoute");
+
 const mountRoutes = (app) => {
   // Mount Routes
   app.use("/api/v1/auth", authRoute);
@@ -83,5 +85,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/broker", brokerRoute);
 
   app.use("/api/v1/telegramChannel", telegramChannelsRoute);
+
+  app.use("/api/v1/questionRoute", questionRoute);
 };
 module.exports = mountRoutes;

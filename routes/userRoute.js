@@ -27,6 +27,7 @@ const {
   uploadProfileImage,
   resizeImage,
   updateUserTelegram,
+  getMarketers,
 } = require("../services/userService");
 
 const router = express.Router();
@@ -35,13 +36,23 @@ router.get("/getMe", authServices.protect, getLoggedUserData, getUser);
 router.put("/deActiveMe", authServices.protect, deActivateLoggedUser);
 router.put("/activeMe", authServices.protect, activeateLoggedUser);
 router.delete("/deleteMyAcount", authServices.protect, deleteMyAccount);
+//--------------------------------
+router.get(
+  "/getMarketers",
+  authServices.protect,
+  authServices.allowedTo("admin"),
+  getMarketers
+);
+//--------------------------------
 router.put(
   "/changeMyPassword",
   authServices.protect,
   changeLoggedUserPasswordValidator,
   updateLoggedUserPassword
 );
+//--------------------------------
 router.get("/instractors", createFilterObj, getInstructors);
+//--------------------------------
 router.put(
   "/changeMyData",
   authServices.protect,

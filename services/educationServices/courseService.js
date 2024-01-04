@@ -22,10 +22,10 @@ exports.createCourse = asyncHandler(async (req, res) => {
     title,
     category,
     price,
-    courses,
     expirationTime,
     renewPrice,
     description,
+    telegramChannelNames,
   } = req.body;
   //create cours
   const course = await Course.create({
@@ -33,9 +33,9 @@ exports.createCourse = asyncHandler(async (req, res) => {
     description,
     category,
     price,
-    courses,
-    expirationTime,
     renewPrice,
+    expirationTime,
+    telegramChannelNames,
   });
   if (!course) return res.status(400).json({ msg: "something went wrong" });
   //case in newnormal to create package after create course to handle course subscrption unsing package
@@ -47,6 +47,7 @@ exports.createCourse = asyncHandler(async (req, res) => {
     expirationTime,
     type: "course",
     renewPrice,
+    telegramChannelNames
   });
   return res.status(201).json({ data: " successfully " });
 });

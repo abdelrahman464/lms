@@ -27,7 +27,6 @@ const educationPackageSchema = new mongoose.Schema({
   expirationTime: {
     //0  //30   //  //expirtaioInDays
     type: Number,
-    required: [true, "expirationTime required"],
   },
   image: String,
 

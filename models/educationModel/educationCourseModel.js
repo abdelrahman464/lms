@@ -61,6 +61,11 @@ const educationCourseSchema = new mongoose.Schema(
       type: Number,
       required: [true, "expirationTime required"],
     },
+    telegramChannelNames: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timeseries: true,

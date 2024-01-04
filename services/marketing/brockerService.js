@@ -29,12 +29,16 @@ exports.getSuitableBrocker = async (req, res, next) => {
   try {
     //1-----check if marketer has brocker
     // Check if there are brokers with the condition marketer:req.user.invitor
-    if (req.user.invitor) {
-      const invitorBrockers = await Brocker.find({
+    let invitor = req.user.invitor;
+
+    while (invitor) {
+      const invitorBrockers = await Brocker.findOne({
         marketer: req.user.invitor,
       });
-      if (invitorBrockers.length > 0) {
-        console.log("Found brokers for invitor:", req.user.invitor);
+      if (!invitorBrockers) {
+        invitor = invitor.invitor;
+      }
+      if (invitorBrockers) {
         return res.status(200).json({
           status: "success",
           data: invitorBrockers,
