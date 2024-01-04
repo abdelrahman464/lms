@@ -425,6 +425,8 @@ exports.getMarketLog = async (req, res) => {
   if (!marketLog) {
     return res.status(404).json({ status: "faild", msg: "not found" });
   }
+  // Destructure the marketLog object and exclude the 'invoices' key
+  const { invoices, ...marketLogWithoutInvoices } = marketLog.toObject();
 
   let totalTreeProfits = 0;
   for (const transaction of marketLog.transactions) {
@@ -436,7 +438,12 @@ exports.getMarketLog = async (req, res) => {
 
   return res
     .status(200)
-    .json({ status: "success", marketLog, totalTreeProfits, totalProfits });
+    .json({
+      status: "success",
+      marketLog:marketLogWithoutInvoices,
+      totalTreeProfits,
+      totalProfits,
+    });
 };
 //-----------------------------------------------------------------------------------------------------------------------//
 exports.getMyMarketLog = async (req, res) => {
@@ -542,7 +549,6 @@ exports.createInvoiceForAllUsers = async (req, res) => {
 //-----------------------------------------------------------------------------------------------//
 exports.getMyChildren = async (req, res) => {
   const { marketerId } = req.params;
-  console.log(marketerId);
   const children = await User.find({ invitor: marketerId }).select(
     "name email profileImg startMarketing"
   );
