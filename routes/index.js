@@ -86,6 +86,6 @@ const mountRoutes = (app) => {
 
   app.use("/api/v1/telegramChannel", telegramChannelsRoute);
 
-  app.use("/api/v1/questionRoute", questionRoute);
+  app.use("/api/v1/question", questionRoute);
 };
 module.exports = mountRoutes;
