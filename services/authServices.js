@@ -8,6 +8,28 @@ const ApiError = require("../utils/apiError");
 const sendEmail = require("../utils/sendEmail");
 const generateToken = require("../utils/generateToken");
 const { getMarketLog2 } = require("./marketing/marketingService");
+
+//@desc marketer data from User
+const getMarketerBrokerData = async (marketerId) => {
+  const marketer = await User.findOne({ _id: marketerId }); //req.user._id
+  if (!marketer || !marketer.brocker) {
+    console.log("marketer not found");
+    return null;
+  }
+  let brocker;
+  // check if marketer has brocker
+  if (marketer.brocker) {
+    console.log("marketer has brocker");
+    // assign object
+    if (marketer.brocker.type == "me") {
+      brocker = { type: "direct_parnet", parentId: marketer.brocker.parentId };
+    } else {
+      brocker = { type: "tree_parent", parentId: marketer.brocker.parentId };
+    }
+  }
+  console.log(brocker);
+  return brocker;
+};
 //@desc signup
 //@route POST /api/v1/auth/signup
 //@access public
@@ -21,12 +43,16 @@ exports.signup = asyncHandler(async (req, res, next) => {
         req.body.mediator = marketLog.marketer._id;
         req.body.invitor = marketLog.invitor._id;
       }
+      // assign brocker to new user
+      req.body.brocker = await getMarketerBrokerData(req.body.invitor);
+      console.log(req.body.brocker);
     }
   }
   //1-create user
   const user = await new User({
     invitor: req.body.invitor ? req.body.invitor : null,
     mediator: req.body.mediator ? req.body.mediator : null,
+    brocker: req.body.brocker ? req.body.brocker : null,
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,

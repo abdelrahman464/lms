@@ -287,7 +287,6 @@ exports.getMarketLog = async (req, res) => {
 //@desc get market log for specific marketer
 //@access internal app => authSercice 'signUp'
 exports.getMarketLog2 = async (marketerId) => {
-  console.log(marketerId);
   const marketLog = await MarketingLog.findOne({ marketer: marketerId }); //req.user._id
 
   return marketLog;

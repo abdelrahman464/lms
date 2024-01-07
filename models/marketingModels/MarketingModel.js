@@ -5,7 +5,15 @@ const mongoose = require("mongoose");
 //calculate his total
 const MarketingLogsSchema = new mongoose.Schema(
   {
+    role: {
+      type: String,
+      enum: ["customer", "marketer"],
+    },
     marketer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    invitor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
@@ -13,15 +21,8 @@ const MarketingLogsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    role: {
-      type: String,
-      enum: ["customer", "marketer"],
-    },
+
     //we will use this when update brokers of marketer
-    invitor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
 
     bonous: {
       type: Number,

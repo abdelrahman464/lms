@@ -28,6 +28,18 @@ const userShcema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    //----------------
+    brocker: {
+      type: {
+        type: String,
+        Enum: ["me", "direct_parnet", "tree_parent"],
+      },
+      parentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+    //----------------
     telegram: {
       telegramId: {
         type: String,
